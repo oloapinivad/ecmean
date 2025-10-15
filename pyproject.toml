@@ -67,3 +67,6 @@ version = {attr = "ecmean.__version__"}
 [tool.coverage.run]
 concurrency = ["multiprocessing"]
 
+[tool.coverage.report]
+ignore_errors = true
+

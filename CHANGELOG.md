@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 Unreleased is the current development version, which is currently lying in `main` branch.
 
+- Support for EC-Earth4 regular grid from OIFS
+
 ## [v0.1.15]
 
 - Fixed a bug in the heatmap production for global mean

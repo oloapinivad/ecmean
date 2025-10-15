@@ -19,7 +19,7 @@
 model:
   basedir: '{expname}'
   component:
-    atm: cmor
+    atm: cmoratm
     oce: nemo
 
 # Definition of filetypes (specific for each component)
@@ -28,11 +28,11 @@ filetype:
   atm2d:
     filename: '{expname}_atm_cmip6_1m_{year1}-{year2}.nc'
     dir: output/oifs
-    component: oifs
+    component: cmoratm
   atm3d:
     filename: '{expname}_atm_cmip6_pl_1m_{year1}-{year2}.nc'
     dir: output/oifs
-    component: oifs
+    component: cmoratm
   oceT:
     filename: '{expname}_oce_1m_T_{year1}-{year2}.nc'
     dir: output/nemo
@@ -51,8 +51,8 @@ filetype:
 # inifile can be formatted with all the possible keywords listed above
 # If a relative path is used this is attached to $ECEDIR/$basedir
 component:
-  oifs:
-    maskfile: 'output/oifs/{expname}_fx_cmip6_1*_{year1}-{year2}.nc'
+  cmoratm:
+    maskfile: 'output/oifs/{expname}_atm_cmip6_fx_{year1}-{year2}.nc'
     gridfile: 'output/oifs/{expname}_atm_cmip6_1*_{year1}-{year2}.nc'
     areafile: ''
   nemo:

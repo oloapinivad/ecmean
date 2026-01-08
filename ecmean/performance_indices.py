@@ -61,6 +61,7 @@ class PerformanceIndices:
         varstat (dict): Dictionary to store variable statistics.
         funcname (str): Name of the class.
         start_time (float): Start time for performance measurement.
+        title (str): Title of the plot, overrides default title.
     Methods:
         toc(message):
             Update the timer and log the elapsed time.
@@ -80,7 +81,7 @@ class PerformanceIndices:
                  loglevel='WARNING', numproc=1, climatology=None,
                  interface=None, model=None, ensemble='r1i1p1f1',
                  silent=None, xdataset=None, outputdir=None,
-                 extrafigure=False):
+                 extrafigure=False, title=None):
         """Initialize the PerformanceIndices class with the given parameters."""
 
         self.loglevel = loglevel
@@ -99,6 +100,7 @@ class PerformanceIndices:
         self.extrafigure = extrafigure #special key to be set for manual debugging, producing extra figures: DO NOT USE
         self.outarray = None
         self.start_time = time()
+        self.title = title
 
     def toc(self, message):
         """Update the timer and log the elapsed time."""
@@ -208,7 +210,7 @@ class PerformanceIndices:
             diagnostic=diagname, modelname=self.diag.modelname,
             expname=self.diag.expname, year1=self.diag.year1,
             year2=self.diag.year2, regions=self.diag.regions,
-            seasons=self.diag.seasons)
+            seasons=self.diag.seasons, title=self.title)
         if self.varstat is None:
             self.varstat = load_output_yaml(self.diag.filenames('yml'))
         if mapfile is None:

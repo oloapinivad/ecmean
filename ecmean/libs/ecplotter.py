@@ -18,7 +18,7 @@ class ECPlotter:
 
     def __init__(self, diagnostic,
                  modelname, expname, year1, year2,
-                 regions=None, seasons=None):
+                 regions=None, seasons=None, title=None):
         """Initialize the ECPlotter class.
 
         Args:
@@ -42,6 +42,7 @@ class ECPlotter:
         self.regions = regions
         self.seasons = seasons
         self.default_title = f"{diagnostic.replace('_', ' ').upper()} {self.modelname} {self.expname} {self.year1} {self.year2}"
+        self.title = title if title is not None else self.default_title
 
     def _save_and_close(self, fig, filemap):
         """Helper function to save and close the figure."""
@@ -141,7 +142,7 @@ class ECPlotter:
         thr = [0, 1, 5]
         tictoc = [0, 0.25, 0.5, 0.75, 1, 2, 3, 4, 5]
 
-        title = kwargs.get('title') if 'title' in kwargs else self.default_title
+        title = kwargs.get('title', self.title)
 
         tot = len(myfield.columns)
         # Extract the region (second element) from each column tuple
@@ -216,7 +217,7 @@ class ECPlotter:
         yfig = len(clean.index)
         fig, axs = plt.subplots(1, 1, sharey=True, tight_layout=True, figsize=(xfig + 5, yfig + 2))
 
-        title = kwargs.get('title') if 'title' in kwargs else self.default_title
+        title = kwargs.get('title', self.title)
 
         # set color range and palette
         thr = 10

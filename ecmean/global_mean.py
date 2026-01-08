@@ -64,6 +64,7 @@ class GlobalMean:
         vartrend (dict): Dictionary to store variable trends.
         funcname (str): Name of the class.
         start_time (float): Start time for the timer.
+        title (str): Title of the plot, overrides default title.
     Methods:
         toc(message):
             Update the timer and log the elapsed time.
@@ -79,7 +80,7 @@ class GlobalMean:
 
     def __init__(self, exp, year1, year2, config='config.yml', loglevel='WARNING', numproc=1,
                  interface=None, model=None, ensemble='r1i1p1f1', addnan=False, silent=None,
-                 trend=None, line=None, outputdir=None, xdataset=None, reference='EC23'):
+                 trend=None, line=None, outputdir=None, xdataset=None, reference='EC23', title=None):
 
         self.loglevel = loglevel
         self.loggy = setup_logger(level=self.loglevel)
@@ -95,6 +96,7 @@ class GlobalMean:
         self.varmean = None
         self.vartrend = None
         self.start_time = time()
+        self.title = title
 
     def toc(self, message):
         """Update the timer and log the elapsed time."""
@@ -241,10 +243,11 @@ class GlobalMean:
             self.varmean = load_output_yaml(self.diag.filenames('yml'))
         if mapfile is None:
             mapfile = self.diag.filenames(figformat)
+        plot_kwargs = {'title': self.title} if self.title is not None else {}
         fig = plotter.heatmap_plot(
             data=self.varmean, reference=self.ref,
             variables=self.diag.var_all,
-            filename=mapfile, storefig=storefig, addnan=addnan
+            filename=mapfile, storefig=storefig, addnan=addnan, **plot_kwargs
         )
         if self.diag.ftable:
             self.loggy.info('Line file is: %s', self.diag.linefile)

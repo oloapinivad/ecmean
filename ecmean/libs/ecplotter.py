@@ -50,7 +50,7 @@ class ECPlotter:
         plt.close(fig)
         
 
-    def heatmap_plot(self, data, reference, variables, filename=None, storefig=True, climatology="EC23", addnan=False):
+    def heatmap_plot(self, data, reference, variables, filename=None, storefig=True, climatology="EC23", addnan=False, **kwargs):
         """
         Prepare data for plotting performance indices.
 
@@ -62,6 +62,9 @@ class ECPlotter:
             storefig (bool, optional): Whether to save the figure. Defaults to True.
             climatology (str, optional): Type of climatology, either "EC23" or "EC24". Defaults to "EC23".
             addnan (bool, optional): Whether to add NaN values in the final plots. Defaults to False, only for global mean.
+
+        Keyword Args:
+            title (str): Title of the plot, overrides default title
 
         Returns:
             fig: The generated matplotlib figure object, if requested.
@@ -78,14 +81,14 @@ class ECPlotter:
             fig = self.heatmap_comparison_pi(
                 data_dict=data2plot, cmip6_dict=cmip6,
                 longnames=longnames, filemap=filename,
-                storefig=storefig)
+                storefig=storefig, **kwargs)
         elif self.diagnostic == "global_mean":
             obsmean, obsstd, data2plot, units_list = self.prepare_clim_dictionaries_gm(data, reference,
                                                                         variables, self.seasons, self.regions)
             fig = self.heatmap_comparison_gm(
                 data_dict=data2plot, mean_dict=obsmean, std_dict=obsstd,
                 units_list=units_list, storefig=storefig,
-                filemap=filename, addnan=addnan)
+                filemap=filename, addnan=addnan, **kwargs)
         else:
             loggy.error("Invalid diagnostic type %s. Choose 'performance_indices' or 'global_mean'.", self.diagnostic)
             raise ValueError(f"Invalid diagnostic type {self.diagnostic}. Choose 'performance_indices' or 'global_mean'.")
@@ -141,7 +144,7 @@ class ECPlotter:
         thr = [0, 1, 5]
         tictoc = [0, 0.25, 0.5, 0.75, 1, 2, 3, 4, 5]
 
-        title = kwargs.get('title') if 'title' in kwargs else self.default_title
+        title = kwargs.get('title', self.default_title)
 
         tot = len(myfield.columns)
         # Extract the region (second element) from each column tuple
@@ -216,7 +219,7 @@ class ECPlotter:
         yfig = len(clean.index)
         fig, axs = plt.subplots(1, 1, sharey=True, tight_layout=True, figsize=(xfig + 5, yfig + 2))
 
-        title = kwargs.get('title') if 'title' in kwargs else self.default_title
+        title = kwargs.get('title', self.default_title)
 
         # set color range and palette
         thr = 10

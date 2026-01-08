@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 Unreleased is the current development version, which is currently lying in `main` branch.
 
+- Allow title override in global mean and performance indices plots (#130)
 - Support for EC-Earth4 regular grid from OIFS
 
 ## [v0.1.15]

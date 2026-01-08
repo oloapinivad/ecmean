@@ -210,15 +210,16 @@ class PerformanceIndices:
             diagnostic=diagname, modelname=self.diag.modelname,
             expname=self.diag.expname, year1=self.diag.year1,
             year2=self.diag.year2, regions=self.diag.regions,
-            seasons=self.diag.seasons, title=self.title)
+            seasons=self.diag.seasons)
         if self.varstat is None:
             self.varstat = load_output_yaml(self.diag.filenames('yml'))
         if mapfile is None:
             mapfile = self.diag.filenames(figformat)
+        plot_kwargs = {'title': self.title} if self.title is not None else {}
         fig = plotter.heatmap_plot(
             data=self.varstat, reference=self.piclim,
             variables=self.diag.field_all, climatology=self.diag.climatology,
-            filename=mapfile, storefig=storefig)
+            filename=mapfile, storefig=storefig, **plot_kwargs)
         
         self.toc('Plotting')
 

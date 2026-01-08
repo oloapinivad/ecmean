@@ -238,15 +238,16 @@ class GlobalMean:
             diagnostic=diagname, modelname=self.diag.modelname,
             expname=self.diag.expname, year1=self.diag.year1,
             year2=self.diag.year2, regions=self.diag.regions,
-            seasons=self.diag.seasons, title=self.title)
+            seasons=self.diag.seasons)
         if self.varmean is None:
             self.varmean = load_output_yaml(self.diag.filenames('yml'))
         if mapfile is None:
             mapfile = self.diag.filenames(figformat)
+        plot_kwargs = {'title': self.title} if self.title is not None else {}
         fig = plotter.heatmap_plot(
             data=self.varmean, reference=self.ref,
             variables=self.diag.var_all,
-            filename=mapfile, storefig=storefig, addnan=addnan
+            filename=mapfile, storefig=storefig, addnan=addnan, **plot_kwargs
         )
         if self.diag.ftable:
             self.loggy.info('Line file is: %s', self.diag.linefile)

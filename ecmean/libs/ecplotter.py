@@ -65,6 +65,7 @@ class ECPlotter:
 
         Keyword Args:
             title (str): Title of the plot, overrides default title
+            cbar_label (str): Label for the colorbar, overrides default
 
         Returns:
             fig: The generated matplotlib figure object, if requested.
@@ -113,6 +114,7 @@ class ECPlotter:
 
         Keyword Args:
             title (str): title of the plot, overrides default title
+            cbar_label (str): label for the colorbar, overrides default hardcoded label
         """
 
         # convert output dictionary to pandas dataframe
@@ -145,6 +147,7 @@ class ECPlotter:
         tictoc = [0, 0.25, 0.5, 0.75, 1, 2, 3, 4, 5]
 
         title = kwargs.get('title', self.default_title)
+        colorbar_label = kwargs.get('cbar_label', 'Relative Performance Index')
 
         tot = len(myfield.columns)
         # Extract the region (second element) from each column tuple
@@ -152,7 +155,7 @@ class ECPlotter:
         divnorm = TwoSlopeNorm(vmin=thr[0], vcenter=thr[1], vmax=thr[2])
         pal = sns.color_palette("Spectral_r", as_cmap=True)
         chart = sns.heatmap(myfield, norm=divnorm, cmap=pal,
-                            cbar_kws={"ticks": tictoc, 'label': title},
+                            cbar_kws={"ticks": tictoc, 'label': colorbar_label},
                             ax=axs, annot=True, linewidth=0.5, fmt='.2f',
                             annot_kws={'fontsize': size_model, 'fontweight': 'bold'})
 
@@ -194,6 +197,7 @@ class ECPlotter:
 
         Keyword Args:
             title (str): title of the plot, overrides default title
+            cbar_label (str): label for the colorbar, overrides default hardcoded label
         """
 
         # convert the three dictionary to pandas and then add units
@@ -220,6 +224,8 @@ class ECPlotter:
         fig, axs = plt.subplots(1, 1, sharey=True, tight_layout=True, figsize=(xfig + 5, yfig + 2))
 
         title = kwargs.get('title', self.default_title)
+        default_cbar_label = 'Model Bias \n (standard deviation of interannual variability from observations)'
+        colorbar_label = kwargs.get('cbar_label', default_cbar_label)
 
         # set color range and palette
         thr = 10
@@ -231,7 +237,7 @@ class ECPlotter:
         chart = sns.heatmap(clean, annot=data_table[mask], vmin=-thr - 0.5, vmax=thr + 0.5, center=0,
                             annot_kws={'va': 'bottom', 'fontsize': size_model},
                             cbar_kws={'ticks': tictoc, "shrink": .5,
-                                    'label': 'Model Bias \n (standard deviation of interannual variability from observations)'},
+                                    'label': colorbar_label},
                             fmt='.2f', cmap=pal)
         if addnan:
             empty = np.where(clean.isna(), 0, np.nan)

@@ -154,7 +154,7 @@ class ECPlotter:
         divnorm = TwoSlopeNorm(vmin=thr[0], vcenter=thr[1], vmax=thr[2])
         pal = sns.color_palette("Spectral_r", as_cmap=True)
         chart = sns.heatmap(myfield, norm=divnorm, cmap=pal,
-                            cbar_kws={"ticks": tictoc, 'label': f"Relative Performance Index ({climatology})"},
+                            cbar_kws={"ticks": tictoc, 'label': f"CMIP6 RELATIVE PI for ({climatology}) climatology"},
                             ax=axs, annot=True, linewidth=0.5, fmt='.2f',
                             annot_kws={'fontsize': size_model, 'fontweight': 'bold'})
 

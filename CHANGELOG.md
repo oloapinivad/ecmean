@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 Unreleased is the current development version, which is currently lying in `main` branch.
 
-- Allow colorbar label override in performance indices plots (#133)
+- Improved colorbar label in performance indices plots(#133)
 
 ## [v0.1.16]
 

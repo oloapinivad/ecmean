@@ -222,8 +222,6 @@ class ECPlotter:
         fig, axs = plt.subplots(1, 1, sharey=True, tight_layout=True, figsize=(xfig + 5, yfig + 2))
 
         title = kwargs.get('title', self.default_title)
-        default_cbar_label = 'Model Bias \n (standard deviation of interannual variability from observations)'
-        colorbar_label = kwargs.get('cbar_label', default_cbar_label)
 
         # set color range and palette
         thr = 10
@@ -235,7 +233,7 @@ class ECPlotter:
         chart = sns.heatmap(clean, annot=data_table[mask], vmin=-thr - 0.5, vmax=thr + 0.5, center=0,
                             annot_kws={'va': 'bottom', 'fontsize': size_model},
                             cbar_kws={'ticks': tictoc, "shrink": .5,
-                                    'label': colorbar_label},
+                                      'label': 'Model Bias \n (standard deviation of interannual variability from observations)'},
                             fmt='.2f', cmap=pal)
         if addnan:
             empty = np.where(clean.isna(), 0, np.nan)

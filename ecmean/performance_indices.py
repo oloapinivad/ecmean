@@ -62,7 +62,6 @@ class PerformanceIndices:
         funcname (str): Name of the class.
         start_time (float): Start time for performance measurement.
         title (str): Title of the plot, overrides default title.
-        colorbar_label (str): Label for the colorbar, overrides default.
     Methods:
         toc(message):
             Update the timer and log the elapsed time.
@@ -82,7 +81,7 @@ class PerformanceIndices:
                  loglevel='WARNING', numproc=1, climatology=None,
                  interface=None, model=None, ensemble='r1i1p1f1',
                  silent=None, xdataset=None, outputdir=None,
-                 extrafigure=False, title=None, colorbar_label=None):
+                 extrafigure=False, title=None):
         """Initialize the PerformanceIndices class with the given parameters."""
 
         self.loglevel = loglevel
@@ -102,7 +101,6 @@ class PerformanceIndices:
         self.outarray = None
         self.start_time = time()
         self.title = title
-        self.colorbar_label = colorbar_label
 
     def toc(self, message):
         """Update the timer and log the elapsed time."""
@@ -221,8 +219,6 @@ class PerformanceIndices:
         plot_kwargs = {}
         if self.title is not None:
             plot_kwargs['title'] = self.title
-        if self.colorbar_label is not None:
-            plot_kwargs['cbar_label'] = self.colorbar_label
 
         fig = plotter.heatmap_plot(
             data=self.varstat, reference=self.piclim,
@@ -453,13 +449,13 @@ def pi_entry_point():
                         climatology=args.climatology,
                         interface=args.interface, config=args.config,
                         model=args.model, ensemble=args.ensemble, outputdir=args.outputdir,
-                        title=args.title, colorbar_label=args.cbar_label)
+                        title=args.title)
 
 
 def performance_indices(exp, year1, year2, config='config.yml', loglevel='WARNING',
                         numproc=1, climatology=None, interface=None, model=None,
                         ensemble='r1i1p1f1', silent=None, xdataset=None, outputdir=None,
-                        title=None, colorbar_label=None):
+                        title=None):
     """
     Wrapper function to compute the performance indices for a given experiment and years.
     """
@@ -467,7 +463,7 @@ def performance_indices(exp, year1, year2, config='config.yml', loglevel='WARNIN
                             loglevel=loglevel, numproc=numproc, climatology=climatology,
                             interface=interface, model=model, ensemble=ensemble, silent=silent,
                             xdataset=xdataset, outputdir=outputdir, 
-                            title=title, colorbar_label=colorbar_label)
+                            title=title)
     pi.prepare()
     pi.run()
     pi.store()

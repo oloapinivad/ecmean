@@ -65,7 +65,6 @@ class ECPlotter:
 
         Keyword Args:
             title (str): Title of the plot, overrides default title
-            cbar_label (str): Label for the colorbar, overrides default
 
         Returns:
             fig: The generated matplotlib figure object, if requested.
@@ -79,6 +78,7 @@ class ECPlotter:
             reference = yaml.safe_load(reference)
         if self.diagnostic == "performance_indices":
             data2plot, cmip6, longnames = self.prepare_clim_dictionaries_pi(data, reference, variables)
+            kwargs['climatology'] = climatology
             fig = self.heatmap_comparison_pi(
                 data_dict=data2plot, cmip6_dict=cmip6,
                 longnames=longnames, filemap=filename,
@@ -107,14 +107,13 @@ class ECPlotter:
         Args:
             data_dict (dict): dictionary of absolute performance indices
             cmip6_dict (dict): dictionary of CMIP6 performance indices
-            diag (object): Diagnostic object
-            units_list (list): list of units
+            longnames (list): list of long names for variables
             filemap (str): path to save the plot
             size_model (int): size of the PIs in the plot
 
         Keyword Args:
             title (str): title of the plot, overrides default title
-            cbar_label (str): label for the colorbar, overrides default hardcoded label
+            climatology (str): climatology used. Defaults to "EC23".
         """
 
         # convert output dictionary to pandas dataframe
@@ -147,7 +146,7 @@ class ECPlotter:
         tictoc = [0, 0.25, 0.5, 0.75, 1, 2, 3, 4, 5]
 
         title = kwargs.get('title', self.default_title)
-        colorbar_label = kwargs.get('cbar_label', 'Relative Performance Index')
+        climatology = kwargs.get('climatology', "EC23")
 
         tot = len(myfield.columns)
         # Extract the region (second element) from each column tuple
@@ -155,7 +154,7 @@ class ECPlotter:
         divnorm = TwoSlopeNorm(vmin=thr[0], vcenter=thr[1], vmax=thr[2])
         pal = sns.color_palette("Spectral_r", as_cmap=True)
         chart = sns.heatmap(myfield, norm=divnorm, cmap=pal,
-                            cbar_kws={"ticks": tictoc, 'label': colorbar_label},
+                            cbar_kws={"ticks": tictoc, 'label': f"Relative Performance Index ({climatology})"},
                             ax=axs, annot=True, linewidth=0.5, fmt='.2f',
                             annot_kws={'fontsize': size_model, 'fontweight': 'bold'})
 
@@ -197,7 +196,6 @@ class ECPlotter:
 
         Keyword Args:
             title (str): title of the plot, overrides default title
-            cbar_label (str): label for the colorbar, overrides default hardcoded label
         """
 
         # convert the three dictionary to pandas and then add units

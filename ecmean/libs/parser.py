@@ -63,7 +63,5 @@ def parse_arguments(args, script):
                             help='climatology resolution')
         parser.add_argument('--title', type=str, default=None,
                             help='title for the plot, overrides default title')
-        parser.add_argument('--colorbar-label', '--cbar-label', dest='cbar_label', type=str, default=None,
-                            help='label for the colorbar, overrides default')
         
     return parser.parse_args(args)

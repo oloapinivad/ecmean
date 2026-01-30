@@ -86,7 +86,6 @@ Optional Arguments
 
    Specify the variant label (ripf number for cmor).
 
-
 Example
 ^^^^^^^
 

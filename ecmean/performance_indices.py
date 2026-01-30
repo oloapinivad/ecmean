@@ -215,11 +215,11 @@ class PerformanceIndices:
             self.varstat = load_output_yaml(self.diag.filenames('yml'))
         if mapfile is None:
             mapfile = self.diag.filenames(figformat)
-        plot_kwargs = {'title': self.title} if self.title is not None else {}
+
         fig = plotter.heatmap_plot(
-            data=self.varstat, reference=self.piclim,
+            data=self.varstat, base=self.piclim,
             variables=self.diag.field_all, climatology=self.diag.climatology,
-            filename=mapfile, storefig=storefig, **plot_kwargs)
+            filename=mapfile, storefig=storefig, title=self.title)
         
         self.toc('Plotting')
 
@@ -449,14 +449,16 @@ def pi_entry_point():
 
 def performance_indices(exp, year1, year2, config='config.yml', loglevel='WARNING',
                         numproc=1, climatology=None, interface=None, model=None,
-                        ensemble='r1i1p1f1', silent=None, xdataset=None, outputdir=None):
+                        ensemble='r1i1p1f1', silent=None, xdataset=None, outputdir=None,
+                        title=None):
     """
     Wrapper function to compute the performance indices for a given experiment and years.
     """
     pi = PerformanceIndices(exp=exp, year1=year1, year2=year2, config=config,
                             loglevel=loglevel, numproc=numproc, climatology=climatology,
                             interface=interface, model=model, ensemble=ensemble, silent=silent,
-                            xdataset=xdataset, outputdir=outputdir)
+                            xdataset=xdataset, outputdir=outputdir, 
+                            title=title)
     pi.prepare()
     pi.run()
     pi.store()

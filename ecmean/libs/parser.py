@@ -61,5 +61,5 @@ def parse_arguments(args, script):
                             choices=['EC23', 'EC24'])
         parser.add_argument('--resolution', type=str, default='',
                             help='climatology resolution')
-
+        
     return parser.parse_args(args)

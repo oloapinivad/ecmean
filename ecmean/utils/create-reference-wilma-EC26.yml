@@ -55,14 +55,14 @@ pr:
 evspsbl: 
   dataset: ERA5
   longname: 'Evaporation'
-  derived: e
+  derived: E
   org_units: m/day
   tgt_units: mm/day
   dir: "{eradir}/evaporation/mon/*.nc"
 pme: 
   dataset: ERA5
   longname: 'Precip. minus Evap.'
-  derived: TP+e
+  derived: TP+E
   org_units: m/day
   tgt_units: mm/day
   dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_full_sfc_1940-2024.nc', '{eradir}/evaporation/mon/*.nc']
@@ -128,7 +128,7 @@ pme_land:
   longname: 'Precip. minus Evap. (land)'
   mask: land
   operation: integral
-  derived: TP+e
+  derived: TP+E
   org_units: m/day
   tgt_units: Sv
   dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_full_sfc_1940-2024.nc', '{eradir}/evaporation/mon/*.nc']  

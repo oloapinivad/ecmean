@@ -13,8 +13,8 @@ __author__ = "Paolo Davini (p.davini@isac.cnr.it), Feb 2023."
 from ecmean.libs.files import load_yaml
 from ecmean.libs.units import units_extra_definition, UnitsHandler
 from ecmean.libs.ncfixers import xr_preproc
-from ecmean.libs.masks import masked_meansum, select_region
-from ecmean.libs.areas import area_cell
+from ecmean.libs.masks import masked_meansum, select_region, mask_field
+from ecmean.libs.areas import AreaCalculator
 from ecmean.libs.support import identify_grid
 from ecmean.libs.formula import _eval_formula
 import logging
@@ -24,13 +24,17 @@ import xarray as xr
 import os
 from cdo import *
 from glob import glob
+import re
 cdo = Cdo()
+
+# === DEBUG MODE ===
+DEBUG = False
 
 # set default logging
 logging.basicConfig(level=logging.INFO)
 
 # variable list
-atm_vars = ['tas', 'psl', 'pr', 'evspsbl', 'pme', 'clt', 'cll', 'clm', 'clh',
+atm_vars = ['tas_land', 'tas', 'psl', 'pr', 'evspsbl', 'pme', 'clt', 'cll', 'clm', 'clh',
             'pr_oce', 'pme_oce', 'pr_land', 'pme_land']
 rad_vars = ['net_toa', 'rsnt', 'rlnt', 'rsntcs', 'rlntcs', 'swcf', 'lwcf',
             'rsns', 'rlns', 'hfss', 'hfls', 'net_sfc_nosn', 'net_sfc',
@@ -43,14 +47,20 @@ variables = atm_vars + rad_vars + oce_vars + ice_vars
 
 
 # to set: time period (default, can be shorter if data are missing)
-year1 = 1991
-year2 = 2020
+year1 = 2000
+year2 = 2024
+
+if DEBUG:
+    variables = ['pme']   # una variabile semplice
+    year1 = 2000
+    year2 = 2024        # 2 anni bastano
+
 
 # yml file to get information on dataset on some machine
-clim_info = '/home/paolo/ECmean4/ecmean/utils/create-reference-wilma.yml'
+clim_info = '/work/users/malbanes/ECmean4/ecmean/utils/create-reference-wilma_EC25.yml'
 
 # climatology yml output
-clim_name = 'EC23'
+clim_name = 'EC25'
 clim_file = os.path.join('../reference/gm_reference_' + clim_name + '.yml')
 
 # add other units
@@ -111,10 +121,22 @@ for var in variables:
         xfield = _eval_formula(cmd, xfield).to_dataset(name=var)
 
         # select time
-        cfield = xfield[var].sel(time=xfield.time.dt.year.isin(years))
-        real_year1 = int(np.min(cfield.time.dt.year.values))
-        real_year2 = int(np.max(cfield.time.dt.year.values))
+        valid_time = xfield[var].dropna("time", how="all").time
+        avail_years = np.unique(valid_time.dt.year.values)
+        year1_eff = max(year1, int(avail_years.min()))
+        year2_eff = min(year2, int(avail_years.max()))
+        if year1_eff > year2_eff:
+            raise ValueError(
+                f"{var}: requested period {year1}-{year2} "
+                f"not compatible with data availability "
+                f"{avail_years.min()}-{avail_years.max()}"
+            )
+        years_eff = list(range(year1_eff, year2_eff + 1))
+        # select time
+        cfield = xfield[var].sel(time=xfield.time.dt.year.isin(years_eff))
 
+        real_year1 = year1_eff
+        real_year2 = year2_eff
         # tell us that we do not have the full data window
         if (real_year1 != year1):
             logging.warning("Initial year different from what expected: " + str(real_year1))
@@ -125,12 +147,18 @@ for var in variables:
         print("Compute cell area for weights...")
         first = cfield.to_dataset(name=var)
         gg = identify_grid(first)
-        weights = area_cell(first, gridtype=gg).load()
+        calc = AreaCalculator()
+        weights = calc.calculate_area(first, gridtype=gg).load()
 
         # compute land sea mask
         if mask_type != 'global':
             print("Mask...")
             xmask = cdo.remapbil(filedata[0], input=maskfile, returnXArray='lsm')
+            # elimina la dimensione time
+            if 'time' in xmask.dims:
+                xmask = xmask.isel(time=0, drop=True)
+            # binarizza SEMPRE
+            xmask = (xmask >= 0.5)
             xmask.load()
         else:
             xmask = 0.
@@ -156,7 +184,7 @@ for var in variables:
 
             mf[season] = {}
             # print("Region loop...")
-            for region in ['Global', 'North Midlat', 'Tropical', 'South Midlat']:
+            for region in ['Global', 'Tropical', 'North Midlat', 'South Midlat', 'NH', 'SH', 'Equatorial', 'North Pole', 'South Pole']:
 
                 # slice everything
                 slicefield = select_region(gfield, region)

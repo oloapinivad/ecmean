@@ -246,7 +246,7 @@ class GlobalMean:
         fig = plotter.heatmap_plot(
             data=self.varmean, reference=self.ref,
             variables=self.diag.var_all,
-            filename=mapfile, storefig=storefig, addnan=addnan, title=self.title
+            filename=mapfile, storefig=storefig, addnan=addnan, title=self.title, reference_name=self.diag.reference
         )
         if self.diag.ftable:
             self.loggy.info('Line file is: %s', self.diag.linefile)
@@ -373,7 +373,7 @@ def gm_entry_point():
                 trend=args.trend, line=args.line, loglevel=args.loglevel,
                 interface=args.interface, config=args.config, model=args.model,
                 ensemble=args.ensemble, addnan=args.addnan, outputdir=args.outputdir,
-                reference=args.reference, title=args.title)
+                reference=args.reference)
     print('ECmean4 Global Mean successfully computed!')
 
 

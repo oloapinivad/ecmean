@@ -444,8 +444,7 @@ def pi_entry_point():
                         numproc=args.numproc, loglevel=args.loglevel,
                         climatology=args.climatology,
                         interface=args.interface, config=args.config,
-                        model=args.model, ensemble=args.ensemble, outputdir=args.outputdir,
-                        title=args.title)
+                        model=args.model, ensemble=args.ensemble, outputdir=args.outputdir)
 
 
 def performance_indices(exp, year1, year2, config='config.yml', loglevel='WARNING',

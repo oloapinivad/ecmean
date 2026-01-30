@@ -41,8 +41,6 @@ def parse_arguments(args, script):
                         help='force the output directory')
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + __version__)
-    parser.add_argument('--title', type=str, default=None,
-                        help='title for the plot, overrides default title')
 
     # specific to global mean
     if script == 'gm':

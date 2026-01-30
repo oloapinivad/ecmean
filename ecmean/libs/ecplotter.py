@@ -49,7 +49,8 @@ class ECPlotter:
         plt.close(fig)
         
 
-    def heatmap_plot(self, data, reference, variables, filename=None, storefig=True, climatology="EC23", addnan=False, title=None):
+    def heatmap_plot(self, data, reference, variables, filename=None, storefig=True, 
+                     climatology="EC23", addnan=False, title=None, reference_name=None):
         """
         Prepare data for plotting performance indices or global mean.
 
@@ -62,6 +63,7 @@ class ECPlotter:
             climatology (str, optional): Type of climatology, either "EC23" or "EC24". Defaults to "EC23".
             addnan (bool, optional): Whether to add NaN values in the final plots. Defaults to False, only for global mean.
             title (str, optional): Title of the plot, overrides default title. Defaults to None.
+            reference_name (str, optional): Name of the reference climatology (e.g., "EC23"). Defaults to None, only for global mean.
 
         Returns:
             fig: The generated matplotlib figure object, if requested.
@@ -88,7 +90,7 @@ class ECPlotter:
             fig = self.heatmap_comparison_gm(
                 data_dict=data2plot, mean_dict=obsmean, std_dict=obsstd,
                 units_list=units_list, storefig=storefig,
-                filemap=filename, addnan=addnan, title=title)
+                filemap=filename, addnan=addnan, title=title, reference=reference_name)
         else:
             loggy.error("Invalid diagnostic type %s. Choose 'performance_indices' or 'global_mean'.", self.diagnostic)
             raise ValueError(f"Invalid diagnostic type {self.diagnostic}. Choose 'performance_indices' or 'global_mean'.")
@@ -155,7 +157,7 @@ class ECPlotter:
         pal = sns.color_palette("Spectral_r", as_cmap=True)
         chart = sns.heatmap(myfield, norm=divnorm, cmap=pal,
                             cbar_kws={"ticks": tictoc, 
-                            'label': f"CMIP6 RELATIVE PI for ({climatology}) climatology"},
+                            'label': f"CMIP6 RELATIVE PI for {climatology} climatology"},
                             ax=axs, annot=True, linewidth=0.5, fmt='.2f',
                             annot_kws={'fontsize': size_model, 'fontweight': 'bold'})
 
@@ -179,7 +181,7 @@ class ECPlotter:
         return fig
 
     def heatmap_comparison_gm(self, data_dict, mean_dict, std_dict, units_list, filemap=None,
-                            addnan=True, storefig=True, size_model=14, size_obs=8, title=None):
+                              addnan=True, storefig=True, size_model=14, size_obs=8, title=None, reference=None):
         """
         Function to produce a heatmap - seaborn based - for Global Mean
         based on season-averaged standard deviation ratio
@@ -195,6 +197,7 @@ class ECPlotter:
             size_model (int, optional): size of the model values in the plot. Defaults to 14.
             size_obs (int, optional): size of the observation values in the plot. Defaults to 8.
             title (str, optional): title of the plot, overrides default title. Defaults to None.
+            reference (str, optional): name of the reference climatology (e.g., "EC23"). Defaults to None.
         """
         # convert the three dictionary to pandas and then add units
         data_table = dict_to_dataframe(data_dict)
@@ -229,10 +232,13 @@ class ECPlotter:
         tot = len(clean.columns)
         sss = len(set([tup[1] for tup in clean.columns]))
 
+        ref_str = f", reference {reference}" if reference is not None else ""
+        cbar_label = (f"Model Bias{ref_str}\n"
+                      "(standard deviation of interannual variability from observations)")
+
         chart = sns.heatmap(clean, annot=data_table[mask], vmin=-thr - 0.5, vmax=thr + 0.5, center=0,
                             annot_kws={'va': 'bottom', 'fontsize': size_model},
-                            cbar_kws={'ticks': tictoc, "shrink": .5,
-                                      'label': 'Model Bias \n (standard deviation of interannual variability from observations)'},
+                            cbar_kws={'ticks': tictoc, "shrink": .5, 'label': cbar_label},
                             fmt='.2f', cmap=pal)
         if addnan:
             empty = np.where(clean.isna(), 0, np.nan)

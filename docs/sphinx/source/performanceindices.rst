@@ -99,11 +99,6 @@ Optional Arguments
 
    Specify the path of the output directory. This will create a `YAML` and `PDF` folders for table and figures.
 
-.. option:: --title TITLE
-
-   Specify a custom title for the plot. If not provided, a default title will be generated based on the diagnostic type, model name, experiment name, and years.
-
-
 Example 
 ^^^^^^^
 

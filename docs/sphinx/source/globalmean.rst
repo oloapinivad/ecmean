@@ -86,11 +86,6 @@ Optional Arguments
 
    Specify the variant label (ripf number for cmor).
 
-.. option:: --title TITLE
-
-   Specify a custom title for the plot. If not provided, a default title will be generated based on the diagnostic type, model name, experiment name, and years.
-
-
 Example
 ^^^^^^^
 

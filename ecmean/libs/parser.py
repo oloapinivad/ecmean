@@ -41,6 +41,8 @@ def parse_arguments(args, script):
                         help='force the output directory')
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + __version__)
+    parser.add_argument('--title', type=str, default=None,
+                        help='title for the plot, overrides default title')
 
     # specific to global mean
     if script == 'gm':
@@ -61,7 +63,5 @@ def parse_arguments(args, script):
                             choices=['EC23', 'EC24'])
         parser.add_argument('--resolution', type=str, default='',
                             help='climatology resolution')
-        parser.add_argument('--title', type=str, default=None,
-                            help='title for the plot, overrides default title')
         
     return parser.parse_args(args)

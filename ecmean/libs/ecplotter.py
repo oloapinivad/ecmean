@@ -29,7 +29,6 @@ class ECPlotter:
             year2 (int): End year of the data.
             regions (list, optional): List of regions to consider. Defaults to None, only for global mean.
             seasons (list, optional): List of seasons to consider. Defaults to None, only for global mean.
-    
         """
         
         if diagnostic not in ["performance_indices", "global_mean"]:
@@ -50,9 +49,9 @@ class ECPlotter:
         plt.close(fig)
         
 
-    def heatmap_plot(self, data, reference, variables, filename=None, storefig=True, climatology="EC23", addnan=False, **kwargs):
+    def heatmap_plot(self, data, reference, variables, filename=None, storefig=True, climatology="EC23", addnan=False, title=None):
         """
-        Prepare data for plotting performance indices.
+        Prepare data for plotting performance indices or global mean.
 
         Args:
             data (dict or str): Dictionary with data to plot or path to a YAML file.
@@ -62,13 +61,14 @@ class ECPlotter:
             storefig (bool, optional): Whether to save the figure. Defaults to True.
             climatology (str, optional): Type of climatology, either "EC23" or "EC24". Defaults to "EC23".
             addnan (bool, optional): Whether to add NaN values in the final plots. Defaults to False, only for global mean.
-
-        Keyword Args:
-            title (str): Title of the plot, overrides default title
+            title (str, optional): Title of the plot, overrides default title. Defaults to None.
 
         Returns:
             fig: The generated matplotlib figure object, if requested.
         """
+        title = title if title is not None else self.default_title
+        climatology = climatology if climatology is not None else "EC23"
+
         if climatology not in ["EC23", "EC24"]:
             raise ValueError("Invalid climatology type. Choose 'EC23' or 'EC24'.")
         loggy.debug("Data is: %s", data)
@@ -78,18 +78,17 @@ class ECPlotter:
             reference = yaml.safe_load(reference)
         if self.diagnostic == "performance_indices":
             data2plot, cmip6, longnames = self.prepare_clim_dictionaries_pi(data, reference, variables)
-            kwargs['climatology'] = climatology
             fig = self.heatmap_comparison_pi(
                 data_dict=data2plot, cmip6_dict=cmip6,
                 longnames=longnames, filemap=filename,
-                storefig=storefig, **kwargs)
+                storefig=storefig, title=title, climatology=climatology)
         elif self.diagnostic == "global_mean":
             obsmean, obsstd, data2plot, units_list = self.prepare_clim_dictionaries_gm(data, reference,
                                                                         variables, self.seasons, self.regions)
             fig = self.heatmap_comparison_gm(
                 data_dict=data2plot, mean_dict=obsmean, std_dict=obsstd,
                 units_list=units_list, storefig=storefig,
-                filemap=filename, addnan=addnan, **kwargs)
+                filemap=filename, addnan=addnan, title=title)
         else:
             loggy.error("Invalid diagnostic type %s. Choose 'performance_indices' or 'global_mean'.", self.diagnostic)
             raise ValueError(f"Invalid diagnostic type {self.diagnostic}. Choose 'performance_indices' or 'global_mean'.")
@@ -98,7 +97,7 @@ class ECPlotter:
 
     def heatmap_comparison_pi(self, data_dict, cmip6_dict,
             longnames, storefig=True, filemap=None, size_model=14,
-            **kwargs
+            title=None, climatology=None
         ):
         """
         Function to produce a heatmap - seaborn based - for Performance Indices
@@ -108,14 +107,12 @@ class ECPlotter:
             data_dict (dict): dictionary of absolute performance indices
             cmip6_dict (dict): dictionary of CMIP6 performance indices
             longnames (list): list of long names for variables
-            filemap (str): path to save the plot
-            size_model (int): size of the PIs in the plot
-
-        Keyword Args:
-            title (str): title of the plot, overrides default title
-            climatology (str): climatology used. Defaults to "EC23".
+            filemap (str, optional): path to save the plot. Defaults to None.
+            storefig (bool, optional): Whether to save the figure. Defaults to True.
+            size_model (int, optional): size of the PIs in the plot. Defaults to 14.
+            title (str, optional): title of the plot, overrides default title. Defaults to None.
+            climatology (str, optional): climatology used, either "EC23" or "EC24". Defaults to None.
         """
-
         # convert output dictionary to pandas dataframe
         data_table = dict_to_dataframe(data_dict)
         loggy.debug("Data table")
@@ -142,11 +139,14 @@ class ECPlotter:
         # real plot
         fig, axs = plt.subplots(1, 1, sharey=True, tight_layout=True, figsize=(xfig + 5, yfig + 2))
 
+        # set title
+        title = title if title is not None else self.default_title
+
+        # set climatology for cbar_label
+        climatology = climatology if climatology is not None else "EC23"
+
         thr = [0, 1, 5]
         tictoc = [0, 0.25, 0.5, 0.75, 1, 2, 3, 4, 5]
-
-        title = kwargs.get('title', self.default_title)
-        climatology = kwargs.get('climatology', "EC23")
 
         tot = len(myfield.columns)
         # Extract the region (second element) from each column tuple
@@ -154,7 +154,8 @@ class ECPlotter:
         divnorm = TwoSlopeNorm(vmin=thr[0], vcenter=thr[1], vmax=thr[2])
         pal = sns.color_palette("Spectral_r", as_cmap=True)
         chart = sns.heatmap(myfield, norm=divnorm, cmap=pal,
-                            cbar_kws={"ticks": tictoc, 'label': f"CMIP6 RELATIVE PI for ({climatology}) climatology"},
+                            cbar_kws={"ticks": tictoc, 
+                            'label': f"CMIP6 RELATIVE PI for ({climatology}) climatology"},
                             ax=axs, annot=True, linewidth=0.5, fmt='.2f',
                             annot_kws={'fontsize': size_model, 'fontweight': 'bold'})
 
@@ -178,7 +179,7 @@ class ECPlotter:
         return fig
 
     def heatmap_comparison_gm(self, data_dict, mean_dict, std_dict, units_list, filemap=None,
-                            addnan=True, storefig=True, size_model=14, size_obs=8, **kwargs):
+                            addnan=True, storefig=True, size_model=14, size_obs=8, title=None):
         """
         Function to produce a heatmap - seaborn based - for Global Mean
         based on season-averaged standard deviation ratio
@@ -187,17 +188,14 @@ class ECPlotter:
             data_dict (dict): table of model data
             mean_dict (dict): table of observations
             std_dict (dict): table of standard deviation
-            diag (dict): diagnostic object
             units_list (list): list of units
-            filemap (str): path to save the plot
-            addnan (bool): add to the final plots also fields which cannot be compared against observations
-            size_model (int): size of the model values in the plot
-            size_obs (int): size of the observation values in the plot
-
-        Keyword Args:
-            title (str): title of the plot, overrides default title
+            filemap (str, optional): path to save the plot. Defaults to None.
+            addnan (bool, optional): add to the final plots also fields which cannot be compared against observations. Defaults to True.
+            storefig (bool, optional): Whether to save the figure. Defaults to True.
+            size_model (int, optional): size of the model values in the plot. Defaults to 14.
+            size_obs (int, optional): size of the observation values in the plot. Defaults to 8.
+            title (str, optional): title of the plot, overrides default title. Defaults to None.
         """
-
         # convert the three dictionary to pandas and then add units
         data_table = dict_to_dataframe(data_dict)
         mean_table = dict_to_dataframe(mean_dict)
@@ -220,8 +218,9 @@ class ECPlotter:
         xfig = len(clean.columns)
         yfig = len(clean.index)
         fig, axs = plt.subplots(1, 1, sharey=True, tight_layout=True, figsize=(xfig + 5, yfig + 2))
-
-        title = kwargs.get('title', self.default_title)
+        
+        # set title
+        title = title if title is not None else self.default_title
 
         # set color range and palette
         thr = 10

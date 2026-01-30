@@ -216,14 +216,10 @@ class PerformanceIndices:
         if mapfile is None:
             mapfile = self.diag.filenames(figformat)
 
-        plot_kwargs = {}
-        if self.title is not None:
-            plot_kwargs['title'] = self.title
-
         fig = plotter.heatmap_plot(
             data=self.varstat, reference=self.piclim,
             variables=self.diag.field_all, climatology=self.diag.climatology,
-            filename=mapfile, storefig=storefig, **plot_kwargs)
+            filename=mapfile, storefig=storefig, title=self.title)
         
         self.toc('Plotting')
 

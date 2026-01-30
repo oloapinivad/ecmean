@@ -222,12 +222,11 @@ class GlobalMean:
         self.toc('Storing')
 
     def plot(self, diagname="global_mean", mapfile=None, figformat='pdf', storefig=True, returnfig=False, addnan=True):
-        
         """
-        Generate the heatmap for performance indices.
+        Generate the heatmap for global mean.
 
         Args:
-            diagname (str): Name of the diagnostic. Default is 'performance_indices'.
+            diagname (str): Name of the diagnostic. Default is 'global_mean'.
             mapfile (str): Path to the output file. If None, it will be defined automatically following ECmean syntax.
             figformat (str): Format of the output file. Default is 'pdf'.
             storefig (bool): If True, store the figure in the specified file. Default is True.
@@ -243,11 +242,11 @@ class GlobalMean:
             self.varmean = load_output_yaml(self.diag.filenames('yml'))
         if mapfile is None:
             mapfile = self.diag.filenames(figformat)
-        plot_kwargs = {'title': self.title} if self.title is not None else {}
+
         fig = plotter.heatmap_plot(
             data=self.varmean, reference=self.ref,
             variables=self.diag.var_all,
-            filename=mapfile, storefig=storefig, addnan=addnan, **plot_kwargs
+            filename=mapfile, storefig=storefig, addnan=addnan, title=self.title
         )
         if self.diag.ftable:
             self.loggy.info('Line file is: %s', self.diag.linefile)
@@ -374,18 +373,18 @@ def gm_entry_point():
                 trend=args.trend, line=args.line, loglevel=args.loglevel,
                 interface=args.interface, config=args.config, model=args.model,
                 ensemble=args.ensemble, addnan=args.addnan, outputdir=args.outputdir,
-                reference=args.reference)
+                reference=args.reference, title=args.title)
     print('ECmean4 Global Mean successfully computed!')
 
 
 def global_mean(exp, year1, year2, config='config.yml', loglevel='WARNING', numproc=1,
                 interface=None, model=None, ensemble='r1i1p1f1', addnan=False, silent=None,
-                trend=None, line=None, outputdir=None, xdataset=None, reference=None):
+                trend=None, line=None, outputdir=None, xdataset=None, reference=None, title=None):
     """Wrapper function to compute the global mean."""
     gm = GlobalMean(exp, year1, year2, config,
                     loglevel=loglevel, numproc=numproc, interface=interface, model=model,
                     ensemble=ensemble, addnan=addnan, silent=silent, trend=trend,
-                    line=line, outputdir=outputdir, xdataset=xdataset, reference=reference)
+                    line=line, outputdir=outputdir, xdataset=xdataset, reference=reference, title=title)
     gm.prepare()
     gm.run()
     gm.store()

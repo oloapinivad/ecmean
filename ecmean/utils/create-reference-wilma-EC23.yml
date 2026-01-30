@@ -27,7 +27,7 @@ tas:
   mask: land-no-antarctica
   org_units: celsius
   tgt_units: celsius
-  dir: "{datadir}/{dataset}/data/*.nc"
+  dir: "{datadir}/{dataset}/data/v4.05/*.nc"
   notes: 'CRU TS4.05'
 psl: 
   dataset: ERA5

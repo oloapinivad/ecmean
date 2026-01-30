@@ -7,16 +7,10 @@
     The reference file (gm_reference.yml) specifies all the details for each dataset
 """
 
-__author__ = "Paolo Davini (p.davini@isac.cnr.it), Feb 2023."
+__author__ = "Paolo Davini (p.davini@isac.cnr.it), Feb 2023." \
+" Modified by Marco Albanese (marianna.albanese@ipolito.it), Jan 2026."
 
 
-from ecmean.libs.files import load_yaml
-from ecmean.libs.units import units_extra_definition, UnitsHandler
-from ecmean.libs.ncfixers import xr_preproc
-from ecmean.libs.masks import masked_meansum, select_region, mask_field
-from ecmean.libs.areas import AreaCalculator
-from ecmean.libs.support import identify_grid
-from ecmean.libs.formula import _eval_formula
 import logging
 import yaml
 import numpy as np
@@ -24,7 +18,15 @@ import xarray as xr
 import os
 from cdo import *
 from glob import glob
-import re
+
+from ecmean.libs.files import load_yaml
+from ecmean.libs.units import units_extra_definition, UnitsHandler
+from ecmean.libs.ncfixers import xr_preproc
+from ecmean.libs.masks import masked_meansum, select_region
+from ecmean.libs.areas import AreaCalculator
+from ecmean.libs.support import identify_grid
+from ecmean.libs.formula import _eval_formula
+
 cdo = Cdo()
 
 # === DEBUG MODE ===
@@ -45,7 +47,6 @@ ice_vars = ['siconc', 'siconc_north', 'siconc_south']
 # put them together
 variables = atm_vars + rad_vars + oce_vars + ice_vars
 
-
 # to set: time period (default, can be shorter if data are missing)
 year1 = 2000
 year2 = 2024
@@ -56,12 +57,11 @@ if DEBUG:
     year2 = 2024        # 2 anni bastano
 
 
-# yml file to get information on dataset on some machine
-clim_info = '/work/users/malbanes/ECmean4/ecmean/utils/create-reference-wilma_EC25.yml'
-
 # climatology yml output
-clim_name = 'EC25'
-clim_file = os.path.join('../reference/gm_reference_' + clim_name + '.yml')
+CLIMNAME = 'EC26'
+clim_info = f'create-reference-wilma-{CLIMNAME}.yml'
+# yml file to get information on dataset on some machine
+clim_file = os.path.join('../reference', f'gm_reference_{CLIMNAME}.yml')
 
 # add other units
 units_extra_definition()
@@ -165,8 +165,8 @@ for var in variables:
 
         # yearly and season averages
         print("Time averages...")
-        gfield1 = cfield.resample(time='AS', skipna=nanskipper).mean('time', skipna=nanskipper).load()
-        gfield2 = cfield.resample(time='Q-NOV', skipna=nanskipper).mean('time', skipna=nanskipper).load()
+        gfield1 = cfield.resample(time='YS', skipna=nanskipper).mean('time', skipna=nanskipper).load()
+        gfield2 = cfield.resample(time='QE-NOV', skipna=nanskipper).mean('time', skipna=nanskipper).load()
 
         print("Season loop...")
         mf = {}
@@ -253,5 +253,5 @@ for var in variables:
     dclim[var]['obs'] = mf
 
     # dump the yaml file
-    with open(clim_file, 'w') as file:
+    with open(clim_file, 'w', encoding='utf-8') as file:
         yaml.safe_dump(dclim, file, sort_keys=False)

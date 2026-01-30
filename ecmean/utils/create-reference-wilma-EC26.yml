@@ -27,8 +27,8 @@ tas_land:
   mask: land-no-antarctica
   org_units: celsius
   tgt_units: celsius
-  dir: "{datadir}/{dataset}/data/*.nc"
-  notes: 'CRU TS4.05'
+  dir: "{datadir}/{dataset}/data/v4.09/*.nc"
+  notes: 'CRU TS4.09'
 tas: 
   dataset: BERKELEY-EARTH
   longname: '2m Temperature'
@@ -36,6 +36,7 @@ tas:
   org_units: celsius
   tgt_units: celsius
   dir: "/work/users/malbanes/dataset/Berkeley-Earth_aqua-filled_1x1_1979-2024.nc"
+  notes: "Berkeley Earth Surface Temperature, version without missing points used in AQUA"
 psl: 
   dataset: ERA5
   longname: 'Mean Sea Level Pressure'
@@ -50,6 +51,7 @@ pr:
   org_units: mm/month
   tgt_units: mm/day
   dir: "{mswepdir}/*.nc"
+  notes: 'v2.80; PAST+NRT'
 evspsbl: 
   dataset: ERA5
   longname: 'Evaporation'
@@ -63,15 +65,15 @@ pme:
   derived: TP+e
   org_units: m/day
   tgt_units: mm/day
-  dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_0.25x0.25_sfc_1940-2022.nc', '{eradir}/evaporation/mon/*.nc']
+  dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_full_sfc_1940-2024.nc', '{eradir}/evaporation/mon/*.nc']
 clt: 
-  dataset: EBAF_v4.2
+  dataset: CERES EBAF_v4.2.1
   longname: 'Total Cloud Cover'
   derived: cldarea_total_daynight_mon
   org_units: '%'
   tgt_units: frac
-  dir: "{datadir}/{dataset}/CERES_EBAF-TOA_Edition4.2_MONTHLY_200003-202301.nc"
-  notes: 'Edition 4.2; Release Date December 9, 2022'
+  dir: "{datadir}/{dataset}/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  notes: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
 cll: 
   dataset: ERA5
   longname: 'Low Cloud Cover'
@@ -110,7 +112,7 @@ pme_oce:
   derived: TP+e
   org_units: m/day
   tgt_units: Sv
-  dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_0.25x0.25_sfc_1940-2022.nc', '{eradir}/evaporation/mon/*.nc']  
+  dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_full_sfc_1940-2024.nc', '{eradir}/evaporation/mon/*.nc']  
 pr_land:
   dataset: MSWEP
   longname: 'Precipitation (land)'
@@ -129,7 +131,7 @@ pme_land:
   derived: TP+e
   org_units: m/day
   tgt_units: Sv
-  dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_0.25x0.25_sfc_1940-2022.nc', '{eradir}/evaporation/mon/*.nc']  
+  dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_full_sfc_1940-2024.nc', '{eradir}/evaporation/mon/*.nc']  
 tos: 
   dataset: ESA-CCI-L4
   longname: 'Sea Surface Temperature'
@@ -139,16 +141,17 @@ tos:
   org_units: K
   tgt_units: celsius
   dir: '{esadir}/analysed_sst/*.nc'  
+  notes: v3.0.1
 sos: 
-  dataset: ESA-CCI
+  dataset: Copernicus Global Analysed Sea Surface Salinity
   longname: 'Sea Surface Salinity'
   derived: 'sss'
   mask: ocean
   domain: oce
   org_units: PSU
   tgt_units: PSU
-  dir: '{datadir}/ESA-CCI/data/ESA-sss.nc'  
-  notes: Weekly sea surface salinity product, v03.21
+  dir: '{datadir}/COPERNICUS/processed/*.nc'
+  notes: L4 Analysis product
 siconc: 
   dataset: ESA-CCI-L4
   longname: 'Sea Ice Area'
@@ -159,64 +162,65 @@ siconc:
   org_units: frac
   tgt_units: Mm^2
   dir: '{esadir}/sea_ice_fraction/*.nc'  
+  notes: v3.0.1
 rsnt: 
-  dataset: EBAF_v4.2
+  dataset: CERES EBAF_v4.2.1
   longname: 'TOA SW Net'
   derived: solar_mon-toa_sw_all_mon
   org_units: W/m2
   tgt_units: W/m2
-  dir: "{datadir}/{dataset}/CERES_EBAF-TOA_Edition4.2_MONTHLY_200003-202301.nc"
-  notes: 'Edition 4.2; Release Date December 9, 2022'
+  dir: "{datadir}/{dataset}/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  notes: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
 rlnt: 
-  dataset: EBAF_v4.2
+  dataset: CERES EBAF_v4.2.1
   longname: 'TOA LW Net'
   derived: toa_lw_all_mon
   org_units: W/m2
   tgt_units: W/m2
   direction: up
-  dir: "{datadir}/{dataset}/CERES_EBAF-TOA_Edition4.2_MONTHLY_200003-202301.nc"
-  notes: 'Edition 4.2; Release Date December 9, 2022'
+  dir: "{datadir}/{dataset}/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  notes: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
 net_toa:
-  dataset: EBAF_v4.2
+  dataset: CERES EBAF_v4.2.1
   longname: 'TOA Net'
   derived: toa_net_all_mon
   org_units: W/m2
   tgt_units: W/m2
-  dir: "{datadir}/{dataset}/CERES_EBAF-TOA_Edition4.2_MONTHLY_200003-202301.nc"
-  notes: 'Edition 4.2; Release Date December 9, 2022'
+  dir: "{datadir}/{dataset}/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  notes: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
 rsntcs: 
-  dataset: EBAF_v4.2
+  dataset: CERES EBAF_v4.2.1
   longname: 'TOA SW Net (clear sky)'
   derived: solar_mon-toa_sw_clr_c_mon
   org_units: W/m2
   tgt_units: W/m2
-  dir: "{datadir}/{dataset}/CERES_EBAF-TOA_Edition4.2_MONTHLY_200003-202301.nc"
-  notes: 'Edition 4.2; Release Date December 9, 2022'
+  dir: "{datadir}/{dataset}/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  notes: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
 rlntcs: 
-  dataset: EBAF_v4.2
+  dataset: CERES EBAF_v4.2.1
   longname: 'TOA LW Net (clear sky)'
   derived: toa_lw_clr_c_mon
   org_units: W/m2
   tgt_units: W/m2
   direction: up
-  dir: "{datadir}/{dataset}/CERES_EBAF-TOA_Edition4.2_MONTHLY_200003-202301.nc"
-  notes: 'Edition 4.2; Release Date December 9, 2022'
+  dir: "{datadir}/{dataset}/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  notes: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
 swcf: 
-  dataset: EBAF_v4.2
+  dataset: CERES EBAF_v4.2.1
   longname: 'SW Cloud Forcing'
   derived: toa_sw_clr_c_mon-toa_sw_all_mon
   org_units: W/m2
   tgt_units: W/m2
-  dir: "{datadir}/{dataset}/CERES_EBAF-TOA_Edition4.2_MONTHLY_200003-202301.nc"
-  notes: 'Edition 4.2; Release Date December 9, 2022'
+  dir: "{datadir}/{dataset}/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  notes: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
 lwcf: 
-  dataset: EBAF_v4.2
+  dataset: CERES EBAF_v4.2.1
   longname: 'LW Cloud Forcing'
   derived: toa_lw_clr_c_mon-toa_lw_all_mon
   org_units: W/m2
   tgt_units: W/m2
-  dir: "{datadir}/{dataset}/CERES_EBAF-TOA_Edition4.2_MONTHLY_200003-202301.nc"
-  notes: 'Edition 4.2; Release Date December 9, 2022'
+  dir: "{datadir}/{dataset}/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  notes: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
 
 # from here on dataset which are hard coded and does not require NetCDF files
 toamsfc: 

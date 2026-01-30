@@ -49,21 +49,21 @@ class ECPlotter:
         plt.close(fig)
         
 
-    def heatmap_plot(self, data, reference, variables, filename=None, storefig=True, 
-                     climatology="EC23", addnan=False, title=None, reference_name=None):
+    def heatmap_plot(self, data, base, variables, filename=None, storefig=True,
+                     climatology="EC23", addnan=False, title=None, reference=None):
         """
         Prepare data for plotting performance indices or global mean.
 
         Args:
             data (dict or str): Dictionary with data to plot or path to a YAML file.
-            reference (dict or str): Dictionary with reference data or path to a YAML file.
+            base (dict or str): Dictionary with base benchmark data or path to a YAML file.
             variables (list): List of variable short names to plot.
             filename (str, optional): Path to save the plot. Defaults to None, it would be derived automatically.
             storefig (bool, optional): Whether to save the figure. Defaults to True.
-            climatology (str, optional): Type of climatology, either "EC23" or "EC24". Defaults to "EC23".
+            climatology (str, optional): Type of PI climatology, either "EC23" or "EC24". Defaults to "EC23".
             addnan (bool, optional): Whether to add NaN values in the final plots. Defaults to False, only for global mean.
             title (str, optional): Title of the plot, overrides default title. Defaults to None.
-            reference_name (str, optional): Name of the reference climatology (e.g., "EC23"). Defaults to None, only for global mean.
+            reference (str, optional): Name of the GM reference (e.g., "EC23"). Defaults to None, only for global mean.
 
         Returns:
             fig: The generated matplotlib figure object, if requested.
@@ -76,21 +76,21 @@ class ECPlotter:
         loggy.debug("Data is: %s", data)
         if isinstance(data, str):
             data = yaml.safe_load(data)
-        if isinstance(reference, str):
-            reference = yaml.safe_load(reference)
+        if isinstance(base, str):
+            base = yaml.safe_load(base)
         if self.diagnostic == "performance_indices":
-            data2plot, cmip6, longnames = self.prepare_clim_dictionaries_pi(data, reference, variables)
+            data2plot, cmip6, longnames = self.prepare_clim_dictionaries_pi(data, base, variables)
             fig = self.heatmap_comparison_pi(
                 data_dict=data2plot, cmip6_dict=cmip6,
                 longnames=longnames, filemap=filename,
                 storefig=storefig, title=title, climatology=climatology)
         elif self.diagnostic == "global_mean":
-            obsmean, obsstd, data2plot, units_list = self.prepare_clim_dictionaries_gm(data, reference,
+            obsmean, obsstd, data2plot, units_list = self.prepare_clim_dictionaries_gm(data, base,
                                                                         variables, self.seasons, self.regions)
             fig = self.heatmap_comparison_gm(
                 data_dict=data2plot, mean_dict=obsmean, std_dict=obsstd,
                 units_list=units_list, storefig=storefig,
-                filemap=filename, addnan=addnan, title=title, reference=reference_name)
+                filemap=filename, addnan=addnan, title=title, reference=reference)
         else:
             loggy.error("Invalid diagnostic type %s. Choose 'performance_indices' or 'global_mean'.", self.diagnostic)
             raise ValueError(f"Invalid diagnostic type {self.diagnostic}. Choose 'performance_indices' or 'global_mean'.")
@@ -197,7 +197,7 @@ class ECPlotter:
             size_model (int, optional): size of the model values in the plot. Defaults to 14.
             size_obs (int, optional): size of the observation values in the plot. Defaults to 8.
             title (str, optional): title of the plot, overrides default title. Defaults to None.
-            reference (str, optional): name of the reference climatology (e.g., "EC23"). Defaults to None.
+            reference (str, optional): name of the GM reference climatology (e.g., "EC23"). Defaults to None.
         """
         # convert the three dictionary to pandas and then add units
         data_table = dict_to_dataframe(data_dict)
@@ -232,7 +232,8 @@ class ECPlotter:
         tot = len(clean.columns)
         sss = len(set([tup[1] for tup in clean.columns]))
 
-        ref_str = f", reference {reference}" if reference is not None else ""
+        # add reference if declared
+        ref_str = f" against {reference} reference" if reference is not None else ""
         cbar_label = (f"Model Bias{ref_str}\n"
                       "(standard deviation of interannual variability from observations)")
 

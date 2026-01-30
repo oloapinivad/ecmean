@@ -217,7 +217,7 @@ class PerformanceIndices:
             mapfile = self.diag.filenames(figformat)
 
         fig = plotter.heatmap_plot(
-            data=self.varstat, reference=self.piclim,
+            data=self.varstat, base=self.piclim,
             variables=self.diag.field_all, climatology=self.diag.climatology,
             filename=mapfile, storefig=storefig, title=self.title)
         

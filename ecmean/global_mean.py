@@ -244,9 +244,10 @@ class GlobalMean:
             mapfile = self.diag.filenames(figformat)
 
         fig = plotter.heatmap_plot(
-            data=self.varmean, reference=self.ref,
+            data=self.varmean, base=self.ref,
             variables=self.diag.var_all,
-            filename=mapfile, storefig=storefig, addnan=addnan, title=self.title, reference_name=self.diag.reference
+            filename=mapfile, storefig=storefig, addnan=addnan, 
+            title=self.title, reference=self.diag.reference
         )
         if self.diag.ftable:
             self.loggy.info('Line file is: %s', self.diag.linefile)

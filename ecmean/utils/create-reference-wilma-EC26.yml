@@ -35,7 +35,7 @@ tas:
   derived: 2t
   org_units: celsius
   tgt_units: celsius
-  dir: "/work/users/malbanes/dataset/Berkeley-Earth_aqua-filled_1x1_1979-2024.nc"
+  dir: "{datadir}/{dataset}/Berkeley-Earth_aqua-filled_1x1_1979-2024.nc"
   notes: "Berkeley Earth Surface Temperature, version without missing points used in AQUA"
 psl: 
   dataset: ERA5
@@ -67,7 +67,7 @@ pme:
   tgt_units: mm/day
   dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_full_sfc_1940-2024.nc', '{eradir}/evaporation/mon/*.nc']
 clt: 
-  dataset: CERES EBAF_v4.2.1
+  dataset: EBAF_v4.2.1
   longname: 'Total Cloud Cover'
   derived: cldarea_total_daynight_mon
   org_units: '%'
@@ -77,21 +77,21 @@ clt:
 cll: 
   dataset: ERA5
   longname: 'Low Cloud Cover'
-  derived: lcc
+  derived: LCC
   org_units: frac
   tgt_units: frac
-  dir: '{eradir}/low_cloud_cover/mon/*.nc'
+  dir: '{eradir}/low_cloud_cover/*.nc'
 clm: 
   dataset: ERA5
   longname: 'Medium Cloud Cover'
-  derived: mcc
+  derived: MCC
   org_units: frac
   tgt_units: frac
   dir: '{eradir}/medium_cloud_cover/mon/*.nc'
 clh: 
   dataset: ERA5
   longname: 'High Cloud Cover'
-  derived: hcc
+  derived: HCC
   org_units: frac
   tgt_units: frac
   dir: '{eradir}/high_cloud_cover/mon/*.nc'
@@ -109,7 +109,7 @@ pme_oce:
   longname: 'Precip. minus Evap. (ocean)'
   mask: ocean
   operation: integral
-  derived: TP+e
+  derived: TP+E
   org_units: m/day
   tgt_units: Sv
   dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_full_sfc_1940-2024.nc', '{eradir}/evaporation/mon/*.nc']  
@@ -145,7 +145,7 @@ tos:
 sos: 
   dataset: Copernicus Global Analysed Sea Surface Salinity
   longname: 'Sea Surface Salinity'
-  derived: 'sss'
+  derived: 'sos'
   mask: ocean
   domain: oce
   org_units: PSU
@@ -164,7 +164,7 @@ siconc:
   dir: '{esadir}/sea_ice_fraction/*.nc'  
   notes: v3.0.1
 rsnt: 
-  dataset: CERES EBAF_v4.2.1
+  dataset: EBAF_v4.2.1
   longname: 'TOA SW Net'
   derived: solar_mon-toa_sw_all_mon
   org_units: W/m2
@@ -172,7 +172,7 @@ rsnt:
   dir: "{datadir}/{dataset}/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
   notes: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
 rlnt: 
-  dataset: CERES EBAF_v4.2.1
+  dataset: EBAF_v4.2.1
   longname: 'TOA LW Net'
   derived: toa_lw_all_mon
   org_units: W/m2
@@ -181,7 +181,7 @@ rlnt:
   dir: "{datadir}/{dataset}/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
   notes: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
 net_toa:
-  dataset: CERES EBAF_v4.2.1
+  dataset: EBAF_v4.2.1
   longname: 'TOA Net'
   derived: toa_net_all_mon
   org_units: W/m2
@@ -189,7 +189,7 @@ net_toa:
   dir: "{datadir}/{dataset}/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
   notes: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
 rsntcs: 
-  dataset: CERES EBAF_v4.2.1
+  dataset: EBAF_v4.2.1
   longname: 'TOA SW Net (clear sky)'
   derived: solar_mon-toa_sw_clr_c_mon
   org_units: W/m2
@@ -197,7 +197,7 @@ rsntcs:
   dir: "{datadir}/{dataset}/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
   notes: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
 rlntcs: 
-  dataset: CERES EBAF_v4.2.1
+  dataset: EBAF_v4.2.1
   longname: 'TOA LW Net (clear sky)'
   derived: toa_lw_clr_c_mon
   org_units: W/m2
@@ -206,7 +206,7 @@ rlntcs:
   dir: "{datadir}/{dataset}/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
   notes: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
 swcf: 
-  dataset: CERES EBAF_v4.2.1
+  dataset: EBAF_v4.2.1
   longname: 'SW Cloud Forcing'
   derived: toa_sw_clr_c_mon-toa_sw_all_mon
   org_units: W/m2
@@ -214,7 +214,7 @@ swcf:
   dir: "{datadir}/{dataset}/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
   notes: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
 lwcf: 
-  dataset: CERES EBAF_v4.2.1
+  dataset: EBAF_v4.2.1
   longname: 'LW Cloud Forcing'
   derived: toa_lw_clr_c_mon-toa_lw_all_mon
   org_units: W/m2

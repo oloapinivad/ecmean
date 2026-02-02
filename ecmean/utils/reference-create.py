@@ -8,7 +8,7 @@
 """
 
 __author__ = "Paolo Davini (p.davini@isac.cnr.it), Feb 2023." \
-" Modified by Marco Albanese (marianna.albanese@ipolito.it), Jan 2026."
+" Modified by Marianna Albanese (marianna.albanese@polito.it), Jan 2026."
 
 
 import logging
@@ -52,10 +52,9 @@ year1 = 2000
 year2 = 2024
 
 if DEBUG:
-    variables = ['pme']   # una variabile semplice
+    variables = ['pme']   
     year1 = 2000
-    year2 = 2024        # 2 anni bastano
-
+    year2 = 2024       
 
 # climatology yml output
 CLIMNAME = 'EC26'
@@ -114,8 +113,30 @@ for var in variables:
 
         # load data and time select
         print("Loading multiple files...")
-        xfield = xr.open_mfdataset(filedata, chunks='auto', preprocess=xr_preproc, engine='netcdf4')
+        if var in oce_vars:
+            # lista per salvare i risultati annuali di ciascun file
+            annual_datasets = []
 
+            for f in filedata:
+                print(f"Processing {f} ...")
+                # apro il file con chunking per evitare di caricare tutto in memoria
+                ds = xr.open_dataset(f, chunks={'time': 12})
+                ds = xr_preproc(ds)  # applica preprocess manualmente
+
+                # calcolo subito la media annuale per questa variabile
+                da = ds[var]
+                da_ann = da.resample(time='YS', skipna=nanskipper).mean('time', skipna=nanskipper)
+                annual_datasets.append(da_ann)
+
+                # chiudo il dataset per liberare memoria
+                ds.close()
+
+            # concateno solo le medie annuali
+            xfield = xr.concat(annual_datasets, dim='time', data_vars='all')
+        else:
+            # per le altre variabili rimane open_mfdataset classico
+            xfield = xr.open_mfdataset(filedata, chunks='auto', preprocess=xr_preproc, engine='netcdf4')
+            
         # if derived, use the formula skill (or just rename)
         cmd = info[var]['derived']
         xfield = _eval_formula(cmd, xfield).to_dataset(name=var)

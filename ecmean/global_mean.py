@@ -120,8 +120,6 @@ class GlobalMean:
         comp = self.face['model']['component']
         inifiles = get_inifiles(self.face, self.diag)
 
-        units_extra_definition()
-
         self.util_dictionary = Supporter(
             comp, inifiles['atm'], inifiles['oce'], areas=True, remap=False
         )
@@ -299,6 +297,9 @@ class GlobalMean:
 
         """
         loggy = logging.getLogger(__name__)
+        
+        # from python 3.14 this has to be into the worker
+        units_extra_definition()
 
         for var in varlist:
             result = init_mydict(diag.seasons, diag.regions)

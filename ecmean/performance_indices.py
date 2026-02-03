@@ -135,9 +135,6 @@ class PerformanceIndices:
         # get file info files
         inifiles = get_inifiles(self.face, self.diag)
 
-        # add missing unit definitions
-        units_extra_definition()
-
         # create remap dictionary with atm and oce interpolators
         self.util_dictionary = Supporter(
             comp, inifiles['atm'], inifiles['oce'],
@@ -297,6 +294,10 @@ class PerformanceIndices:
             varlist (list): List of variables to process.
         """
         loggy = logging.getLogger(__name__)
+
+        # from python 3.14 this has to be into the worker
+        units_extra_definition()
+
         for var in varlist:
             # store NaN in dict (can't use defaultdict due to multiprocessing)
             result = init_mydict(diag.seasons, diag.regions)

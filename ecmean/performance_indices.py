@@ -33,6 +33,7 @@ from ecmean.libs.parser import parse_arguments
 from ecmean.libs.loggy import setup_logger
 
 dask.config.set(scheduler="synchronous")
+xr.set_options(use_new_combine_kwarg_defaults=True)
 
 
 class PerformanceIndices:
@@ -168,7 +169,8 @@ class PerformanceIndices:
         for varlist in weight_split(self.diag.field_all, self.diag.numproc):
             core = Process(target=self.pi_worker, args=(self.util_dictionary, self.piclim,
                                                         self.face, self.diag, self.diag.field_atm3d,
-                                                        self.varstat, self.outarray, varlist))
+                                                        self.varstat, self.outarray, varlist,
+                                                        self.loglevel))
             core.start()
             processes.append(core)
 
@@ -279,7 +281,7 @@ class PerformanceIndices:
 
 
     @staticmethod
-    def pi_worker(util, piclim, face, diag, field_3d, varstat, dictarray, varlist):
+    def pi_worker(util, piclim, face, diag, field_3d, varstat, dictarray, varlist, loglevel):
         """
         Main parallel diagnostic worker for performance indices.
 
@@ -293,7 +295,7 @@ class PerformanceIndices:
             dictarray (dict): Dictionary to store the output array.
             varlist (list): List of variables to process.
         """
-        loggy = logging.getLogger(__name__)
+        loggy = setup_logger(level=loglevel)
 
         # from python 3.14 this has to be into the worker
         units_extra_definition()

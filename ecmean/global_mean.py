@@ -35,6 +35,7 @@ from ecmean.libs.ecplotter import ECPlotter
 from ecmean.libs.loggy import setup_logger
 
 dask.config.set(scheduler="synchronous")
+xr.set_options(use_new_combine_kwarg_defaults=True)
 
 
 class GlobalMean:
@@ -143,7 +144,8 @@ class GlobalMean:
                                                         self.diag,
                                                         self.varmean,
                                                         self.vartrend,
-                                                        varlist))
+                                                        varlist,
+                                                        self.loglevel))
             core.start()
             processes.append(core)
 
@@ -291,13 +293,12 @@ class GlobalMean:
 
 
     @staticmethod
-    def gm_worker(util, ref, face, diag, varmean, vartrend, varlist):
+    def gm_worker(util, ref, face, diag, varmean, vartrend, varlist, loglevel):
         """"
         Workhorse for the global mean computation.
-
         """
-        loggy = logging.getLogger(__name__)
-        
+        loggy = setup_logger(level=loglevel)
+
         # from python 3.14 this has to be into the worker
         units_extra_definition()
 

@@ -10,7 +10,6 @@
 
 import sys
 import os
-import logging
 from time import time
 from multiprocessing import Process, Manager
 import numpy as np
@@ -33,8 +32,8 @@ from ecmean.libs.parser import parse_arguments
 from ecmean.libs.loggy import setup_logger
 
 dask.config.set(scheduler="synchronous")
-xr.set_options(use_new_combine_kwarg_defaults=True)
-
+if sys.version_info >= (3, 14):
+    xr.set_options(use_new_combine_kwarg_defaults=True)
 
 class PerformanceIndices:
     """

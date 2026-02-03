@@ -12,7 +12,6 @@ __author__ = "Paolo Davini (p.davini@isac.cnr.it), Sep 2022."
 
 import os
 import sys
-import logging
 from multiprocessing import Process, Manager
 from time import time
 from tabulate import tabulate
@@ -35,7 +34,8 @@ from ecmean.libs.ecplotter import ECPlotter
 from ecmean.libs.loggy import setup_logger
 
 dask.config.set(scheduler="synchronous")
-xr.set_options(use_new_combine_kwarg_defaults=True)
+if sys.version_info >= (3, 14):
+    xr.set_options(use_new_combine_kwarg_defaults=True)
 
 
 class GlobalMean:

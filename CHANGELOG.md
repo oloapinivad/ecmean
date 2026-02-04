@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 Unreleased is the current development version, which is currently lying in `main` branch.
 
+## [v0.2]
+
 - Various speed up improvement for ECplotter and multiprocessing (#137)
 - Support for python==3.14 (#136)
 - Refactored colorbar label in performance indices plots; removed kwargs direct title propagation (#133)

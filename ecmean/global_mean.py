@@ -294,6 +294,16 @@ class GlobalMean:
     def gm_worker(util, ref, face, diag, varmean, vartrend, varlist, loglevel):
         """"
         Workhorse for the global mean computation.
+
+        Args:
+            util (Supporter): Utility dictionary for remapping and masks.
+            ref (dict): Reference climatology dictionary.
+            face (dict): Interface dictionary.
+            diag (Diagnostic): Diagnostic instance.
+            varmean (dict): Shared dictionary to store variable means.
+            vartrend (dict): Shared dictionary to store variable trends.
+            varlist (dict): List of variables to process.
+            varlist (list): List of variables to process.
         """
         loggy = setup_logger(level=loglevel)
 

@@ -294,6 +294,9 @@ class PerformanceIndices:
         """
         loggy = setup_logger(level=loglevel)
 
+        # Local accumulation - avoid Manager().dict() overhead during computation
+        local_varstat = {}
+
         # from python 3.14 this has to be into the worker
         units_extra_definition()
 
@@ -432,7 +435,10 @@ class PerformanceIndices:
                     dictarray['bias'][var] = final - cfield if 'final' in locals() else None
 
             # nested dictionary, to be redefined as a dict to remove lambdas
-            varstat[var] = result
+            local_varstat[var] = result
+        
+        # store the local results into the shared dictionary
+        varstat.update(local_varstat)
 
 
 def pi_entry_point():

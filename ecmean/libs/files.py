@@ -57,7 +57,8 @@ def var_is_there(flist, var, face):
             loggy.error("No valid files found for variable %s. Ignoring it.", var)
             return False, None
         xfield = xr.open_mfdataset(
-            flist, combine='by_coords', data_vars='all', join='outer')
+            flist, combine='by_coords', data_vars='all', 
+            join='outer', compat='no_conflicts')
 
     # if variable is derived, extract required vars
     var_req = _get_variables_to_load(var, face)

@@ -325,7 +325,7 @@ class PerformanceIndices:
                     if not isinstance(infile, (xr.DataArray, xr.Dataset)):
                         xfield = xr.open_mfdataset(
                             infile, preprocess=xr_preproc, chunks={'time': 12},
-                            data_vars='all', join='outer')
+                            data_vars='all', join='outer', compat='no_conflicts')
                     else:
                         xfield = infile
 

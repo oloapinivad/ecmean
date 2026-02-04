@@ -56,8 +56,8 @@ def parse_arguments(args, script):
 
     # specific to performance indices
     if script == 'pi':
-        parser.add_argument('--climatology', type=str, default='EC23',
-                            help='climatology to be compared. default: EC23. Options: [EC23, EC24]',
+        parser.add_argument('--climatology', type=str, default='EC24',
+                            help='climatology to be compared. default: EC24. Options: [EC23, EC24]',
                             choices=['EC23', 'EC24'])
         parser.add_argument('--resolution', type=str, default='',
                             help='climatology resolution')

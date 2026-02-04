@@ -34,4 +34,4 @@ performance_indices:
   regions: ['Global', 'North Midlat', 'Tropical', 'South Midlat']
   seasons: ['ALL', 'DJF', 'JJA']
   resolution: r360x180
-  climatology: EC23
+  climatology: EC24

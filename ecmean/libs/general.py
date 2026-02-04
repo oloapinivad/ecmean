@@ -23,16 +23,13 @@ loggy = logging.getLogger(__name__)
 def set_multiprocessing_start_method():
     """Function to set the multiprocessing spawn method to fork"""
     plat = platform.system()
-    # print('Running on %s', plat)
     if plat == 'Windows':
         raise OSError("Windows does not support 'fork' start method.")
-    elif plat == 'Darwin':
+    if plat in ['Darwin', 'Linux']:
         multiprocessing.set_start_method('fork', force=True)
-    elif plat == 'Linux':
-        pass
     else:
         raise OSError(f"Unsupported operative system {plat}")
-    # print('Multiprocessing start method is %s', multiprocessing.get_start_method())
+    loggy.debug('Multiprocessing start method is %s', multiprocessing.get_start_method())
     return plat, multiprocessing.get_start_method()
 
 

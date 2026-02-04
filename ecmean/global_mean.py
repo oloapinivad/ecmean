@@ -12,7 +12,6 @@ __author__ = "Paolo Davini (p.davini@isac.cnr.it), Sep 2022."
 
 import os
 import sys
-import logging
 from multiprocessing import Process, Manager
 from time import time
 from tabulate import tabulate
@@ -120,8 +119,6 @@ class GlobalMean:
         comp = self.face['model']['component']
         inifiles = get_inifiles(self.face, self.diag)
 
-        units_extra_definition()
-
         self.util_dictionary = Supporter(
             comp, inifiles['atm'], inifiles['oce'], areas=True, remap=False
         )
@@ -145,7 +142,8 @@ class GlobalMean:
                                                         self.diag,
                                                         self.varmean,
                                                         self.vartrend,
-                                                        varlist))
+                                                        varlist,
+                                                        self.loglevel))
             core.start()
             processes.append(core)
 
@@ -293,12 +291,14 @@ class GlobalMean:
 
 
     @staticmethod
-    def gm_worker(util, ref, face, diag, varmean, vartrend, varlist):
+    def gm_worker(util, ref, face, diag, varmean, vartrend, varlist, loglevel):
         """"
         Workhorse for the global mean computation.
-
         """
-        loggy = logging.getLogger(__name__)
+        loggy = setup_logger(level=loglevel)
+
+        # from python 3.14 this has to be into the worker
+        units_extra_definition()
 
         for var in varlist:
             result = init_mydict(diag.seasons, diag.regions)
@@ -316,7 +316,10 @@ class GlobalMean:
                                                   clim=ref, face=face).units_converter()
 
                     if not isinstance(infile, (xr.DataArray, xr.Dataset)):
-                        xfield = xr.open_mfdataset(infile, preprocess=xr_preproc, chunks={'time': 12})
+                        xfield = xr.open_mfdataset(
+                            infile, preprocess=xr_preproc, chunks={'time': 12},
+                            data_vars='all', combine='by_coords', 
+                            compat='no_conflicts')
                     else:
                         xfield = infile
 

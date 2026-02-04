@@ -1,0 +1,3680 @@
+tas_land:
+  longname: 2m Temperature (land-only)
+  dataset: CRU
+  mask: land-no-antarctica
+  domain: atm
+  units: celsius
+  year1: 2000
+  year2: 2024
+  notes: CRU TS4.09
+  obs:
+    ALL:
+      Global:
+        mean: 13.914
+        std: 0.251
+      Tropical:
+        mean: 24.436
+        std: 0.183
+      North Midlat:
+        mean: 2.891
+        std: 0.369
+      South Midlat:
+        mean: 14.899
+        std: 0.249
+      NH:
+        mean: 6.829
+        std: 0.322
+      SH:
+        mean: 18.968
+        std: 0.3
+      Equatorial:
+        mean: 25.615
+        std: 0.171
+      North Pole:
+        mean: -8.808
+        std: 0.475
+      South Pole:
+        mean: .nan
+        std: .nan
+    DJF:
+      Global:
+        mean: 6.634
+        std: 0.416
+      Tropical:
+        mean: 22.829
+        std: 0.238
+      North Midlat:
+        mean: -11.405
+        std: 0.798
+      South Midlat:
+        mean: 20.841
+        std: 0.351
+      NH:
+        mean: -6.265
+        std: 0.648
+      SH:
+        mean: 24.38
+        std: 0.355
+      Equatorial:
+        mean: 24.877
+        std: 0.223
+      North Pole:
+        mean: -25.184
+        std: 0.836
+      South Pole:
+        mean: .nan
+        std: .nan
+    MAM:
+      Global:
+        mean: 14.066
+        std: 0.248
+      Tropical:
+        mean: 25.154
+        std: 0.216
+      North Midlat:
+        mean: 2.458
+        std: 0.408
+      South Midlat:
+        mean: 15.016
+        std: 0.328
+      NH:
+        mean: 6.641
+        std: 0.34
+      SH:
+        mean: 18.991
+        std: 0.363
+      Equatorial:
+        mean: 26.462
+        std: 0.229
+      North Pole:
+        mean: -10.649
+        std: 0.708
+      South Pole:
+        mean: .nan
+        std: .nan
+    JJA:
+      Global:
+        mean: 20.424
+        std: 0.228
+      Tropical:
+        mean: 24.815
+        std: 0.205
+      North Midlat:
+        mean: 16.839
+        std: 0.329
+      South Midlat:
+        mean: 8.85
+        std: 0.374
+      NH:
+        mean: 19.345
+        std: 0.298
+      SH:
+        mean: 12.916
+        std: 0.375
+      Equatorial:
+        mean: 25.17
+        std: 0.195
+      North Pole:
+        mean: 8.563
+        std: 0.285
+      South Pole:
+        mean: .nan
+        std: .nan
+    SON:
+      Global:
+        mean: 14.528
+        std: 0.296
+      Tropical:
+        mean: 24.96
+        std: 0.208
+      North Midlat:
+        mean: 3.652
+        std: 0.463
+      South Midlat:
+        mean: 14.901
+        std: 0.379
+      NH:
+        mean: 7.579
+        std: 0.413
+      SH:
+        mean: 19.602
+        std: 0.437
+      Equatorial:
+        mean: 25.962
+        std: 0.182
+      North Pole:
+        mean: -7.997
+        std: 0.526
+      South Pole:
+        mean: .nan
+        std: .nan
+tas:
+  longname: 2m Temperature
+  dataset: BERKELEY-EARTH
+  domain: atm
+  units: celsius
+  year1: 2000
+  year2: 2024
+  notes: Berkeley Earth Surface Temperature, version without missing points used in
+    AQUA
+  obs:
+    ALL:
+      Global:
+        mean: 15.026
+        std: 0.204
+      Tropical:
+        mean: 25.213
+        std: 0.201
+      North Midlat:
+        mean: 5.973
+        std: 0.339
+      South Midlat:
+        mean: 3.703
+        std: 0.151
+      NH:
+        mean: 10.17
+        std: 0.309
+      SH:
+        mean: 8.05
+        std: 0.14
+      Equatorial:
+        mean: 26.407
+        std: 0.214
+      North Pole:
+        mean: -5.975
+        std: 0.547
+      South Pole:
+        mean: -15.599
+        std: 0.257
+    DJF:
+      Global:
+        mean: 13.376
+        std: 0.231
+      Tropical:
+        mean: 24.779
+        std: 0.243
+      North Midlat:
+        mean: -3.115
+        std: 0.461
+      South Midlat:
+        mean: 7.058
+        std: 0.129
+      NH:
+        mean: 2.259
+        std: 0.396
+      SH:
+        mean: 11.19
+        std: 0.127
+      Equatorial:
+        mean: 26.171
+        std: 0.277
+      North Pole:
+        mean: -18.523
+        std: 0.759
+      South Pole:
+        mean: -7.702
+        std: 0.319
+    MAM:
+      Global:
+        mean: 14.853
+        std: 0.209
+      Tropical:
+        mean: 25.648
+        std: 0.22
+      North Midlat:
+        mean: 3.889
+        std: 0.327
+      South Midlat:
+        mean: 4.224
+        std: 0.189
+      NH:
+        mean: 8.37
+        std: 0.288
+      SH:
+        mean: 8.732
+        std: 0.176
+      Equatorial:
+        mean: 26.975
+        std: 0.257
+      North Pole:
+        mean: -9.334
+        std: 0.727
+      South Pole:
+        mean: -16.767
+        std: 0.439
+    JJA:
+      Global:
+        mean: 16.634
+        std: 0.206
+      Tropical:
+        mean: 25.21
+        std: 0.21
+      North Midlat:
+        mean: 15.148
+        std: 0.298
+      South Midlat:
+        mean: 0.966
+        std: 0.268
+      NH:
+        mean: 18.029
+        std: 0.277
+      SH:
+        mean: 5.34
+        std: 0.218
+      Equatorial:
+        mean: 26.155
+        std: 0.219
+      North Pole:
+        mean: 7.496
+        std: 0.313
+      South Pole:
+        mean: -21.629
+        std: 0.749
+    SON:
+      Global:
+        mean: 15.245
+        std: 0.222
+      Tropical:
+        mean: 25.225
+        std: 0.225
+      North Midlat:
+        mean: 7.96
+        std: 0.422
+      South Midlat:
+        mean: 2.57
+        std: 0.142
+      NH:
+        mean: 12.016
+        std: 0.381
+      SH:
+        mean: 6.941
+        std: 0.136
+      Equatorial:
+        mean: 26.338
+        std: 0.236
+      North Pole:
+        mean: -3.546
+        std: 0.71
+      South Pole:
+        mean: -16.282
+        std: 0.31
+psl:
+  longname: Mean Sea Level Pressure
+  dataset: ERA5
+  domain: atm
+  units: hPa
+  year1: 2000
+  year2: 2021
+  obs:
+    ALL:
+      Global:
+        mean: 1011.454
+        std: 0.044
+      Tropical:
+        mean: 1013.19
+        std: 0.17
+      North Midlat:
+        mean: 1014.834
+        std: 0.249
+      South Midlat:
+        mean: 1004.696
+        std: 0.372
+      NH:
+        mean: 1014.885
+        std: 0.194
+      SH:
+        mean: 1007.673
+        std: 0.264
+      Equatorial:
+        mean: 1011.824
+        std: 0.166
+      North Pole:
+        mean: 1012.87
+        std: 1.011
+      South Pole:
+        mean: 990.012
+        std: 1.586
+    DJF:
+      Global:
+        mean: 1011.604
+        std: 0.048
+      Tropical:
+        mean: 1012.95
+        std: 0.352
+      North Midlat:
+        mean: 1016.186
+        std: 0.891
+      South Midlat:
+        mean: 1004.423
+        std: 0.715
+      NH:
+        mean: 1016.674
+        std: 0.638
+      SH:
+        mean: 1006.745
+        std: 0.565
+      Equatorial:
+        mean: 1011.432
+        std: 0.331
+      North Pole:
+        mean: 1013.747
+        std: 2.944
+      South Pole:
+        mean: 990.487
+        std: 2.885
+    MAM:
+      Global:
+        mean: 1011.475
+        std: 0.047
+      Tropical:
+        mean: 1012.842
+        std: 0.257
+      North Midlat:
+        mean: 1015.245
+        std: 0.51
+      South Midlat:
+        mean: 1005.062
+        std: 0.573
+      NH:
+        mean: 1015.215
+        std: 0.389
+      SH:
+        mean: 1007.78
+        std: 0.428
+      Equatorial:
+        mean: 1011.464
+        std: 0.26
+      North Pole:
+        mean: 1014.968
+        std: 1.785
+      South Pole:
+        mean: 990.468
+        std: 1.948
+    JJA:
+      Global:
+        mean: 1011.328
+        std: 0.054
+      Tropical:
+        mean: 1013.656
+        std: 0.246
+      North Midlat:
+        mean: 1012.884
+        std: 0.318
+      South Midlat:
+        mean: 1005.205
+        std: 0.606
+      NH:
+        mean: 1012.702
+        std: 0.272
+      SH:
+        mean: 1008.764
+        std: 0.417
+      Equatorial:
+        mean: 1012.506
+        std: 0.236
+      North Pole:
+        mean: 1011.304
+        std: 1.084
+      South Pole:
+        mean: 991.528
+        std: 2.753
+    SON:
+      Global:
+        mean: 1011.41
+        std: 0.049
+      Tropical:
+        mean: 1013.307
+        std: 0.171
+      North Midlat:
+        mean: 1015.023
+        std: 0.434
+      South Midlat:
+        mean: 1004.105
+        std: 0.521
+      NH:
+        mean: 1014.947
+        std: 0.344
+      SH:
+        mean: 1007.41
+        std: 0.363
+      Equatorial:
+        mean: 1011.89
+        std: 0.17
+      North Pole:
+        mean: 1011.544
+        std: 1.24
+      South Pole:
+        mean: 987.788
+        std: 2.665
+pr:
+  longname: Precipitation
+  dataset: MSWEP
+  domain: atm
+  units: mm/day
+  year1: 2000
+  year2: 2024
+  notes: v2.80; PAST+NRT
+  obs:
+    ALL:
+      Global:
+        mean: 2.87
+        std: 0.025
+      Tropical:
+        mean: 3.433
+        std: 0.06
+      North Midlat:
+        mean: 2.161
+        std: 0.043
+      South Midlat:
+        mean: 2.462
+        std: 0.029
+      NH:
+        mean: 2.112
+        std: 0.039
+      SH:
+        mean: 2.374
+        std: 0.024
+      Equatorial:
+        mean: 4.083
+        std: 0.081
+      North Pole:
+        mean: 1.317
+        std: 0.047
+      South Pole:
+        mean: 1.388
+        std: 0.054
+    DJF:
+      Global:
+        mean: 2.817
+        std: 0.04
+      Tropical:
+        mean: 3.449
+        std: 0.08
+      North Midlat:
+        mean: 2.291
+        std: 0.069
+      South Midlat:
+        mean: 2.089
+        std: 0.048
+      NH:
+        mean: 2.062
+        std: 0.062
+      SH:
+        mean: 2.212
+        std: 0.039
+      Equatorial:
+        mean: 4.131
+        std: 0.111
+      North Pole:
+        mean: 1.139
+        std: 0.093
+      South Pole:
+        mean: 1.178
+        std: 0.096
+    MAM:
+      Global:
+        mean: 2.86
+        std: 0.037
+      Tropical:
+        mean: 3.433
+        std: 0.083
+      North Midlat:
+        mean: 1.873
+        std: 0.066
+      South Midlat:
+        mean: 2.712
+        std: 0.041
+      NH:
+        mean: 1.793
+        std: 0.057
+      SH:
+        mean: 2.648
+        std: 0.038
+      Equatorial:
+        mean: 4.098
+        std: 0.121
+      North Pole:
+        mean: 0.989
+        std: 0.069
+      South Pole:
+        mean: 1.656
+        std: 0.068
+    JJA:
+      Global:
+        mean: 2.944
+        std: 0.029
+      Tropical:
+        mean: 3.443
+        std: 0.059
+      North Midlat:
+        mean: 2.116
+        std: 0.038
+      South Midlat:
+        mean: 2.784
+        std: 0.043
+      NH:
+        mean: 2.263
+        std: 0.047
+      SH:
+        mean: 2.514
+        std: 0.045
+      Equatorial:
+        mean: 4.019
+        std: 0.08
+      North Pole:
+        mean: 1.569
+        std: 0.053
+      South Pole:
+        mean: 1.428
+        std: 0.056
+    SON:
+      Global:
+        mean: 2.859
+        std: 0.024
+      Tropical:
+        mean: 3.409
+        std: 0.056
+      North Midlat:
+        mean: 2.365
+        std: 0.048
+      South Midlat:
+        mean: 2.264
+        std: 0.048
+      NH:
+        mean: 2.329
+        std: 0.037
+      SH:
+        mean: 2.12
+        std: 0.043
+      Equatorial:
+        mean: 4.086
+        std: 0.079
+      North Pole:
+        mean: 1.568
+        std: 0.075
+      South Pole:
+        mean: 1.288
+        std: 0.086
+evspsbl:
+  longname: Evaporation
+  dataset: ERA5
+  domain: atm
+  units: mm/day
+  year1: 2000
+  year2: 2024
+  obs:
+    ALL:
+      Global:
+        mean: -2.94
+        std: 0.022
+      Tropical:
+        mean: -4.001
+        std: 0.037
+      North Midlat:
+        mean: -1.758
+        std: 0.015
+      South Midlat:
+        mean: -2.006
+        std: 0.032
+      NH:
+        mean: -2.148
+        std: 0.017
+      SH:
+        mean: -2.494
+        std: 0.032
+      Equatorial:
+        mean: -4.139
+        std: 0.043
+      North Pole:
+        mean: -0.713
+        std: 0.019
+      South Pole:
+        mean: -0.461
+        std: 0.016
+    DJF:
+      Global:
+        mean: -2.902
+        std: 0.03
+      Tropical:
+        mean: -4.044
+        std: 0.049
+      North Midlat:
+        mean: -1.771
+        std: 0.035
+      South Midlat:
+        mean: -1.755
+        std: 0.034
+      NH:
+        mean: -2.265
+        std: 0.032
+      SH:
+        mean: -2.264
+        std: 0.04
+      Equatorial:
+        mean: -4.14
+        std: 0.054
+      North Pole:
+        mean: -0.523
+        std: 0.032
+      South Pole:
+        mean: -0.437
+        std: 0.017
+    MAM:
+      Global:
+        mean: -2.918
+        std: 0.027
+      Tropical:
+        mean: -3.949
+        std: 0.05
+      North Midlat:
+        mean: -1.525
+        std: 0.016
+      South Midlat:
+        mean: -2.255
+        std: 0.045
+      NH:
+        mean: -1.894
+        std: 0.018
+      SH:
+        mean: -2.759
+        std: 0.041
+      Equatorial:
+        mean: -4.065
+        std: 0.057
+      North Pole:
+        mean: -0.586
+        std: 0.029
+      South Pole:
+        mean: -0.592
+        std: 0.033
+    JJA:
+      Global:
+        mean: -3.039
+        std: 0.024
+      Tropical:
+        mean: -4.085
+        std: 0.045
+      North Midlat:
+        mean: -1.772
+        std: 0.023
+      South Midlat:
+        mean: -2.216
+        std: 0.043
+      NH:
+        mean: -2.074
+        std: 0.025
+      SH:
+        mean: -2.704
+        std: 0.035
+      Equatorial:
+        mean: -4.297
+        std: 0.058
+      North Pole:
+        mean: -1.055
+        std: 0.024
+      South Pole:
+        mean: -0.414
+        std: 0.028
+    SON:
+      Global:
+        mean: -2.902
+        std: 0.021
+      Tropical:
+        mean: -3.927
+        std: 0.035
+      North Midlat:
+        mean: -1.961
+        std: 0.027
+      South Midlat:
+        mean: -1.797
+        std: 0.032
+      NH:
+        mean: -2.361
+        std: 0.021
+      SH:
+        mean: -2.252
+        std: 0.034
+      Equatorial:
+        mean: -4.057
+        std: 0.042
+      North Pole:
+        mean: -0.685
+        std: 0.04
+      South Pole:
+        mean: -0.401
+        std: 0.023
+pme:
+  longname: Precip. minus Evap.
+  dataset: ERA5
+  domain: atm
+  units: mm/day
+  year1: 2000
+  year2: 2024
+  obs:
+    ALL:
+      Global:
+        mean: 0.009
+        std: 0.032
+      Tropical:
+        mean: -0.498
+        std: 0.057
+      North Midlat:
+        mean: 0.522
+        std: 0.02
+      South Midlat:
+        mean: 0.494
+        std: 0.025
+      NH:
+        mean: 0.075
+        std: 0.023
+      SH:
+        mean: -0.079
+        std: 0.023
+      Equatorial:
+        mean: 0.007
+        std: 0.076
+      North Pole:
+        mean: 0.743
+        std: 0.036
+      South Pole:
+        mean: 0.987
+        std: 0.043
+    DJF:
+      Global:
+        mean: 0.03
+        std: 0.034
+      Tropical:
+        mean: -0.466
+        std: 0.058
+      North Midlat:
+        mean: 0.616
+        std: 0.036
+      South Midlat:
+        mean: 0.415
+        std: 0.037
+      NH:
+        mean: -0.115
+        std: 0.039
+      SH:
+        mean: 0.045
+        std: 0.042
+      Equatorial:
+        mean: 0.129
+        std: 0.077
+      North Pole:
+        mean: 0.705
+        std: 0.068
+      South Pole:
+        mean: 0.829
+        std: 0.078
+    MAM:
+      Global:
+        mean: -0.014
+        std: 0.033
+      Tropical:
+        mean: -0.514
+        std: 0.063
+      North Midlat:
+        mean: 0.473
+        std: 0.03
+      South Midlat:
+        mean: 0.486
+        std: 0.037
+      NH:
+        mean: 0.003
+        std: 0.037
+      SH:
+        mean: -0.08
+        std: 0.039
+      Equatorial:
+        mean: 0.007
+        std: 0.095
+      North Pole:
+        mean: 0.528
+        std: 0.042
+      South Pole:
+        mean: 1.101
+        std: 0.062
+    JJA:
+      Global:
+        mean: -0.023
+        std: 0.036
+      Tropical:
+        mean: -0.581
+        std: 0.064
+      North Midlat:
+        mean: 0.485
+        std: 0.033
+      South Midlat:
+        mean: 0.573
+        std: 0.03
+      NH:
+        mean: 0.334
+        std: 0.043
+      SH:
+        mean: -0.183
+        std: 0.044
+      Equatorial:
+        mean: -0.233
+        std: 0.086
+      North Pole:
+        mean: 0.698
+        std: 0.053
+      South Pole:
+        mean: 1.056
+        std: 0.039
+    SON:
+      Global:
+        mean: 0.045
+        std: 0.033
+      Tropical:
+        mean: -0.429
+        std: 0.058
+      North Midlat:
+        mean: 0.518
+        std: 0.032
+      South Midlat:
+        mean: 0.501
+        std: 0.033
+      NH:
+        mean: 0.08
+        std: 0.027
+      SH:
+        mean: -0.1
+        std: 0.036
+      Equatorial:
+        mean: 0.128
+        std: 0.082
+      North Pole:
+        mean: 1.042
+        std: 0.069
+      South Pole:
+        mean: 0.963
+        std: 0.075
+clt:
+  longname: Total Cloud Cover
+  dataset: EBAF_v4.2.1
+  domain: atm
+  units: frac
+  year1: 2000
+  year2: 2024
+  notes: Edition 4.2.1; Revised data Release Date March 14, 2025
+  obs:
+    ALL:
+      Global:
+        mean: 0.674
+        std: 0.002
+      Tropical:
+        mean: 0.617
+        std: 0.003
+      North Midlat:
+        mean: 0.677
+        std: 0.004
+      South Midlat:
+        mean: 0.788
+        std: 0.003
+      NH:
+        mean: 0.636
+        std: 0.003
+      SH:
+        mean: 0.738
+        std: 0.003
+      Equatorial:
+        mean: 0.65
+        std: 0.003
+      North Pole:
+        mean: 0.723
+        std: 0.009
+      South Pole:
+        mean: 0.755
+        std: 0.008
+    DJF:
+      Global:
+        mean: 0.672
+        std: 0.004
+      Tropical:
+        mean: 0.616
+        std: 0.005
+      North Midlat:
+        mean: 0.686
+        std: 0.008
+      South Midlat:
+        mean: 0.771
+        std: 0.004
+      NH:
+        mean: 0.641
+        std: 0.008
+      SH:
+        mean: 0.729
+        std: 0.005
+      Equatorial:
+        mean: 0.647
+        std: 0.005
+      North Pole:
+        mean: 0.645
+        std: 0.023
+      South Pole:
+        mean: 0.748
+        std: 0.006
+    MAM:
+      Global:
+        mean: 0.672
+        std: 0.004
+      Tropical:
+        mean: 0.608
+        std: 0.007
+      North Midlat:
+        mean: 0.684
+        std: 0.005
+      South Midlat:
+        mean: 0.789
+        std: 0.004
+      NH:
+        mean: 0.641
+        std: 0.004
+      SH:
+        mean: 0.737
+        std: 0.005
+      Equatorial:
+        mean: 0.64
+        std: 0.008
+      North Pole:
+        mean: 0.687
+        std: 0.014
+      South Pole:
+        mean: 0.752
+        std: 0.012
+    JJA:
+      Global:
+        mean: 0.674
+        std: 0.002
+      Tropical:
+        mean: 0.623
+        std: 0.005
+      North Midlat:
+        mean: 0.656
+        std: 0.004
+      South Midlat:
+        mean: 0.792
+        std: 0.005
+      NH:
+        mean: 0.63
+        std: 0.004
+      SH:
+        mean: 0.736
+        std: 0.005
+      Equatorial:
+        mean: 0.656
+        std: 0.006
+      North Pole:
+        mean: 0.763
+        std: 0.009
+      South Pole:
+        mean: 0.743
+        std: 0.016
+    SON:
+      Global:
+        mean: 0.679
+        std: 0.003
+      Tropical:
+        mean: 0.619
+        std: 0.003
+      North Midlat:
+        mean: 0.679
+        std: 0.006
+      South Midlat:
+        mean: 0.799
+        std: 0.005
+      NH:
+        mean: 0.632
+        std: 0.006
+      SH:
+        mean: 0.749
+        std: 0.006
+      Equatorial:
+        mean: 0.658
+        std: 0.005
+      North Pole:
+        mean: 0.793
+        std: 0.01
+      South Pole:
+        mean: 0.774
+        std: 0.01
+cll:
+  longname: Low Cloud Cover
+  dataset: ERA5
+  domain: atm
+  units: frac
+  year1: 2000
+  year2: 2024
+  obs:
+    ALL:
+      Global:
+        mean: 0.38
+        std: 0.005
+      Tropical:
+        mean: 0.264
+        std: 0.007
+      North Midlat:
+        mean: 0.432
+        std: 0.006
+      South Midlat:
+        mean: 0.558
+        std: 0.004
+      NH:
+        mean: 0.385
+        std: 0.005
+      SH:
+        mean: 0.5
+        std: 0.003
+      Equatorial:
+        mean: 0.259
+        std: 0.008
+      North Pole:
+        mean: 0.626
+        std: 0.007
+      South Pole:
+        mean: 0.629
+        std: 0.006
+    DJF:
+      Global:
+        mean: 0.385
+        std: 0.005
+      Tropical:
+        mean: 0.26
+        std: 0.008
+      North Midlat:
+        mean: 0.488
+        std: 0.008
+      South Midlat:
+        mean: 0.532
+        std: 0.006
+      NH:
+        mean: 0.435
+        std: 0.007
+      SH:
+        mean: 0.475
+        std: 0.005
+      Equatorial:
+        mean: 0.25
+        std: 0.009
+      North Pole:
+        mean: 0.684
+        std: 0.01
+      South Pole:
+        mean: 0.529
+        std: 0.014
+    MAM:
+      Global:
+        mean: 0.372
+        std: 0.005
+      Tropical:
+        mean: 0.252
+        std: 0.008
+      North Midlat:
+        mean: 0.412
+        std: 0.008
+      South Midlat:
+        mean: 0.57
+        std: 0.005
+      NH:
+        mean: 0.371
+        std: 0.007
+      SH:
+        mean: 0.503
+        std: 0.005
+      Equatorial:
+        mean: 0.245
+        std: 0.009
+      North Pole:
+        mean: 0.596
+        std: 0.015
+      South Pole:
+        mean: 0.663
+        std: 0.008
+    JJA:
+      Global:
+        mean: 0.377
+        std: 0.006
+      Tropical:
+        mean: 0.273
+        std: 0.007
+      North Midlat:
+        mean: 0.393
+        std: 0.008
+      South Midlat:
+        mean: 0.567
+        std: 0.008
+      NH:
+        mean: 0.353
+        std: 0.008
+      SH:
+        mean: 0.512
+        std: 0.007
+      Equatorial:
+        mean: 0.27
+        std: 0.008
+      North Pole:
+        mean: 0.558
+        std: 0.012
+      South Pole:
+        mean: 0.696
+        std: 0.012
+    SON:
+      Global:
+        mean: 0.386
+        std: 0.005
+      Tropical:
+        mean: 0.272
+        std: 0.007
+      North Midlat:
+        mean: 0.434
+        std: 0.007
+      South Midlat:
+        mean: 0.562
+        std: 0.007
+      NH:
+        mean: 0.381
+        std: 0.007
+      SH:
+        mean: 0.509
+        std: 0.006
+      Equatorial:
+        mean: 0.27
+        std: 0.009
+      North Pole:
+        mean: 0.666
+        std: 0.01
+      South Pole:
+        mean: 0.628
+        std: 0.012
+clm:
+  longname: Medium Cloud Cover
+  dataset: ERA5
+  domain: atm
+  units: frac
+  year1: 2000
+  year2: 2024
+  obs:
+    ALL:
+      Global:
+        mean: 0.249
+        std: 0.002
+      Tropical:
+        mean: 0.165
+        std: 0.003
+      North Midlat:
+        mean: 0.32
+        std: 0.003
+      South Midlat:
+        mean: 0.347
+        std: 0.003
+      NH:
+        mean: 0.275
+        std: 0.002
+      SH:
+        mean: 0.302
+        std: 0.003
+      Equatorial:
+        mean: 0.173
+        std: 0.004
+      North Pole:
+        mean: 0.409
+        std: 0.006
+      South Pole:
+        mean: 0.442
+        std: 0.005
+    DJF:
+      Global:
+        mean: 0.257
+        std: 0.003
+      Tropical:
+        mean: 0.172
+        std: 0.005
+      North Midlat:
+        mean: 0.377
+        std: 0.003
+      South Midlat:
+        mean: 0.308
+        std: 0.005
+      NH:
+        mean: 0.321
+        std: 0.003
+      SH:
+        mean: 0.271
+        std: 0.004
+      Equatorial:
+        mean: 0.181
+        std: 0.005
+      North Pole:
+        mean: 0.438
+        std: 0.014
+      South Pole:
+        mean: 0.412
+        std: 0.01
+    MAM:
+      Global:
+        mean: 0.249
+        std: 0.003
+      Tropical:
+        mean: 0.157
+        std: 0.004
+      North Midlat:
+        mean: 0.331
+        std: 0.004
+      South Midlat:
+        mean: 0.351
+        std: 0.004
+      NH:
+        mean: 0.281
+        std: 0.003
+      SH:
+        mean: 0.306
+        std: 0.003
+      Equatorial:
+        mean: 0.162
+        std: 0.005
+      North Pole:
+        mean: 0.396
+        std: 0.009
+      South Pole:
+        mean: 0.47
+        std: 0.006
+    JJA:
+      Global:
+        mean: 0.244
+        std: 0.003
+      Tropical:
+        mean: 0.17
+        std: 0.003
+      North Midlat:
+        mean: 0.257
+        std: 0.005
+      South Midlat:
+        mean: 0.378
+        std: 0.004
+      NH:
+        mean: 0.226
+        std: 0.004
+      SH:
+        mean: 0.328
+        std: 0.004
+      Equatorial:
+        mean: 0.18
+        std: 0.004
+      North Pole:
+        mean: 0.363
+        std: 0.009
+      South Pole:
+        mean: 0.452
+        std: 0.008
+    SON:
+      Global:
+        mean: 0.247
+        std: 0.003
+      Tropical:
+        mean: 0.16
+        std: 0.004
+      North Midlat:
+        mean: 0.317
+        std: 0.004
+      South Midlat:
+        mean: 0.351
+        std: 0.004
+      NH:
+        mean: 0.271
+        std: 0.003
+      SH:
+        mean: 0.303
+        std: 0.004
+      Equatorial:
+        mean: 0.169
+        std: 0.004
+      North Pole:
+        mean: 0.44
+        std: 0.01
+      South Pole:
+        mean: 0.433
+        std: 0.009
+clh:
+  longname: High Cloud Cover
+  dataset: ERA5
+  domain: atm
+  units: frac
+  year1: 2000
+  year2: 2024
+  obs:
+    ALL:
+      Global:
+        mean: 0.342
+        std: 0.003
+      Tropical:
+        mean: 0.344
+        std: 0.004
+      North Midlat:
+        mean: 0.34
+        std: 0.003
+      South Midlat:
+        mean: 0.337
+        std: 0.003
+      NH:
+        mean: 0.318
+        std: 0.003
+      SH:
+        mean: 0.309
+        std: 0.003
+      Equatorial:
+        mean: 0.395
+        std: 0.004
+      North Pole:
+        mean: 0.332
+        std: 0.005
+      South Pole:
+        mean: 0.323
+        std: 0.005
+    DJF:
+      Global:
+        mean: 0.339
+        std: 0.004
+      Tropical:
+        mean: 0.353
+        std: 0.006
+      North Midlat:
+        mean: 0.341
+        std: 0.006
+      South Midlat:
+        mean: 0.31
+        std: 0.005
+      NH:
+        mean: 0.306
+        std: 0.006
+      SH:
+        mean: 0.302
+        std: 0.006
+      Equatorial:
+        mean: 0.406
+        std: 0.006
+      North Pole:
+        mean: 0.325
+        std: 0.017
+      South Pole:
+        mean: 0.265
+        std: 0.01
+    MAM:
+      Global:
+        mean: 0.351
+        std: 0.004
+      Tropical:
+        mean: 0.354
+        std: 0.006
+      North Midlat:
+        mean: 0.352
+        std: 0.005
+      South Midlat:
+        mean: 0.344
+        std: 0.005
+      NH:
+        mean: 0.325
+        std: 0.005
+      SH:
+        mean: 0.32
+        std: 0.006
+      Equatorial:
+        mean: 0.406
+        std: 0.007
+      North Pole:
+        mean: 0.296
+        std: 0.011
+      South Pole:
+        mean: 0.321
+        std: 0.005
+    JJA:
+      Global:
+        mean: 0.339
+        std: 0.002
+      Tropical:
+        mean: 0.333
+        std: 0.003
+      North Midlat:
+        mean: 0.333
+        std: 0.004
+      South Midlat:
+        mean: 0.356
+        std: 0.005
+      NH:
+        mean: 0.326
+        std: 0.003
+      SH:
+        mean: 0.308
+        std: 0.005
+      Equatorial:
+        mean: 0.381
+        std: 0.004
+      North Pole:
+        mean: 0.347
+        std: 0.005
+      South Pole:
+        mean: 0.368
+        std: 0.006
+    SON:
+      Global:
+        mean: 0.337
+        std: 0.004
+      Tropical:
+        mean: 0.337
+        std: 0.006
+      North Midlat:
+        mean: 0.336
+        std: 0.005
+      South Midlat:
+        mean: 0.337
+        std: 0.005
+      NH:
+        mean: 0.314
+        std: 0.005
+      SH:
+        mean: 0.306
+        std: 0.006
+      Equatorial:
+        mean: 0.387
+        std: 0.007
+      North Pole:
+        mean: 0.359
+        std: 0.008
+      South Pole:
+        mean: 0.336
+        std: 0.011
+pr_oce:
+  longname: Precipitation (ocean)
+  dataset: MSWEP
+  mask: ocean
+  operation: integral
+  domain: atm
+  units: Sv
+  year1: 2000
+  year2: 2024
+  obs:
+    ALL:
+      Global:
+        mean: 13.512
+        std: 0.145
+      Tropical:
+        mean: 7.94
+        std: 0.161
+      North Midlat:
+        mean: 2.123
+        std: 0.038
+      South Midlat:
+        mean: 3.45
+        std: 0.042
+      NH:
+        mean: 2.771
+        std: 0.044
+      SH:
+        mean: 4.259
+        std: 0.044
+      Equatorial:
+        mean: 6.482
+        std: 0.165
+      North Pole:
+        mean: 0.28
+        std: 0.011
+      South Pole:
+        mean: 0.476
+        std: 0.019
+    DJF:
+      Global:
+        mean: 13.411
+        std: 0.249
+      Tropical:
+        mean: 7.916
+        std: 0.225
+      North Midlat:
+        mean: 2.573
+        std: 0.065
+      South Midlat:
+        mean: 2.922
+        std: 0.07
+      NH:
+        mean: 3.117
+        std: 0.084
+      SH:
+        mean: 3.85
+        std: 0.087
+      Equatorial:
+        mean: 6.444
+        std: 0.228
+      North Pole:
+        mean: 0.281
+        std: 0.025
+      South Pole:
+        mean: 0.414
+        std: 0.03
+    MAM:
+      Global:
+        mean: 13.512
+        std: 0.189
+      Tropical:
+        mean: 7.887
+        std: 0.219
+      North Midlat:
+        mean: 1.824
+        std: 0.051
+      South Midlat:
+        mean: 3.8
+        std: 0.054
+      NH:
+        mean: 2.335
+        std: 0.062
+      SH:
+        mean: 4.783
+        std: 0.081
+      Equatorial:
+        mean: 6.394
+        std: 0.234
+      North Pole:
+        mean: 0.219
+        std: 0.015
+      South Pole:
+        mean: 0.566
+        std: 0.026
+    JJA:
+      Global:
+        mean: 13.596
+        std: 0.191
+      Tropical:
+        mean: 7.998
+        std: 0.183
+      North Midlat:
+        mean: 1.685
+        std: 0.041
+      South Midlat:
+        mean: 3.913
+        std: 0.065
+      NH:
+        mean: 2.417
+        std: 0.063
+      SH:
+        mean: 4.615
+        std: 0.084
+      Equatorial:
+        mean: 6.564
+        std: 0.18
+      North Pole:
+        mean: 0.273
+        std: 0.016
+      South Pole:
+        mean: 0.481
+        std: 0.022
+    SON:
+      Global:
+        mean: 13.54
+        std: 0.177
+      Tropical:
+        mean: 7.969
+        std: 0.186
+      North Midlat:
+        mean: 2.406
+        std: 0.061
+      South Midlat:
+        mean: 3.166
+        std: 0.07
+      NH:
+        mean: 3.213
+        std: 0.055
+      SH:
+        mean: 3.79
+        std: 0.077
+      Equatorial:
+        mean: 6.537
+        std: 0.196
+      North Pole:
+        mean: 0.346
+        std: 0.02
+      South Pole:
+        mean: 0.444
+        std: 0.03
+pme_oce:
+  longname: Precip. minus Evap. (ocean)
+  dataset: ERA5
+  mask: ocean
+  operation: integral
+  domain: atm
+  units: Sv
+  year1: 2000
+  year2: 2024
+  obs:
+    ALL:
+      Global:
+        mean: -1.319
+        std: 0.166
+      Tropical:
+        mean: -2.284
+        std: 0.14
+      North Midlat:
+        mean: 0.322
+        std: 0.02
+      South Midlat:
+        mean: 0.618
+        std: 0.035
+      NH:
+        mean: -0.417
+        std: 0.032
+      SH:
+        mean: -0.283
+        std: 0.045
+      Equatorial:
+        mean: -0.668
+        std: 0.135
+      North Pole:
+        mean: 0.131
+        std: 0.01
+      South Pole:
+        mean: 0.312
+        std: 0.015
+    DJF:
+      Global:
+        mean: -1.506
+        std: 0.203
+      Tropical:
+        mean: -2.284
+        std: 0.166
+      North Midlat:
+        mean: 0.183
+        std: 0.042
+      South Midlat:
+        mean: 0.567
+        std: 0.059
+      NH:
+        mean: -0.931
+        std: 0.063
+      SH:
+        mean: -0.031
+        std: 0.095
+      Equatorial:
+        mean: -0.596
+        std: 0.16
+      North Pole:
+        mean: 0.094
+        std: 0.017
+      South Pole:
+        mean: 0.272
+        std: 0.026
+    MAM:
+      Global:
+        mean: -1.361
+        std: 0.162
+      Tropical:
+        mean: -2.336
+        std: 0.148
+      North Midlat:
+        mean: 0.374
+        std: 0.036
+      South Midlat:
+        mean: 0.577
+        std: 0.047
+      NH:
+        mean: -0.373
+        std: 0.067
+      SH:
+        mean: -0.296
+        std: 0.083
+      Equatorial:
+        mean: -0.743
+        std: 0.161
+      North Pole:
+        mean: 0.083
+        std: 0.013
+      South Pole:
+        mean: 0.343
+        std: 0.021
+    JJA:
+      Global:
+        mean: -1.253
+        std: 0.208
+      Tropical:
+        mean: -2.606
+        std: 0.181
+      North Midlat:
+        mean: 0.648
+        std: 0.041
+      South Midlat:
+        mean: 0.682
+        std: 0.044
+      NH:
+        mean: 0.223
+        std: 0.07
+      SH:
+        mean: -0.508
+        std: 0.083
+      Equatorial:
+        mean: -1.017
+        std: 0.163
+      North Pole:
+        mean: 0.198
+        std: 0.02
+      South Pole:
+        mean: 0.329
+        std: 0.016
+    SON:
+      Global:
+        mean: -1.151
+        std: 0.18
+      Tropical:
+        mean: -1.906
+        std: 0.157
+      North Midlat:
+        mean: 0.083
+        std: 0.035
+      South Midlat:
+        mean: 0.645
+        std: 0.046
+      NH:
+        mean: -0.589
+        std: 0.041
+      SH:
+        mean: -0.296
+        std: 0.063
+      Equatorial:
+        mean: -0.312
+        std: 0.161
+      North Pole:
+        mean: 0.15
+        std: 0.019
+      South Pole:
+        mean: 0.307
+        std: 0.025
+pr_land:
+  longname: Precipitation (land)
+  dataset: MSWEP
+  mask: land
+  operation: integral
+  domain: atm
+  units: Sv
+  year1: 2000
+  year2: 2024
+  obs:
+    ALL:
+      Global:
+        mean: 3.444
+        std: 0.069
+      Tropical:
+        mean: 2.194
+        std: 0.075
+      North Midlat:
+        mean: 1.067
+        std: 0.033
+      South Midlat:
+        mean: 0.187
+        std: 0.008
+      NH:
+        mean: 1.33
+        std: 0.042
+      SH:
+        mean: 0.356
+        std: 0.024
+      Equatorial:
+        mean: 1.761
+        std: 0.066
+      North Pole:
+        mean: 0.241
+        std: 0.009
+      South Pole:
+        mean: 0.073
+        std: 0.005
+    DJF:
+      Global:
+        mean: 3.234
+        std: 0.109
+      Tropical:
+        mean: 2.265
+        std: 0.126
+      North Midlat:
+        mean: 0.808
+        std: 0.06
+      South Midlat:
+        mean: 0.163
+        std: 0.014
+      NH:
+        mean: 0.888
+        std: 0.069
+      SH:
+        mean: 0.45
+        std: 0.043
+      Equatorial:
+        mean: 1.897
+        std: 0.108
+      North Pole:
+        mean: 0.169
+        std: 0.014
+      South Pole:
+        mean: 0.052
+        std: 0.012
+    MAM:
+      Global:
+        mean: 3.39
+        std: 0.102
+      Tropical:
+        mean: 2.246
+        std: 0.093
+      North Midlat:
+        mean: 0.94
+        std: 0.061
+      South Midlat:
+        mean: 0.206
+        std: 0.016
+      NH:
+        mean: 1.148
+        std: 0.075
+      SH:
+        mean: 0.365
+        std: 0.032
+      Equatorial:
+        mean: 1.88
+        std: 0.083
+      North Pole:
+        mean: 0.172
+        std: 0.017
+      South Pole:
+        mean: 0.09
+        std: 0.008
+    JJA:
+      Global:
+        mean: 3.8
+        std: 0.113
+      Tropical:
+        mean: 2.166
+        std: 0.093
+      North Midlat:
+        mean: 1.438
+        std: 0.041
+      South Midlat:
+        mean: 0.2
+        std: 0.011
+      NH:
+        mean: 1.979
+        std: 0.059
+      SH:
+        mean: 0.272
+        std: 0.021
+      Equatorial:
+        mean: 1.552
+        std: 0.078
+      North Pole:
+        mean: 0.347
+        std: 0.015
+      South Pole:
+        mean: 0.084
+        std: 0.007
+    SON:
+      Global:
+        mean: 3.354
+        std: 0.096
+      Tropical:
+        mean: 2.094
+        std: 0.1
+      North Midlat:
+        mean: 1.085
+        std: 0.036
+      South Midlat:
+        mean: 0.178
+        std: 0.015
+      NH:
+        mean: 1.311
+        std: 0.043
+      SH:
+        mean: 0.332
+        std: 0.035
+      Equatorial:
+        mean: 1.714
+        std: 0.092
+      North Pole:
+        mean: 0.275
+        std: 0.016
+      South Pole:
+        mean: 0.065
+        std: 0.008
+pme_land:
+  longname: Precip. minus Evap. (land)
+  dataset: ERA5
+  mask: land
+  operation: integral
+  domain: atm
+  units: Sv
+  year1: 2000
+  year2: 2024
+  obs:
+    ALL:
+      Global:
+        mean: 1.372
+        std: 0.076
+      Tropical:
+        mean: 0.809
+        std: 0.074
+      North Midlat:
+        mean: 0.452
+        std: 0.02
+      South Midlat:
+        mean: 0.114
+        std: 0.006
+      NH:
+        mean: 0.563
+        std: 0.027
+      SH:
+        mean: 0.128
+        std: 0.014
+      Equatorial:
+        mean: 0.683
+        std: 0.065
+      North Pole:
+        mean: 0.165
+        std: 0.009
+      South Pole:
+        mean: 0.081
+        std: 0.005
+    DJF:
+      Global:
+        mean: 1.68
+        std: 0.104
+      Tropical:
+        mean: 0.904
+        std: 0.105
+      North Midlat:
+        mean: 0.73
+        std: 0.036
+      South Midlat:
+        mean: 0.048
+        std: 0.012
+      NH:
+        mean: 0.707
+        std: 0.044
+      SH:
+        mean: 0.118
+        std: 0.036
+      Equatorial:
+        mean: 0.859
+        std: 0.099
+      North Pole:
+        mean: 0.187
+        std: 0.014
+      South Pole:
+        mean: 0.059
+        std: 0.009
+    MAM:
+      Global:
+        mean: 1.28
+        std: 0.079
+      Tropical:
+        mean: 0.812
+        std: 0.082
+      North Midlat:
+        mean: 0.327
+        std: 0.026
+      South Midlat:
+        mean: 0.143
+        std: 0.016
+      NH:
+        mean: 0.379
+        std: 0.036
+      SH:
+        mean: 0.141
+        std: 0.028
+      Equatorial:
+        mean: 0.758
+        std: 0.075
+      North Pole:
+        mean: 0.127
+        std: 0.012
+      South Pole:
+        mean: 0.096
+        std: 0.008
+    JJA:
+      Global:
+        mean: 1.116
+        std: 0.12
+      Tropical:
+        mean: 0.884
+        std: 0.104
+      North Midlat:
+        mean: 0.07
+        std: 0.035
+      South Midlat:
+        mean: 0.167
+        std: 0.01
+      NH:
+        mean: 0.427
+        std: 0.053
+      SH:
+        mean: 0.151
+        std: 0.015
+      Equatorial:
+        mean: 0.543
+        std: 0.083
+      North Pole:
+        mean: 0.08
+        std: 0.018
+      South Pole:
+        mean: 0.092
+        std: 0.008
+    SON:
+      Global:
+        mean: 1.415
+        std: 0.09
+      Tropical:
+        mean: 0.634
+        std: 0.09
+      North Midlat:
+        mean: 0.684
+        std: 0.034
+      South Midlat:
+        mean: 0.098
+        std: 0.011
+      NH:
+        mean: 0.744
+        std: 0.038
+      SH:
+        mean: 0.1
+        std: 0.027
+      Equatorial:
+        mean: 0.572
+        std: 0.089
+      North Pole:
+        mean: 0.265
+        std: 0.019
+      South Pole:
+        mean: 0.077
+        std: 0.009
+net_toa:
+  longname: TOA Net
+  dataset: EBAF_v4.2.1
+  domain: atm
+  units: W/m2
+  year1: 2000
+  year2: 2024
+  notes: Edition 4.2.1; Revised data Release Date March 14, 2025
+  obs:
+    ALL:
+      Global:
+        mean: 1.016
+        std: 0.595
+      Tropical:
+        mean: 45.152
+        std: 0.701
+      North Midlat:
+        mean: -43.367
+        std: 2.863
+      South Midlat:
+        mean: -42.876
+        std: 3.585
+      NH:
+        mean: -28.686
+        std: 2.687
+      SH:
+        mean: -26.57
+        std: 3.456
+      Equatorial:
+        mean: 56.12
+        std: 0.761
+      North Pole:
+        mean: -97.732
+        std: 2.68
+      South Pole:
+        mean: -98.888
+        std: 3.127
+    DJF:
+      Global:
+        mean: 7.999
+        std: 0.547
+      Tropical:
+        mean: 50.515
+        std: 0.874
+      North Midlat:
+        mean: -128.2
+        std: 0.323
+      South Midlat:
+        mean: 59.162
+        std: 1.22
+      NH:
+        mean: -109.807
+        std: 0.37
+      SH:
+        mean: 70.958
+        std: 1.048
+      Equatorial:
+        mean: 60.754
+        std: 1.069
+      North Pole:
+        mean: -171.185
+        std: 1.416
+      South Pole:
+        mean: -13.868
+        std: 2.142
+    MAM:
+      Global:
+        mean: 1.572
+        std: 0.579
+      Tropical:
+        mean: 50.795
+        std: 0.959
+      North Midlat:
+        mean: -1.75
+        std: 0.771
+      South Midlat:
+        mean: -93.555
+        std: 0.725
+      NH:
+        mean: 11.651
+        std: 0.792
+      SH:
+        mean: -72.665
+        std: 0.716
+      Equatorial:
+        mean: 63.284
+        std: 1.107
+      North Pole:
+        mean: -73.119
+        std: 1.329
+      South Pole:
+        mean: -143.694
+        std: 0.944
+    JJA:
+      Global:
+        mean: -7.361
+        std: 0.626
+      Tropical:
+        mean: 27.939
+        std: 0.7
+      North Midlat:
+        mean: 47.104
+        std: 1.011
+      South Midlat:
+        mean: -132.427
+        std: 0.61
+      NH:
+        mean: 53.934
+        std: 0.994
+      SH:
+        mean: -115.759
+        std: 0.617
+      Equatorial:
+        mean: 37.946
+        std: 0.833
+      North Pole:
+        mean: 6.693
+        std: 1.783
+      South Pole:
+        mean: -156.313
+        std: 1.389
+    SON:
+      Global:
+        mean: 2.099
+        std: 0.515
+      Tropical:
+        mean: 51.665
+        std: 0.561
+      North Midlat:
+        mean: -93.034
+        std: 0.647
+      South Midlat:
+        mean: -1.905
+        std: 0.99
+      NH:
+        mean: -72.791
+        std: 0.66
+      SH:
+        mean: 13.887
+        std: 0.904
+      Equatorial:
+        mean: 62.794
+        std: 0.616
+      North Pole:
+        mean: -155.518
+        std: 0.828
+      South Pole:
+        mean: -79.351
+        std: 2.107
+rsnt:
+  longname: TOA SW Net
+  dataset: EBAF_v4.2.1
+  domain: atm
+  units: W/m2
+  year1: 2000
+  year2: 2024
+  notes: Edition 4.2.1; Revised data Release Date March 14, 2025
+  obs:
+    ALL:
+      Global:
+        mean: 241.556
+        std: 0.762
+      Tropical:
+        mean: 305.725
+        std: 0.814
+      North Midlat:
+        mean: 180.842
+        std: 3.604
+      South Midlat:
+        mean: 173.928
+        std: 4.178
+      NH:
+        mean: 206.041
+        std: 3.339
+      SH:
+        mean: 202.155
+        std: 3.94
+      Equatorial:
+        mean: 313.616
+        std: 0.838
+      North Pole:
+        mean: 105.19
+        std: 3.386
+      South Pole:
+        mean: 82.206
+        std: 3.871
+    DJF:
+      Global:
+        mean: 245.764
+        std: 0.685
+      Tropical:
+        mean: 309.553
+        std: 0.81
+      North Midlat:
+        mean: 74.986
+        std: 0.773
+      South Midlat:
+        mean: 288.958
+        std: 1.208
+      NH:
+        mean: 108.125
+        std: 0.796
+      SH:
+        mean: 309.361
+        std: 1.097
+      Equatorial:
+        mean: 316.983
+        std: 0.821
+      North Pole:
+        mean: 7.894
+        std: 0.137
+      South Pole:
+        mean: 190.459
+        std: 2.058
+    MAM:
+      Global:
+        mean: 241.085
+        std: 0.681
+      Tropical:
+        mean: 311.395
+        std: 0.779
+      North Midlat:
+        mean: 218.078
+        std: 1.371
+      South Midlat:
+        mean: 123.469
+        std: 0.697
+      NH:
+        mean: 243.038
+        std: 1.32
+      SH:
+        mean: 156.145
+        std: 0.715
+      Equatorial:
+        mean: 320.909
+        std: 0.841
+      North Pole:
+        mean: 127.602
+        std: 1.426
+      South Pole:
+        mean: 34.83
+        std: 0.587
+    JJA:
+      Global:
+        mean: 236.741
+        std: 0.739
+      Tropical:
+        mean: 289.657
+        std: 0.81
+      North Midlat:
+        mean: 294.329
+        std: 1.455
+      South Midlat:
+        mean: 73.318
+        std: 0.367
+      NH:
+        mean: 306.368
+        std: 1.29
+      SH:
+        mean: 104.983
+        std: 0.437
+      Equatorial:
+        mean: 296.504
+        std: 0.878
+      North Pole:
+        mean: 237.68
+        std: 2.329
+      South Pole:
+        mean: 5.717
+        std: 0.142
+    SON:
+      Global:
+        mean: 242.817
+        std: 0.801
+      Tropical:
+        mean: 312.585
+        std: 0.891
+      North Midlat:
+        mean: 132.937
+        std: 1.146
+      South Midlat:
+        mean: 213.161
+        std: 1.191
+      NH:
+        mean: 163.834
+        std: 1.046
+      SH:
+        mean: 241.157
+        std: 1.088
+      Equatorial:
+        mean: 320.389
+        std: 1.016
+      North Pole:
+        mean: 44.642
+        std: 0.843
+      South Pole:
+        mean: 100.841
+        std: 1.676
+rlnt:
+  longname: TOA LW Net
+  dataset: EBAF_v4.2.1
+  domain: atm
+  units: W/m2
+  year1: 2000
+  year2: 2024
+  notes: Edition 4.2.1; Revised data Release Date March 14, 2025
+  obs:
+    ALL:
+      Global:
+        mean: -240.54
+        std: 0.407
+      Tropical:
+        mean: -260.574
+        std: 0.491
+      North Midlat:
+        mean: -224.208
+        std: 0.923
+      South Midlat:
+        mean: -216.804
+        std: 0.688
+      NH:
+        mean: -234.727
+        std: 0.829
+      SH:
+        mean: -228.726
+        std: 0.606
+      Equatorial:
+        mean: -257.496
+        std: 0.56
+      North Pole:
+        mean: -202.922
+        std: 1.071
+      South Pole:
+        mean: -181.093
+        std: 1.244
+    DJF:
+      Global:
+        mean: -237.765
+        std: 0.478
+      Tropical:
+        mean: -259.039
+        std: 0.838
+      North Midlat:
+        mean: -203.186
+        std: 0.845
+      South Midlat:
+        mean: -229.796
+        std: 0.478
+      NH:
+        mean: -217.931
+        std: 0.901
+      SH:
+        mean: -238.403
+        std: 0.465
+      Equatorial:
+        mean: -256.229
+        std: 1.083
+      North Pole:
+        mean: -179.078
+        std: 1.499
+      South Pole:
+        mean: -204.326
+        std: 0.969
+    MAM:
+      Global:
+        mean: -239.514
+        std: 0.497
+      Tropical:
+        mean: -260.6
+        std: 0.808
+      North Midlat:
+        mean: -219.828
+        std: 0.874
+      South Midlat:
+        mean: -217.025
+        std: 0.398
+      NH:
+        mean: -231.387
+        std: 0.766
+      SH:
+        mean: -228.81
+        std: 0.498
+      Equatorial:
+        mean: -257.625
+        std: 1.054
+      North Pole:
+        mean: -200.72
+        std: 1.684
+      South Pole:
+        mean: -178.524
+        std: 0.855
+    JJA:
+      Global:
+        mean: -244.102
+        std: 0.391
+      Tropical:
+        mean: -261.718
+        std: 0.578
+      North Midlat:
+        mean: -247.226
+        std: 0.731
+      South Midlat:
+        mean: -205.746
+        std: 0.65
+      NH:
+        mean: -252.434
+        std: 0.513
+      SH:
+        mean: -220.741
+        std: 0.668
+      Equatorial:
+        mean: -258.557
+        std: 0.618
+      North Pole:
+        mean: -230.987
+        std: 0.859
+      South Pole:
+        mean: -162.03
+        std: 1.443
+    SON:
+      Global:
+        mean: -240.719
+        std: 0.534
+      Tropical:
+        mean: -260.92
+        std: 0.623
+      North Midlat:
+        mean: -225.972
+        std: 0.993
+      South Midlat:
+        mean: -215.066
+        std: 0.647
+      NH:
+        mean: -236.625
+        std: 0.897
+      SH:
+        mean: -227.27
+        std: 0.709
+      Equatorial:
+        mean: -257.594
+        std: 0.705
+      North Pole:
+        mean: -200.16
+        std: 1.163
+      South Pole:
+        mean: -180.192
+        std: 2.146
+rsntcs:
+  longname: TOA SW Net (clear sky)
+  dataset: EBAF_v4.2.1
+  domain: atm
+  units: W/m2
+  year1: 2000
+  year2: 2024
+  notes: Edition 4.2.1; Revised data Release Date March 14, 2025
+  obs:
+    ALL:
+      Global:
+        mean: 287.154
+        std: 0.543
+      Tropical:
+        mean: 348.601
+        std: 0.431
+      North Midlat:
+        mean: 224.047
+        std: 4.411
+      South Midlat:
+        mean: 227.366
+        std: 5.394
+      NH:
+        mean: 247.268
+        std: 3.956
+      SH:
+        mean: 252.735
+        std: 4.898
+      Equatorial:
+        mean: 358.629
+        std: 0.408
+      North Pole:
+        mean: 133.475
+        std: 4.308
+      South Pole:
+        mean: 110.237
+        std: 5.752
+    DJF:
+      Global:
+        mean: 295.226
+        std: 0.37
+      Tropical:
+        mean: 353.942
+        std: 0.256
+      North Midlat:
+        mean: 95.32
+        std: 0.52
+      South Midlat:
+        mean: 377.696
+        std: 0.917
+      NH:
+        mean: 130.421
+        std: 0.461
+      SH:
+        mean: 389.244
+        std: 0.716
+      Equatorial:
+        mean: 363.315
+        std: 0.261
+      North Pole:
+        mean: 10.045
+        std: 0.211
+      South Pole:
+        mean: 257.136
+        std: 3.472
+    MAM:
+      Global:
+        mean: 283.775
+        std: 0.431
+      Tropical:
+        mean: 351.783
+        std: 0.285
+      North Midlat:
+        mean: 269.048
+        std: 1.563
+      South Midlat:
+        mean: 162.487
+        std: 0.729
+      NH:
+        mean: 291.186
+        std: 1.314
+      SH:
+        mean: 194.47
+        std: 0.687
+      Equatorial:
+        mean: 362.55
+        std: 0.272
+      North Pole:
+        mean: 151.076
+        std: 2.265
+      South Pole:
+        mean: 51.157
+        std: 0.892
+    JJA:
+      Global:
+        mean: 280.468
+        std: 0.339
+      Tropical:
+        mean: 331.623
+        std: 0.214
+      North Midlat:
+        mean: 363.412
+        std: 1.099
+      South Midlat:
+        mean: 95.213
+        std: 0.346
+      NH:
+        mean: 369.12
+        std: 0.92
+      SH:
+        mean: 128.789
+        std: 0.333
+      Equatorial:
+        mean: 341.094
+        std: 0.221
+      North Pole:
+        mean: 306.61
+        std: 3.503
+      South Pole:
+        mean: 7.388
+        std: 0.43
+    SON:
+      Global:
+        mean: 289.451
+        std: 0.373
+      Tropical:
+        mean: 357.359
+        std: 0.258
+      North Midlat:
+        mean: 164.678
+        std: 0.723
+      South Midlat:
+        mean: 278.404
+        std: 1.181
+      NH:
+        mean: 195.003
+        std: 0.68
+      SH:
+        mean: 302.387
+        std: 0.988
+      Equatorial:
+        mean: 367.856
+        std: 0.245
+      North Pole:
+        mean: 62.454
+        std: 0.868
+      South Pole:
+        mean: 129.659
+        std: 2.996
+rlntcs:
+  longname: TOA LW Net (clear sky)
+  dataset: EBAF_v4.2.1
+  domain: atm
+  units: W/m2
+  year1: 2000
+  year2: 2024
+  notes: Edition 4.2.1; Revised data Release Date March 14, 2025
+  obs:
+    ALL:
+      Global:
+        mean: -268.361
+        std: 0.289
+      Tropical:
+        mean: -290.566
+        std: 0.403
+      North Midlat:
+        mean: -248.636
+        std: 0.912
+      South Midlat:
+        mean: -243.678
+        std: 0.513
+      NH:
+        mean: -258.696
+        std: 0.795
+      SH:
+        mean: -254.911
+        std: 0.452
+      Equatorial:
+        mean: -290.597
+        std: 0.475
+      North Pole:
+        mean: -218.397
+        std: 1.247
+      South Pole:
+        mean: -196.708
+        std: 1.287
+    DJF:
+      Global:
+        mean: -265.449
+        std: 0.398
+      Tropical:
+        mean: -290.059
+        std: 0.648
+      North Midlat:
+        mean: -226.951
+        std: 0.83
+      South Midlat:
+        mean: -254.725
+        std: 0.281
+      NH:
+        mean: -240.667
+        std: 0.769
+      SH:
+        mean: -264.076
+        std: 0.275
+      Equatorial:
+        mean: -290.606
+        std: 0.787
+      North Pole:
+        mean: -191.029
+        std: 1.31
+      South Pole:
+        mean: -220.104
+        std: 0.847
+    MAM:
+      Global:
+        mean: -267.747
+        std: 0.33
+      Tropical:
+        mean: -291.018
+        std: 0.594
+      North Midlat:
+        mean: -244.411
+        std: 0.646
+      South Midlat:
+        mean: -244.543
+        std: 0.296
+      NH:
+        mean: -255.424
+        std: 0.509
+      SH:
+        mean: -255.739
+        std: 0.317
+      Equatorial:
+        mean: -291.152
+        std: 0.723
+      North Pole:
+        mean: -213.035
+        std: 1.829
+      South Pole:
+        mean: -194.508
+        std: 0.926
+    JJA:
+      Global:
+        mean: -271.801
+        std: 0.304
+      Tropical:
+        mean: -290.568
+        std: 0.49
+      North Midlat:
+        mean: -271.902
+        std: 0.46
+      South Midlat:
+        mean: -234.167
+        std: 0.457
+      NH:
+        mean: -277.473
+        std: 0.366
+      SH:
+        mean: -247.029
+        std: 0.425
+      Equatorial:
+        mean: -290.174
+        std: 0.58
+      North Pole:
+        mean: -250.738
+        std: 0.688
+      South Pole:
+        mean: -177.145
+        std: 1.329
+    SON:
+      Global:
+        mean: -268.366
+        std: 0.307
+      Tropical:
+        mean: -290.605
+        std: 0.376
+      North Midlat:
+        mean: -250.625
+        std: 0.796
+      South Midlat:
+        mean: -241.63
+        std: 0.401
+      NH:
+        mean: -260.655
+        std: 0.675
+      SH:
+        mean: -253.087
+        std: 0.384
+      Equatorial:
+        mean: -290.481
+        std: 0.443
+      North Pole:
+        mean: -218.008
+        std: 1.37
+      South Pole:
+        mean: -195.839
+        std: 1.488
+swcf:
+  longname: SW Cloud Forcing
+  dataset: EBAF_v4.2.1
+  domain: atm
+  units: W/m2
+  year1: 2000
+  year2: 2024
+  notes: Edition 4.2.1; Revised data Release Date March 14, 2025
+  obs:
+    ALL:
+      Global:
+        mean: -45.599
+        std: 0.41
+      Tropical:
+        mean: -42.876
+        std: 0.556
+      North Midlat:
+        mean: -43.205
+        std: 1.046
+      South Midlat:
+        mean: -53.439
+        std: 1.303
+      NH:
+        mean: -41.227
+        std: 0.87
+      SH:
+        mean: -50.58
+        std: 1.045
+      Equatorial:
+        mean: -45.013
+        std: 0.59
+      North Pole:
+        mean: -28.286
+        std: 1.13
+      South Pole:
+        mean: -28.031
+        std: 1.973
+    DJF:
+      Global:
+        mean: -49.462
+        std: 0.519
+      Tropical:
+        mean: -44.389
+        std: 0.748
+      North Midlat:
+        mean: -20.334
+        std: 0.481
+      South Midlat:
+        mean: -88.738
+        std: 1.059
+      NH:
+        mean: -22.297
+        std: 0.509
+      SH:
+        mean: -79.883
+        std: 0.954
+      Equatorial:
+        mean: -46.332
+        std: 0.787
+      North Pole:
+        mean: -2.151
+        std: 0.23
+      South Pole:
+        mean: -66.677
+        std: 1.857
+    MAM:
+      Global:
+        mean: -42.691
+        std: 0.415
+      Tropical:
+        mean: -40.388
+        std: 0.622
+      North Midlat:
+        mean: -50.97
+        std: 0.849
+      South Midlat:
+        mean: -39.018
+        std: 0.545
+      NH:
+        mean: -48.148
+        std: 0.746
+      SH:
+        mean: -38.325
+        std: 0.573
+      Equatorial:
+        mean: -41.641
+        std: 0.69
+      North Pole:
+        mean: -23.474
+        std: 1.417
+      South Pole:
+        mean: -16.328
+        std: 0.481
+    JJA:
+      Global:
+        mean: -43.727
+        std: 0.553
+      Tropical:
+        mean: -41.966
+        std: 0.712
+      North Midlat:
+        mean: -69.083
+        std: 1.075
+      South Midlat:
+        mean: -21.895
+        std: 0.301
+      NH:
+        mean: -62.752
+        std: 0.948
+      SH:
+        mean: -23.806
+        std: 0.367
+      Equatorial:
+        mean: -44.59
+        std: 0.78
+      North Pole:
+        mean: -68.93
+        std: 2.01
+      South Pole:
+        mean: -1.67
+        std: 0.343
+    SON:
+      Global:
+        mean: -46.633
+        std: 0.568
+      Tropical:
+        mean: -44.774
+        std: 0.761
+      North Midlat:
+        mean: -31.741
+        std: 0.854
+      South Midlat:
+        mean: -65.244
+        std: 0.934
+      NH:
+        mean: -31.169
+        std: 0.766
+      SH:
+        mean: -61.23
+        std: 0.933
+      Equatorial:
+        mean: -47.467
+        std: 0.907
+      North Pole:
+        mean: -17.812
+        std: 0.659
+      South Pole:
+        mean: -28.818
+        std: 2.081
+lwcf:
+  longname: LW Cloud Forcing
+  dataset: EBAF_v4.2.1
+  domain: atm
+  units: W/m2
+  year1: 2000
+  year2: 2024
+  notes: Edition 4.2.1; Revised data Release Date March 14, 2025
+  obs:
+    ALL:
+      Global:
+        mean: 27.822
+        std: 0.314
+      Tropical:
+        mean: 29.992
+        std: 0.414
+      North Midlat:
+        mean: 24.428
+        std: 0.273
+      South Midlat:
+        mean: 26.874
+        std: 0.3
+      NH:
+        mean: 23.969
+        std: 0.279
+      SH:
+        mean: 26.185
+        std: 0.299
+      Equatorial:
+        mean: 33.101
+        std: 0.441
+      North Pole:
+        mean: 15.475
+        std: 0.415
+      South Pole:
+        mean: 15.614
+        std: 0.391
+    DJF:
+      Global:
+        mean: 27.684
+        std: 0.312
+      Tropical:
+        mean: 31.021
+        std: 0.463
+      North Midlat:
+        mean: 23.765
+        std: 0.46
+      South Midlat:
+        mean: 24.929
+        std: 0.405
+      NH:
+        mean: 22.736
+        std: 0.466
+      SH:
+        mean: 25.673
+        std: 0.357
+      Equatorial:
+        mean: 34.377
+        std: 0.602
+      North Pole:
+        mean: 11.951
+        std: 0.865
+      South Pole:
+        mean: 15.777
+        std: 0.402
+    MAM:
+      Global:
+        mean: 28.234
+        std: 0.328
+      Tropical:
+        mean: 30.418
+        std: 0.507
+      North Midlat:
+        mean: 24.583
+        std: 0.427
+      South Midlat:
+        mean: 27.519
+        std: 0.315
+      NH:
+        mean: 24.037
+        std: 0.427
+      SH:
+        mean: 26.929
+        std: 0.359
+      Equatorial:
+        mean: 33.527
+        std: 0.615
+      North Pole:
+        mean: 12.314
+        std: 0.676
+      South Pole:
+        mean: 15.984
+        std: 0.369
+    JJA:
+      Global:
+        mean: 27.699
+        std: 0.299
+      Tropical:
+        mean: 28.85
+        std: 0.473
+      North Midlat:
+        mean: 24.676
+        std: 0.39
+      South Midlat:
+        mean: 28.421
+        std: 0.326
+      NH:
+        mean: 25.038
+        std: 0.313
+      SH:
+        mean: 26.288
+        std: 0.364
+      Equatorial:
+        mean: 31.617
+        std: 0.52
+      North Pole:
+        mean: 19.751
+        std: 0.382
+      South Pole:
+        mean: 15.115
+        std: 0.618
+    SON:
+      Global:
+        mean: 27.647
+        std: 0.401
+      Tropical:
+        mean: 29.685
+        std: 0.532
+      North Midlat:
+        mean: 24.654
+        std: 0.398
+      South Midlat:
+        mean: 26.564
+        std: 0.581
+      NH:
+        mean: 24.03
+        std: 0.394
+      SH:
+        mean: 25.817
+        std: 0.611
+      Equatorial:
+        mean: 32.887
+        std: 0.585
+      North Pole:
+        mean: 17.849
+        std: 0.551
+      South Pole:
+        mean: 15.647
+        std: 0.875
+rsns:
+  longname: Surface Net SW
+  dataset: Wild 2020
+  domain: atm
+  units: W/m2
+  year1: ''
+  year2: ''
+  obs: 160
+rlns:
+  longname: Surface Net LW
+  dataset: Wild 2020
+  domain: atm
+  units: W/m2
+  year1: ''
+  year2: ''
+  obs: -56
+hfss:
+  longname: Surface SH
+  dataset: Wild 2020
+  domain: atm
+  units: W/m2
+  year1: ''
+  year2: ''
+  obs: -21
+hfls:
+  longname: Surface LH
+  dataset: Wild 2020
+  domain: atm
+  units: W/m2
+  year1: ''
+  year2: ''
+  obs: -82
+net_sfc_nosn:
+  longname: Net Surface (no snowfall)
+  dataset: Wild 2020
+  domain: atm
+  units: W/m2
+  year1: ''
+  year2: ''
+  obs: 0.6
+net_sfc:
+  longname: Net Surface
+  dataset: Wild 2020
+  domain: atm
+  units: W/m2
+  year1: ''
+  year2: ''
+  obs: 0.6
+toamsfc_nosn:
+  longname: TOA - Sfc Net Radiation (no snow)
+  dataset: None
+  domain: atm
+  units: W/m2
+  year1: ''
+  year2: ''
+  obs: 0
+toamsfc:
+  longname: TOA - Sfc Net Radiation
+  dataset: None
+  domain: atm
+  units: W/m2
+  year1: ''
+  year2: ''
+  obs: 0
+tos:
+  longname: Sea Surface Temperature
+  dataset: ESA-CCI-L4
+  mask: ocean
+  domain: oce
+  units: celsius
+  year1: 2000
+  year2: 2023
+  notes: v3.0.1
+  obs:
+    ALL:
+      Global:
+        mean: 18.851
+        std: 0.126
+      Tropical:
+        mean: 25.003
+        std: 0.162
+      North Midlat:
+        mean: 10.794
+        std: 0.196
+      South Midlat:
+        mean: 8.881
+        std: 0.084
+      NH:
+        mean: 14.612
+        std: 0.184
+      SH:
+        mean: 12.203
+        std: 0.078
+      Equatorial:
+        mean: 25.334
+        std: 0.083
+      North Pole:
+        mean: 0.955
+        std: 0.132
+      South Pole:
+        mean: -0.86
+        std: 0.074
+    DJF:
+      Global:
+        mean: 18.907
+        std: 0.13
+      Tropical:
+        mean: 24.661
+        std: 0.15
+      North Midlat:
+        mean: 8.4
+        std: 0.152
+      South Midlat:
+        mean: 10.339
+        std: 0.092
+      NH:
+        mean: 12.408
+        std: 0.149
+      SH:
+        mean: 13.564
+        std: 0.085
+      Equatorial:
+        mean: 25.588
+        std: 0.138
+      North Pole:
+        mean: -0.165
+        std: 0.061
+      South Pole:
+        mean: -0.091
+        std: 0.186
+    MAM:
+      Global:
+        mean: 18.969
+        std: 0.124
+      Tropical:
+        mean: 25.094
+        std: 0.159
+      North Midlat:
+        mean: 8.254
+        std: 0.162
+      South Midlat:
+        mean: 10.033
+        std: 0.1
+      NH:
+        mean: 12.355
+        std: 0.16
+      SH:
+        mean: 13.312
+        std: 0.091
+      Equatorial:
+        mean: 25.862
+        std: 0.138
+      North Pole:
+        mean: -0.269
+        std: 0.068
+      South Pole:
+        mean: -0.47
+        std: 0.123
+    JJA:
+      Global:
+        mean: 18.736
+        std: 0.142
+      Tropical:
+        mean: 25.157
+        std: 0.179
+      North Midlat:
+        mean: 13.264
+        std: 0.195
+      South Midlat:
+        mean: 7.613
+        std: 0.082
+      NH:
+        mean: 17.133
+        std: 0.237
+      SH:
+        mean: 11.006
+        std: 0.077
+      Equatorial:
+        mean: 24.992
+        std: 0.076
+      North Pole:
+        mean: 2.506
+        std: 0.338
+      South Pole:
+        mean: -1.352
+        std: 0.031
+    SON:
+      Global:
+        mean: 18.557
+        std: 0.161
+      Tropical:
+        mean: 25.196
+        std: 0.197
+      North Midlat:
+        mean: 12.801
+        std: 0.157
+      South Midlat:
+        mean: 7.509
+        std: 0.088
+      NH:
+        mean: 16.634
+        std: 0.237
+      SH:
+        mean: 10.919
+        std: 0.083
+      Equatorial:
+        mean: 24.968
+        std: 0.074
+      North Pole:
+        mean: 1.653
+        std: 0.144
+      South Pole:
+        mean: -1.414
+        std: 0.03
+sos:
+  longname: Sea Surface Salinity
+  dataset: Copernicus Global Analysed Sea Surface Salinity
+  mask: ocean
+  domain: oce
+  units: PSU
+  year1: 2000
+  year2: 2024
+  notes: L4 Analysis product
+  obs:
+    ALL:
+      Global:
+        mean: 34.544
+        std: 0.009
+      Tropical:
+        mean: 35.095
+        std: 0.016
+      North Midlat:
+        mean: 33.065
+        std: 0.017
+      South Midlat:
+        mean: 34.456
+        std: 0.012
+      NH:
+        mean: 33.763
+        std: 0.011
+      SH:
+        mean: 34.725
+        std: 0.011
+      Equatorial:
+        mean: 34.877
+        std: 0.023
+      North Pole:
+        mean: 30.899
+        std: 0.064
+      South Pole:
+        mean: 33.937
+        std: 0.007
+    DJF:
+      Global:
+        mean: 34.556
+        std: 0.009
+      Tropical:
+        mean: 35.09
+        std: 0.016
+      North Midlat:
+        mean: 33.19
+        std: 0.018
+      South Midlat:
+        mean: 34.431
+        std: 0.012
+      NH:
+        mean: 33.858
+        std: 0.017
+      SH:
+        mean: 34.707
+        std: 0.01
+      Equatorial:
+        mean: 34.869
+        std: 0.024
+      North Pole:
+        mean: 31.171
+        std: 0.03
+      South Pole:
+        mean: 33.826
+        std: 0.018
+    MAM:
+      Global:
+        mean: 34.577
+        std: 0.01
+      Tropical:
+        mean: 35.091
+        std: 0.015
+      North Midlat:
+        mean: 33.266
+        std: 0.017
+      South Midlat:
+        mean: 34.44
+        std: 0.013
+      NH:
+        mean: 33.909
+        std: 0.014
+      SH:
+        mean: 34.715
+        std: 0.014
+      Equatorial:
+        mean: 34.868
+        std: 0.02
+      North Pole:
+        mean: 31.425
+        std: 0.025
+      South Pole:
+        mean: 33.878
+        std: 0.013
+    JJA:
+      Global:
+        mean: 34.531
+        std: 0.013
+      Tropical:
+        mean: 35.11
+        std: 0.017
+      North Midlat:
+        mean: 32.891
+        std: 0.041
+      South Midlat:
+        mean: 34.472
+        std: 0.013
+      NH:
+        mean: 33.63
+        std: 0.029
+      SH:
+        mean: 34.737
+        std: 0.013
+      Equatorial:
+        mean: 34.906
+        std: 0.025
+      North Pole:
+        mean: 30.474
+        std: 0.165
+      South Pole:
+        mean: 34.01
+        std: 0.006
+    SON:
+      Global:
+        mean: 34.52
+        std: 0.01
+      Tropical:
+        mean: 35.084
+        std: 0.019
+      North Midlat:
+        mean: 32.916
+        std: 0.02
+      South Midlat:
+        mean: 34.479
+        std: 0.014
+      NH:
+        mean: 33.654
+        std: 0.017
+      SH:
+        mean: 34.74
+        std: 0.012
+      Equatorial:
+        mean: 34.869
+        std: 0.028
+      North Pole:
+        mean: 30.523
+        std: 0.093
+      South Pole:
+        mean: 34.033
+        std: 0.007
+zos:
+  longname: SSH
+  dataset: None
+  domain: atm
+  units: m
+  year1: ''
+  year2: ''
+  obs: 0
+wfo:
+  longname: Net Water Flux into ocean
+  dataset: None
+  domain: atm
+  units: m/century
+  year1: ''
+  year2: ''
+  obs: 0
+siconc:
+  longname: Sea Ice Area
+  dataset: ESA-CCI-L4
+  mask: ocean
+  operation: integral
+  domain: oce
+  units: Mm^2
+  year1: 2000
+  year2: 2023
+  notes: v3.0.1
+  obs:
+    ALL:
+      Global:
+        mean: 18.891
+        std: 0.784
+      Tropical:
+        mean: 0.0
+        std: 0.0
+      North Midlat:
+        mean: 9.277
+        std: 0.384
+      South Midlat:
+        mean: 9.617
+        std: 0.546
+      NH:
+        mean: 9.277
+        std: 0.384
+      SH:
+        mean: 9.617
+        std: 0.546
+      Equatorial:
+        mean: 0.0
+        std: 0.0
+      North Pole:
+        mean: 8.645
+        std: 0.36
+      South Pole:
+        mean: 9.131
+        std: 0.471
+    DJF:
+      Global:
+        mean: 16.43
+        std: 0.829
+      Tropical:
+        mean: 0.0
+        std: 0.0
+      North Midlat:
+        mean: 12.085
+        std: 0.3
+      South Midlat:
+        mean: 4.346
+        std: 0.627
+      NH:
+        mean: 12.085
+        std: 0.3
+      SH:
+        mean: 4.346
+        std: 0.627
+      Equatorial:
+        mean: 0.0
+        std: 0.0
+      North Pole:
+        mean: 10.914
+        std: 0.252
+      South Pole:
+        mean: 4.297
+        std: 0.612
+    MAM:
+      Global:
+        mean: 18.064
+        std: 0.879
+      Tropical:
+        mean: 0.0
+        std: 0.0
+      North Midlat:
+        mean: 12.299
+        std: 0.337
+      South Midlat:
+        mean: 5.768
+        std: 0.679
+      NH:
+        mean: 12.299
+        std: 0.337
+      SH:
+        mean: 5.768
+        std: 0.679
+      Equatorial:
+        mean: 0.0
+        std: 0.0
+      North Pole:
+        mean: 11.118
+        std: 0.256
+      South Pole:
+        mean: 5.761
+        std: 0.674
+    JJA:
+      Global:
+        mean: 20.199
+        std: 0.854
+      Tropical:
+        mean: 0.0
+        std: 0.0
+      North Midlat:
+        mean: 6.486
+        std: 0.447
+      South Midlat:
+        mean: 13.717
+        std: 0.638
+      NH:
+        mean: 6.486
+        std: 0.447
+      SH:
+        mean: 13.717
+        std: 0.638
+      Equatorial:
+        mean: 0.0
+        std: 0.0
+      North Pole:
+        mean: 6.33
+        std: 0.444
+      South Pole:
+        mean: 13.076
+        std: 0.522
+    SON:
+      Global:
+        mean: 20.884
+        std: 0.936
+      Tropical:
+        mean: 0.0
+        std: 0.0
+      North Midlat:
+        mean: 6.229
+        std: 0.606
+      South Midlat:
+        mean: 14.659
+        std: 0.592
+      NH:
+        mean: 6.229
+        std: 0.606
+      SH:
+        mean: 14.659
+        std: 0.592
+      Equatorial:
+        mean: 0.0
+        std: 0.0
+      North Pole:
+        mean: 6.211
+        std: 0.608
+      South Pole:
+        mean: 13.407
+        std: 0.45
+siconc_north:
+  longname: Sea Ice Area (Northern Hemisphere)
+  dataset: ESA-CCI-L4
+  mask: north
+  operation: integral
+  domain: ocean
+  units: Mm^2
+  year1: ''
+  year2: ''
+  obs: 9.562
+siconc_south:
+  longname: Sea Ice Area (Southern Hemisphere)
+  dataset: ESA-CCI-L4
+  mask: south
+  operation: integral
+  domain: ocean
+  units: Mm^2
+  year1: ''
+  year2: ''
+  obs: 9.66

@@ -57,7 +57,7 @@ if DEBUG:
     year2 = 2024       
 
 # climatology yml output
-CLIMNAME = 'EC26'
+CLIMNAME = 'EC26_2000_2024'
 clim_info = f'create-reference-wilma-{CLIMNAME}.yml'
 # yml file to get information on dataset on some machine
 clim_file = os.path.join('../reference', f'gm_reference_{CLIMNAME}.yml')
@@ -113,30 +113,8 @@ for var in variables:
 
         # load data and time select
         print("Loading multiple files...")
-        if var in oce_vars:
-            # lista per salvare i risultati annuali di ciascun file
-            annual_datasets = []
-
-            for f in filedata:
-                print(f"Processing {f} ...")
-                # apro il file con chunking per evitare di caricare tutto in memoria
-                ds = xr.open_dataset(f, chunks={'time': 12})
-                ds = xr_preproc(ds)  # applica preprocess manualmente
-
-                # calcolo subito la media annuale per questa variabile
-                da = ds[var]
-                da_ann = da.resample(time='YS', skipna=nanskipper).mean('time', skipna=nanskipper)
-                annual_datasets.append(da_ann)
-
-                # chiudo il dataset per liberare memoria
-                ds.close()
-
-            # concateno solo le medie annuali
-            xfield = xr.concat(annual_datasets, dim='time', data_vars='all')
-        else:
-            # per le altre variabili rimane open_mfdataset classico
-            xfield = xr.open_mfdataset(filedata, chunks='auto', preprocess=xr_preproc, engine='netcdf4')
-            
+        xfield = xr.open_mfdataset(filedata, chunks='auto', preprocess=xr_preproc, engine='netcdf4')
+        
         # if derived, use the formula skill (or just rename)
         cmd = info[var]['derived']
         xfield = _eval_formula(cmd, xfield).to_dataset(name=var)

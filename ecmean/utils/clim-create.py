@@ -41,16 +41,16 @@ variables = ['tas', 'pr', 'net_sfc', 'tauu', 'tauv', 'psl',
              'ua', 'va', 'ta', 'hus', 'tos', 'sos', 'siconc']
 
 # to set: time period (default, can be shorter if data are missing) #WARNING MISSING
-year1 = 1985
-year2 = 2014
+year1 = 2000
+year2 = 2024
 
 # yml file to get information on dataset on some machine
-CLIM = 'EC24'
-clim_info = f'/home/paolo/ECmean4/ecmean/utils/create-clim-wilma-{CLIM}.yml'
+CLIM = 'EC26_2000_2024'
+clim_info = f'/work/users/malbanes/ECmean4/ecmean/utils/create-clim-wilma-{CLIM}.yml'
 
 # figures : some diagnostic figures can be saved to check the consistency of mean and variance fields
 do_figures = True
-figdir = '/work/users/paolo/figures/ecmean-py-variances/'
+figdir = '/work/users/malbanes/figures/ecmean-py-variances/'
 
 # targets resolutio
 grids = ['r360x180']

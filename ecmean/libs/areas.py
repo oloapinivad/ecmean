@@ -179,8 +179,9 @@ class AreaCalculator:
         if gridtype in ['gaussian', 'lonlat']:
             area = area.reshape([len(xfield['lat']), len(xfield['lon'])])
 
-        outfield = xr.DataArray(area, dims=area_dims, coords=xfield.coords, name='area')
-
+        coords = {dim: xfield.coords[dim] for dim in area_dims}
+        outfield = xr.DataArray(area, dims=area_dims, coords=coords, name='area')
+        
         loggy.debug("Total Earth Surface: %s Km2", str(outfield.sum().values / 10**6))
 
         return outfield

@@ -43,13 +43,14 @@ Modification to this is not necessary, but please be aware that the variable con
 	``tab`` includes the list of fields to be reported in the output table.
 
 **regions**: 
-	the list of regions on which compute the PI. Four regions are supported. Supported regions are: ``Global`` (90S-90N), ``North Midlat`` (30N-90N), ``Tropical`` (30S-30N), ``South Midlat`` (90S-30S) 
+	the list of regions on which compute the PI. Four regions are supported. Supported regions are: ``Global`` (90S-90N), ``North Midlat`` (30N-90N), ``Tropical`` (30S-30N), ``South Midlat`` (90S-30S). 
+	For EC26 reference, other regions are also available: ``NH`` (20N-90N), ``SH`` (20S-90S), ``Equatorial`` (20S-20N), ``North Pole`` (60N-90N), ``South Pole`` (60S-90S).
 
 **seasons**:
 	the list of seasons on which compute the PI. Four standard seasons are supported expressed as 3-string character (e.g. ``DJF``). ``ALL`` defines the yearly average. Default includes yearly, winter and summer.
 
 **reference**:
-	the global mean reference climatology. Only EC23 is currently available
+	the global mean reference climatology. EC23 (without the tas global variable and for the period 1990-2020) and EC26 (with tas global variable and both for the period 1980-2010 and for the period 2000-2024) are available.
 
 Performance indices configuration
 ---------------------------------
@@ -63,13 +64,13 @@ Modification to this is not necessary, but please be aware that the variable con
 
 **regions**: 
 	the list of regions on which compute the PI. Four regions are supported. Default regions are: ``Global`` (90S-90N), ``North Midlat`` (30N-90N), ``Tropical`` (30S-30N), ``South Midlat`` (90S-30S).
-	For EC24 climatology, other regions are also available: ``NH`` (20N-90N), ``SH`` (20S-90S), ``Equatorial`` (20S-20N), ``North Pole`` (60N-90N), ``South Pole`` (60S-90S).
+	For EC24 and EC26 climatology, other regions are also available: ``NH`` (20N-90N), ``SH`` (20S-90S), ``Equatorial`` (20S-20N), ``North Pole`` (60N-90N), ``South Pole`` (60S-90S).
 
 **seasons**:
 	the list of seasons on which compute the PI. ``ALL`` defines the yearly average. Also ``DJF`` and ``JJA`` are supported.
 
 **climatology**:
-	the climatology to be used. EC23 and EC24 are avaiable. 
+	the climatology to be used. EC23, EC24 and EC26 (both for the period 1980-2010 and for the period 2000-2024) are avaiable. 
 
 
 Interface files

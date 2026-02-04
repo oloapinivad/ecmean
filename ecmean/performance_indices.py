@@ -128,7 +128,7 @@ class PerformanceIndices:
 
         # all clim have the same grid, read from the first clim available and get target grid
         clim, _ = get_clim_files(self.piclim, 'tas', self.diag, 'ALL')
-        target_remap_grid = xr.open_dataset(clim, data_vars='all', join='outer')
+        target_remap_grid = xr.open_dataset(clim)
 
         # get file info files
         inifiles = get_inifiles(self.face, self.diag)

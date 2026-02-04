@@ -32,8 +32,6 @@ from ecmean.libs.parser import parse_arguments
 from ecmean.libs.loggy import setup_logger
 
 dask.config.set(scheduler="synchronous")
-if sys.version_info >= (3, 14):
-    xr.set_options(use_new_combine_kwarg_defaults=True)
 
 class PerformanceIndices:
     """
@@ -130,7 +128,7 @@ class PerformanceIndices:
 
         # all clim have the same grid, read from the first clim available and get target grid
         clim, _ = get_clim_files(self.piclim, 'tas', self.diag, 'ALL')
-        target_remap_grid = xr.open_dataset(clim)
+        target_remap_grid = xr.open_dataset(clim, data_vars='all', join='outer')
 
         # get file info files
         inifiles = get_inifiles(self.face, self.diag)
@@ -325,7 +323,9 @@ class PerformanceIndices:
 
                     # open file: chunking on time only, might be improved
                     if not isinstance(infile, (xr.DataArray, xr.Dataset)):
-                        xfield = xr.open_mfdataset(infile, preprocess=xr_preproc, chunks={'time': 12})
+                        xfield = xr.open_mfdataset(
+                            infile, preprocess=xr_preproc, chunks={'time': 12},
+                            data_vars='all', join='outer')
                     else:
                         xfield = infile
 

@@ -34,8 +34,6 @@ from ecmean.libs.ecplotter import ECPlotter
 from ecmean.libs.loggy import setup_logger
 
 dask.config.set(scheduler="synchronous")
-if sys.version_info >= (3, 14):
-    xr.set_options(use_new_combine_kwarg_defaults=True)
 
 
 class GlobalMean:
@@ -318,7 +316,9 @@ class GlobalMean:
                                                   clim=ref, face=face).units_converter()
 
                     if not isinstance(infile, (xr.DataArray, xr.Dataset)):
-                        xfield = xr.open_mfdataset(infile, preprocess=xr_preproc, chunks={'time': 12})
+                        xfield = xr.open_mfdataset(
+                            infile, preprocess=xr_preproc, chunks={'time': 12},
+                            data_vars='all', combine='by_coords')
                     else:
                         xfield = infile
 

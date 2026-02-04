@@ -123,7 +123,7 @@ def check_var_climatology(varlist, reference):
     """Check if a var is defined in the climatology/reference file"""
 
     missing = [element for element in varlist if element not in reference]
-    if len(missing) > 0:
+    if missing:
         raise KeyError(f'Variable/Variables {missing} is/are not defined in the climatology, aborting!')
 
 

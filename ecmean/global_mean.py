@@ -300,6 +300,10 @@ class GlobalMean:
         # from python 3.14 this has to be into the worker
         units_extra_definition()
 
+        # Local accumulation - avoid Manager().dict() overhead during computation
+        local_varmean = {}
+        local_vartrend = {}
+
         for var in varlist:
             result = init_mydict(diag.seasons, diag.regions)
             trend = init_mydict(diag.seasons, diag.regions)
@@ -364,8 +368,12 @@ class GlobalMean:
                             if season == 'ALL' and region == 'Global':
                                 loggy.info('Average: %s %s %s %s', var, season, region, result[season][region])
 
-            varmean[var] = result
-            vartrend[var] = trend
+            local_varmean[var] = result
+            local_vartrend[var] = trend
+
+        # OPTIMIZATION: Single bulk write to Manager.dict() at the end
+        varmean.update(local_varmean)
+        vartrend.update(local_vartrend)
 
 
 def gm_entry_point():

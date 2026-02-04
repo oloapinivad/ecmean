@@ -2,11 +2,15 @@
 import textwrap
 import logging
 import yaml
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.colors import  TwoSlopeNorm, ListedColormap #, LogNorm
 import seaborn as sns
 import numpy as np
 from ecmean.libs.general import dict_to_dataframe, init_mydict
+
+ # OPTIMIZATION: Use non-interactive backend (much faster)
+matplotlib.use('Agg')
 
 loggy = logging.getLogger(__name__)
 
@@ -230,21 +234,26 @@ class ECPlotter:
         tictoc = range(-thr, thr + 1)
         pal = ListedColormap(sns.color_palette("vlag", n_colors=21))
         tot = len(clean.columns)
-        sss = len(set([tup[1] for tup in clean.columns]))
+        sss = len({tup[1] for tup in clean.columns})
 
         # add reference if declared
         ref_str = f" against {reference} reference" if reference is not None else ""
         cbar_label = (f"Model Bias{ref_str}\n"
                       "(standard deviation of interannual variability from observations)")
 
+        if addnan:
+            empty_data = np.where(clean.isna(), 0, np.nan)
+            empty_data = np.where(data_table[mask] == 0, np.nan, empty_data)
+            empty_mean = np.where(clean.isna(), 0, np.nan)
+            empty_mean = np.where(mean_table[mask].isna(), np.nan, empty_mean)
+
+        # Original plotting method preserved, but optimized
         chart = sns.heatmap(clean, annot=data_table[mask], vmin=-thr - 0.5, vmax=thr + 0.5, center=0,
                             annot_kws={'va': 'bottom', 'fontsize': size_model},
                             cbar_kws={'ticks': tictoc, "shrink": .5, 'label': cbar_label},
                             fmt='.2f', cmap=pal)
         if addnan:
-            empty = np.where(clean.isna(), 0, np.nan)
-            empty = np.where(data_table[mask] == 0, np.nan, empty)
-            chart = sns.heatmap(empty, annot=data_table[mask], fmt='.2f',
+            chart = sns.heatmap(empty_data, annot=data_table[mask], fmt='.2f',
                                 vmin=-thr - 0.5, vmax=thr + 0.5, center=0,
                                 annot_kws={'va': 'bottom', 'fontsize': size_model, 'color': 'dimgrey'}, cbar=False,
                                 cmap=ListedColormap(['none']))
@@ -252,9 +261,7 @@ class ECPlotter:
                             annot_kws={'va': 'top', 'fontsize': size_obs, 'fontstyle': 'italic'},
                             fmt='.2f', cmap=pal, cbar=False)
         if addnan:
-            empty = np.where(clean.isna(), 0, np.nan)
-            empty = np.where(mean_table[mask].isna(), np.nan, empty)
-            chart = sns.heatmap(empty, annot=mean_table[mask], vmin=-thr - 0.5, vmax=thr + 0.5, center=0,
+            chart = sns.heatmap(empty_mean, annot=mean_table[mask], vmin=-thr - 0.5, vmax=thr + 0.5, center=0,
                                 annot_kws={'va': 'top', 'fontsize': size_obs, 'fontstyle': 'italic', 'color': 'dimgrey'},
                                 fmt='.2f', cmap=ListedColormap(['none']), cbar=False)
 

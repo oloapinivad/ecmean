@@ -123,7 +123,7 @@ def check_var_climatology(varlist, reference):
     """Check if a var is defined in the climatology/reference file"""
 
     missing = [element for element in varlist if element not in reference]
-    if len(missing) > 0:
+    if missing:
         raise KeyError(f'Variable/Variables {missing} is/are not defined in the climatology, aborting!')
 
 
@@ -154,16 +154,20 @@ def dict_to_dataframe(varstat, allowed = ['ALL', 'DJF', 'JJA', 'MAM', 'SON']):
     Returns:
     pd.DataFrame: Transformed DataFrame with hierarchical keys.
     """
+    # Use set for O(1) lookup instead of O(n) list lookup
+    allowed_seasons = set(allowed)
+
     data_table = {}
-    for i in varstat.keys():
-        pippo = {}
-        for outerkey, innerdict in varstat[i].items():
-            if outerkey in allowed:
-                for innerkey, values in innerdict.items():
-                    pippo[(outerkey, innerkey)] = values
-        data_table[i] = pippo
-    data_table = pd.DataFrame(data_table).T
-    return data_table
+    for var, seasons_dict in varstat.items():
+        var_data = {}
+        for season, regions_dict in seasons_dict.items():
+            # Only process seasons that are in the allowed list
+            if season in allowed_seasons:
+                for region, value in regions_dict.items():
+                    var_data[(season, region)] = value
+
+        data_table[var] = var_data
+    return pd.DataFrame(data_table).T
 
 
 def write_tuning_table(linefile, varmean, var_table, diag, ref):

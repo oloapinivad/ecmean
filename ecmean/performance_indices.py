@@ -98,13 +98,19 @@ class PerformanceIndices:
         self.extrafigure = extrafigure #special key to be set for manual debugging, producing extra figures: DO NOT USE
         self.outarray = None
         self.start_time = time()
+        self.current_time = time()
         self.title = title
 
     def toc(self, message):
         """Update the timer and log the elapsed time."""
-        elapsed_time = time() - self.start_time
-        self.start_time = time()
+        elapsed_time = time() - self.current_time
+        self.current_time = time()
         self.loggy.info('%s time: %.2f seconds', message, elapsed_time)
+    
+    def final_toc(self):
+        """Log the total elapsed time since the start."""
+        total_elapsed_time = time() - self.start_time
+        self.loggy.info('Total execution time: %.2f seconds', total_elapsed_time)
 
     def prepare(self):
         """Prepare the necessary components for performance indices calculation."""
@@ -222,60 +228,6 @@ class PerformanceIndices:
         if returnfig:
             self.loggy.info('Returning figure object')
             return fig
-        
-    # def plot(self, mapfile=None, figformat='pdf', returnfig=False, storefig=True):
-    #     """
-    #     Generate the heatmap for performance indices.
-
-    #     Args:
-    #         mapfile (str): Path to the output file. If None, it will be defined automatically following ECmean syntax.
-    #         figformat (str): Format of the output file. Default is 'pdf'.
-    #         returnfig (bool): If True, return the figure object. Default is False.
-    #         storefig (bool): If True, store the figure in the specified file. Default is True.
-    #     """
-    #     if self.extrafigure:
-    #         self.loggy.debug('Plotting extra results...')
-    #         print(self.outarray)
-    #         debugfig = os.path.join(self.diag.figdir, f"map_{os.path.basename(self.diag.filenames('png'))}")
-    #         plot_xarray(self.outarray['map'], filename=debugfig, log_scale=True, cmap='viridis')
-    #         debugfig = os.path.join(self.diag.figdir, f"bias_{os.path.basename(self.diag.filenames('png'))}")
-    #         plot_xarray(self.outarray['bias'], filename=debugfig, cmap='seismic', log_scale=False)
-
-    #     # to this date, only EC23/EC24 support comparison with CMIP6 data
-    #     if self.diag.climatology in ['EC23', 'EC24']:
-
-    #         # load yaml file if is missing
-    #         if not self.varstat:
-    #             yamlfile = self.diag.filenames('yml')
-    #             self.loggy.info('Loading the stored data from the yaml file %s', yamlfile)
-    #             if os.path.isfile(yamlfile):
-    #                 with open(yamlfile, 'r', encoding='utf-8') as file:
-    #                     self.varstat = yaml.safe_load(file)
-    #             else:
-    #                 raise FileNotFoundError(f'File {yamlfile} not found.')
-
-    #         # prepare the data for the heatmap from the original yaml dictionaries
-    #         self.loggy.debug('%s, %s, %s', self.varstat, self.piclim, self.diag.field_all)
-    #         data2plot, cmip6, longnames = prepare_clim_dictionaries_pi(data=self.varstat,
-    #                                                                    clim=self.piclim,
-    #                                                                    shortnames=self.diag.field_all)
-
-    #         # call the heatmap routine for a plot
-    #         if mapfile is None:
-    #             mapfile = self.diag.filenames(figformat)
-
-    #         fig = heatmap_comparison_pi(
-    #             data_dict=data2plot, cmip6_dict=cmip6, 
-    #             diag=self.diag, longnames=longnames, filemap=mapfile,
-    #             storefig=storefig)
-
-    #         self.toc('Plotting')
-    #         if returnfig:
-    #             return fig
-        
-    #     else:
-    #         self.loggy.warning('Only EC23 and EC24 climatology is supported for comparison with CMIP6 data.')
-
 
     @staticmethod
     def pi_worker(util, piclim, face, diag, field_3d, varstat, dictarray, varlist, loglevel):
@@ -293,6 +245,9 @@ class PerformanceIndices:
             varlist (list): List of variables to process.
         """
         loggy = setup_logger(level=loglevel)
+
+        # Local accumulation - avoid Manager().dict() overhead during computation
+        local_varstat = {}
 
         # from python 3.14 this has to be into the worker
         units_extra_definition()
@@ -432,7 +387,10 @@ class PerformanceIndices:
                     dictarray['bias'][var] = final - cfield if 'final' in locals() else None
 
             # nested dictionary, to be redefined as a dict to remove lambdas
-            varstat[var] = result
+            local_varstat[var] = result
+        
+        # store the local results into the shared dictionary
+        varstat.update(local_varstat)
 
 
 def pi_entry_point():
@@ -465,3 +423,4 @@ def performance_indices(exp, year1, year2, config='config.yml', loglevel='WARNIN
     pi.run()
     pi.store()
     pi.plot()
+    pi.final_toc()

@@ -95,13 +95,19 @@ class GlobalMean:
         self.varmean = None
         self.vartrend = None
         self.start_time = time()
+        self.current_time = time()
         self.title = title
 
     def toc(self, message):
         """Update the timer and log the elapsed time."""
-        elapsed_time = time() - self.start_time
-        self.start_time = time()
+        elapsed_time = time() - self.current_time
+        self.current_time = time()
         self.loggy.info('%s time: %.2f seconds', message, elapsed_time)
+
+    def final_toc(self):
+        """Log the total elapsed time since the start."""
+        total_elapsed_time = time() - self.start_time
+        self.loggy.info('Total execution time: %.2f seconds', total_elapsed_time)
 
     def prepare(self):
         """Prepare the necessary components for the global mean computation."""
@@ -257,39 +263,6 @@ class GlobalMean:
             self.loggy.info('Returning figure object')
             return fig
 
-    # def plot(self, mapfile=None, figformat='pdf'):
-    #     """"
-    #     Plot the global mean values.
-    #     Args:
-    #         mapfile: Path to the output file. If None, it will be defined automatically following ECmean syntax
-    #         figformat: Format of the output file.
-    #     """
-
-    #     # load yaml file if is missing
-    #     if not self.varmean:
-    #         yamlfile = self.diag.filenames('yml')
-    #         self.loggy.info('Loading the stored data from the yaml file %s', yamlfile)
-    #         if os.path.isfile(yamlfile):
-    #             with open(yamlfile, 'r', encoding='utf-8') as file:
-    #                 self.varmean = yaml.safe_load(file)
-    #         else:
-    #             raise FileNotFoundError(f'YAML file {yamlfile} not found')
-
-    #     # prepare the dictionaries for the plotting
-    #     obsmean, obsstd, data2plot, units_list = prepare_clim_dictionaries_gm(self.varmean, self.ref,
-    #                                                                           self.diag.var_all, self.diag.seasons,
-    #                                                                           self.diag.regions)
-    #     if mapfile is None:
-    #         mapfile = self.diag.filenames(figformat)
-    #     self.loggy.info('Figure file is: %s', mapfile)
-
-    #     # call the heatmap for plottinh
-    #     heatmap_comparison_gm(data_dict=data2plot, mean_dict=obsmean, std_dict=obsstd,
-    #                           diag=self.diag, units_list=units_list,
-    #                           filemap=mapfile, addnan=self.diag.addnan)
-
-
-
     @staticmethod
     def gm_worker(util, ref, face, diag, varmean, vartrend, varlist, loglevel):
         """"
@@ -411,3 +384,4 @@ def global_mean(exp, year1, year2, config='config.yml', loglevel='WARNING', nump
     gm.run()
     gm.store()
     gm.plot()
+    gm.final_toc()

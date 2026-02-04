@@ -12,7 +12,6 @@ __author__ = "Paolo Davini (p.davini@isac.cnr.it), Sep 2022."
 
 import os
 import sys
-import logging
 from multiprocessing import Process, Manager
 from time import time
 from tabulate import tabulate
@@ -96,13 +95,19 @@ class GlobalMean:
         self.varmean = None
         self.vartrend = None
         self.start_time = time()
+        self.current_time = time()
         self.title = title
 
     def toc(self, message):
         """Update the timer and log the elapsed time."""
-        elapsed_time = time() - self.start_time
-        self.start_time = time()
+        elapsed_time = time() - self.current_time
+        self.current_time = time()
         self.loggy.info('%s time: %.2f seconds', message, elapsed_time)
+
+    def final_toc(self):
+        """Log the total elapsed time since the start."""
+        total_elapsed_time = time() - self.start_time
+        self.loggy.info('Total execution time: %.2f seconds', total_elapsed_time)
 
     def prepare(self):
         """Prepare the necessary components for the global mean computation."""
@@ -119,8 +124,6 @@ class GlobalMean:
 
         comp = self.face['model']['component']
         inifiles = get_inifiles(self.face, self.diag)
-
-        units_extra_definition()
 
         self.util_dictionary = Supporter(
             comp, inifiles['atm'], inifiles['oce'], areas=True, remap=False
@@ -145,7 +148,8 @@ class GlobalMean:
                                                         self.diag,
                                                         self.varmean,
                                                         self.vartrend,
-                                                        varlist))
+                                                        varlist,
+                                                        self.loglevel))
             core.start()
             processes.append(core)
 
@@ -222,12 +226,11 @@ class GlobalMean:
         self.toc('Storing')
 
     def plot(self, diagname="global_mean", mapfile=None, figformat='pdf', storefig=True, returnfig=False, addnan=True):
-        
         """
-        Generate the heatmap for performance indices.
+        Generate the heatmap for global mean.
 
         Args:
-            diagname (str): Name of the diagnostic. Default is 'performance_indices'.
+            diagname (str): Name of the diagnostic. Default is 'global_mean'.
             mapfile (str): Path to the output file. If None, it will be defined automatically following ECmean syntax.
             figformat (str): Format of the output file. Default is 'pdf'.
             storefig (bool): If True, store the figure in the specified file. Default is True.
@@ -243,11 +246,12 @@ class GlobalMean:
             self.varmean = load_output_yaml(self.diag.filenames('yml'))
         if mapfile is None:
             mapfile = self.diag.filenames(figformat)
-        plot_kwargs = {'title': self.title} if self.title is not None else {}
+
         fig = plotter.heatmap_plot(
-            data=self.varmean, reference=self.ref,
+            data=self.varmean, base=self.ref,
             variables=self.diag.var_all,
-            filename=mapfile, storefig=storefig, addnan=addnan, **plot_kwargs
+            filename=mapfile, storefig=storefig, addnan=addnan, 
+            title=self.title, reference=self.diag.reference
         )
         if self.diag.ftable:
             self.loggy.info('Line file is: %s', self.diag.linefile)
@@ -259,46 +263,29 @@ class GlobalMean:
             self.loggy.info('Returning figure object')
             return fig
 
-    # def plot(self, mapfile=None, figformat='pdf'):
-    #     """"
-    #     Plot the global mean values.
-    #     Args:
-    #         mapfile: Path to the output file. If None, it will be defined automatically following ECmean syntax
-    #         figformat: Format of the output file.
-    #     """
-
-    #     # load yaml file if is missing
-    #     if not self.varmean:
-    #         yamlfile = self.diag.filenames('yml')
-    #         self.loggy.info('Loading the stored data from the yaml file %s', yamlfile)
-    #         if os.path.isfile(yamlfile):
-    #             with open(yamlfile, 'r', encoding='utf-8') as file:
-    #                 self.varmean = yaml.safe_load(file)
-    #         else:
-    #             raise FileNotFoundError(f'YAML file {yamlfile} not found')
-
-    #     # prepare the dictionaries for the plotting
-    #     obsmean, obsstd, data2plot, units_list = prepare_clim_dictionaries_gm(self.varmean, self.ref,
-    #                                                                           self.diag.var_all, self.diag.seasons,
-    #                                                                           self.diag.regions)
-    #     if mapfile is None:
-    #         mapfile = self.diag.filenames(figformat)
-    #     self.loggy.info('Figure file is: %s', mapfile)
-
-    #     # call the heatmap for plottinh
-    #     heatmap_comparison_gm(data_dict=data2plot, mean_dict=obsmean, std_dict=obsstd,
-    #                           diag=self.diag, units_list=units_list,
-    #                           filemap=mapfile, addnan=self.diag.addnan)
-
-
-
     @staticmethod
-    def gm_worker(util, ref, face, diag, varmean, vartrend, varlist):
+    def gm_worker(util, ref, face, diag, varmean, vartrend, varlist, loglevel):
         """"
         Workhorse for the global mean computation.
 
+        Args:
+            util (Supporter): Utility dictionary for remapping and masks.
+            ref (dict): Reference climatology dictionary.
+            face (dict): Interface dictionary.
+            diag (Diagnostic): Diagnostic instance.
+            varmean (dict): Shared dictionary to store variable means.
+            vartrend (dict): Shared dictionary to store variable trends.
+            varlist (dict): List of variables to process.
+            varlist (list): List of variables to process.
         """
-        loggy = logging.getLogger(__name__)
+        loggy = setup_logger(level=loglevel)
+
+        # from python 3.14 this has to be into the worker
+        units_extra_definition()
+
+        # Local accumulation - avoid Manager().dict() overhead during computation
+        local_varmean = {}
+        local_vartrend = {}
 
         for var in varlist:
             result = init_mydict(diag.seasons, diag.regions)
@@ -316,7 +303,10 @@ class GlobalMean:
                                                   clim=ref, face=face).units_converter()
 
                     if not isinstance(infile, (xr.DataArray, xr.Dataset)):
-                        xfield = xr.open_mfdataset(infile, preprocess=xr_preproc, chunks={'time': 12})
+                        xfield = xr.open_mfdataset(
+                            infile, preprocess=xr_preproc, chunks={'time': 12},
+                            data_vars='all', combine='by_coords', 
+                            compat='no_conflicts')
                     else:
                         xfield = infile
 
@@ -361,8 +351,12 @@ class GlobalMean:
                             if season == 'ALL' and region == 'Global':
                                 loggy.info('Average: %s %s %s %s', var, season, region, result[season][region])
 
-            varmean[var] = result
-            vartrend[var] = trend
+            local_varmean[var] = result
+            local_vartrend[var] = trend
+
+        # OPTIMIZATION: Single bulk write to Manager.dict() at the end
+        varmean.update(local_varmean)
+        vartrend.update(local_vartrend)
 
 
 def gm_entry_point():
@@ -380,13 +374,14 @@ def gm_entry_point():
 
 def global_mean(exp, year1, year2, config='config.yml', loglevel='WARNING', numproc=1,
                 interface=None, model=None, ensemble='r1i1p1f1', addnan=False, silent=None,
-                trend=None, line=None, outputdir=None, xdataset=None, reference=None):
+                trend=None, line=None, outputdir=None, xdataset=None, reference=None, title=None):
     """Wrapper function to compute the global mean."""
     gm = GlobalMean(exp, year1, year2, config,
                     loglevel=loglevel, numproc=numproc, interface=interface, model=model,
                     ensemble=ensemble, addnan=addnan, silent=silent, trend=trend,
-                    line=line, outputdir=outputdir, xdataset=xdataset, reference=reference)
+                    line=line, outputdir=outputdir, xdataset=xdataset, reference=reference, title=title)
     gm.prepare()
     gm.run()
     gm.store()
     gm.plot()
+    gm.final_toc()

@@ -101,7 +101,6 @@ def test_global_mean_amip_xdataset_config_dict():
 
 # call on historical CMIP6
 
-
 def test_global_mean_CMIP6():
     file1 = 'tests/table/global_mean_historical_EC-Earth3_r1i1p1f1_1990_1991.txt'
     file2 = 'tests/table/global_mean_CMIP6_1990_1991.ref'

@@ -11,7 +11,7 @@ authors = [
 ]
 description = "ECmean4 Global Climate Model lightweight evaluation tool"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Intended Audience :: Science/Research",

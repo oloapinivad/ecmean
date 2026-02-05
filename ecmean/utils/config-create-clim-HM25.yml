@@ -1,0 +1,33 @@
+# Choice of model name, determines the chosen interface and is printed in the output table
+interface: CMIP6_esgpull
+model:
+   name: EC-Earth3
+
+dirs:
+   exp: /archive/paolo/esgpull
+   tab: /work/scratch/users/paolo/ecmean_cmip6
+   fig: /work/users/paolo/figures/ECmean4
+
+global_mean:
+  variables:
+    atm: [tas, psl, pr, evspsbl, pme, clt, cll, clm, clh,
+              pr_oce, pme_oce, pr_land, pme_land,
+              net_toa, rsnt, rlnt, rsntcs, rlntcs, swcf, lwcf,
+              rsns, rlns, hfss, hfls, net_sfc_nosn, net_sfc,
+              toamsfc_nosn, toamsfc]
+    oce: [tos, sos, zos, wfo]
+    ice: [siconc_north, siconc_south]
+    tab: [rsnt, rlnt, net_toa, rsns, rlns, hfss, hfls, swcf, lwcf, net_sfc, toamsfc,
+              tas, clt, cll, clm, clh, pr, pme, psl]
+  regions: ['Global', 'North Midlat', 'Tropical', 'South Midlat']
+  seasons: ['ALL', 'DJF', 'JJA']
+
+performance_indices:
+  variables:
+    atm2d: [net_sfc, tas, psl, pr, tauu, tauv]
+    atm3d: [ta, ua, va, hus]
+    oce: [tos, sos]
+    ice: [siconc]
+  regions: ['Global', 'North Midlat', 'Tropical', 'South Midlat']
+  seasons: ['ALL', 'DJF', 'JJA']
+  resolution: r360x180

@@ -59,7 +59,7 @@ def test_performance_indices_omip():
 @pytest.mark.parametrize("clim", ['EC23', 'EC24'])
 def test_cmd_performance_indices_CMIP6(clim):
     subprocess.run(['performance_indices', 'historical', '1990', '1990', '-j', '2', '-c',
-                    'tests/config_CMIP6.yml', '--climatology', clim, '-m', 'EC-Earth3', '-l', 'debug'],
+                    'tests/config_CMIP6.yml', '--climatology', clim, '--model', 'EC-Earth3', '-l', 'debug'],
                    env=env, check=True)
     file1 = 'tests/table/PI4_' + clim + '_historical_EC-Earth3_r1i1p1f1_1990_1990.yml'
     file2 = 'tests/table/PI4_' + clim + '_CMIP6_1990_1990.ref'
@@ -70,7 +70,7 @@ def test_cmd_performance_indices_CMIP6(clim):
 
 #test performance_indices from commnand line + debug
 @pytest.mark.parametrize("clim", ['EC24'])
-def test_cmd_performance_indices_CMIP6_special(clim):
+def test_performance_indices_CMIP6_special(clim):
     with open('tests/config_EC24.yml', 'r', encoding='utf8') as configfile:
         configdict = yaml.safe_load(configfile)
     pi = PerformanceIndices('historical', 1990, 1990, config=configdict, climatology=clim, loglevel='debug',

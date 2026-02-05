@@ -101,7 +101,7 @@ def get_clim_files(piclim, var, diag, season):
     datayear1 = piclim[var].get('year1', None)
     datayear2 = piclim[var].get('year2', None)
 
-    if diag.climatology not in ['EC23', 'EC24']:
+    if diag.climatology not in ['EC23', 'EC24', 'HM25']:
         raise ValueError(f'Climatology {diag.climatology} not supported/existing!')
     
     stringname='climate' if season == 'ALL' else 'seasons'
@@ -181,35 +181,72 @@ def _expand_filename(filenames, var, diag):
         ensemble=diag.ensemble,
         grid=diag.grid,
         model=diag.modelname,
-        version=diag.version
+        version=diag.version,
+        consortium=diag.consortium,
+        mip=diag.mip
     ))
 
 
 def _filter_filename_by_year(template, filenames, year):
-    """Find filename containing a given year in a list of filenames"""
+    """
+    Filter filenames that contain data for a specific year.
+    
+    Args:
+        template (str): File template pattern used to determine if year filtering applies
+        filenames (list): List of actual filenames to filter
+        year (int): Target year to filter for
+        
+    Returns:
+        list: Filtered list of filenames containing the target year
+        
+    The function handles two filename patterns:
+    - Files with year ranges: 'file_199001-199012.nc' or 'file_1990-1991.nc'
+    - Files without year information: returns all files unchanged
+    """
 
-    # if year1 is used in the file template
-    if 'year1' in template:
-        # Assumes that the file name ends with 199001-199012.nc or 1990-1991.nc
-        year1 = [int(x.split('_')[-1].split('-')[0][0:4]) for x in filenames]
-        # if year2 is used in the file template
-        if 'year2' in template:
-            year2 = [int(x.split('_')[-1].split('-')[1][0:4]) for x in filenames]
-        else:
-            year2 = year1
-        # filter names
-        filternames = [fname for y1, y2, fname in zip(year1, year2, filenames)
-                       if year >= y1 and year <= y2]
+    # Early return if no filenames provided
+    if not filenames:
+        return []
+
+    # If template doesn't use year placeholders, return all files
+    if 'year1' not in template:
+        loggy.debug('Template has no year placeholders, returning all %d files', len(filenames))
+        return filenames
+
+    # Extract year ranges from filenames and filter
+    filtered_files = []
+
+    for filename in filenames:
+        try:
+            # Extract the date part (assumes format: *_YYYYMM-YYYYMM.nc or *_YYYY-YYYY.nc)
+            date_part = filename.split('_')[-1].split('.')[0]  # Remove extension
+
+            if '-' not in date_part:
+                loggy.warning('Filename %s does not contain expected date range format', filename)
+                continue
+   
+            start_date, end_date = date_part.split('-', 1)
+
+            # Extract 4-digit years from start and end dates
+            start_year = int(start_date[:4])
+            end_year = int(end_date[:4]) if 'year2' in template else start_year
+
+            # Check if target year falls within the file's time range
+            if start_year <= year <= end_year:
+                filtered_files.append(filename)
+
+        except (ValueError, IndexError) as e:
+            loggy.warning('Failed to parse year from filename %s: %s', filename, e)
+            continue
+
+    # Log results
+    if not filtered_files and filenames:
+        loggy.warning('No files found containing data for year %d', year)
     else:
-        # this is introduced for file that does not have year in their filename
-        filternames = filenames
-
-    # safety warning if something is missing
-    if not filternames and len(filenames) > 0:
-        loggy.warning('Data for year %s has not been found!', str(year))
-
-    loggy.debug('Filtered filenames: %s', filternames)
-    return filternames
+        loggy.debug('Filtered %d files for year %d: %s',
+                   len(filtered_files), year, filtered_files)
+    
+    return filtered_files
 
 
 def load_yaml(infile):
@@ -257,35 +294,68 @@ def _create_filepath(cmorname, face, diag):
 
 
 def make_input_filename(cmorname, face, diag):
-    """Create full input filepaths for the required variable and a given year
-
-    Returns:
-        a list of files to be loaded by xarray
     """
-
-    # if a dataarray is provided
+    Create full input filepaths for the required variable and given years.
+    
+    Args:
+        cmorname (str): CMOR variable name to process
+        face (dict): Interface configuration containing variable and file definitions
+        diag (object): Diagnostic object containing years, paths, and other metadata
+        
+    Returns:
+        list or xarray.Dataset: Either a list of file paths to be loaded by xarray,
+                               or the provided xarray dataset if already available
+    """
+    
+    # Early return if dataset is already provided
     if diag.xdataset is not None:
+        loggy.debug('Using provided xarray dataset for variable %s', cmorname)
         return diag.xdataset
 
-    # detect if it is a derived vars and get the list of var to be loaded
-    varname = _get_variables_to_load(cmorname, face)
+    # Get variables to load (handles derived variables)
+    variables_to_load = _get_variables_to_load(cmorname, face)
+    loggy.debug('Variables to load for %s: %s', cmorname, variables_to_load)
 
-    # create filepath
-    filepath = _create_filepath(cmorname, face, diag)
+    # Create base filepath template
+    filepath_template = _create_filepath(cmorname, face, diag)
 
-    # create the file structure according to the interface file
-    filename = []
+    # Collect all matching files across years and variables
+    all_files = set()  # Use set to automatically handle duplicates
+    
     for year in diag.years_joined:
-        filename1 = []
-        for var in varname:
-            expandfile = _expand_filename(filepath, var, diag)
-            filenames = glob(str(expandfile))
-            fname = _filter_filename_by_year(str(filepath), filenames, year)
-            filename1 = filename1 + fname
-        filename = filename + filename1
-    filename = list(dict.fromkeys(filename))  # Filter unique ones
-    loggy.debug("Filenames: %s", filename)
-    return filename
+        for variable in variables_to_load:
+            # Expand filepath with variable-specific information
+            expanded_filepath = _expand_filename(filepath_template, variable, diag)
+            
+            # Find matching files using glob
+            matching_files = glob(str(expanded_filepath))
+            
+            if not matching_files:
+                loggy.warning('No files found for variable %s, year %d with pattern: %s',
+                             variable, year, expanded_filepath)
+                continue
+            
+            # Filter files by year and add to collection
+            year_filtered_files = _filter_filename_by_year(
+                str(filepath_template), matching_files, year
+            )
+            
+            if year_filtered_files:
+                all_files.update(year_filtered_files)
+            else:
+                loggy.warning('No files found for variable %s, year %d after year filtering',
+                             variable, year)
+    
+    # Convert to sorted list for consistent ordering
+    final_filelist = sorted(list(all_files))
+    
+    if not final_filelist:
+        loggy.error('No input files found for variable %s across all requested years', cmorname)
+    else:
+        loggy.info('Collected %d unique files for variable %s', len(final_filelist), cmorname)
+        loggy.debug('Final file list: %s', final_filelist)
+    
+    return final_filelist
 
 
 def _get_variables_to_load(var, face):

@@ -26,19 +26,24 @@ def parse_arguments(args, script):
     parser.add_argument('-i', '--interface', type=str, default='',
                         help='interface (overrides config.yml)')
     parser.add_argument('-c', '--config', type=str, default='',
-                        help='config file')
+                            help='config file')
     parser.add_argument('-j', dest="numproc", type=int, default=1,
                         help='number of processors to use')
-    parser.add_argument('-m', '--model', type=str, default='',
-                        help='model name')
-    parser.add_argument('-e', '--ensemble', type=str, default='r1i1p1f1',
-                        help='variant label (ripf number for cmor)')
-    parser.add_argument('-s', '--silent', action='store_true',
-                        help='do not print anything to std output')
     parser.add_argument('-l', '--loglevel', type=str, default='WARNING',
                         help='define the level of logging.')
     parser.add_argument('-o', '--outputdir', type=str,
                         help='force the output directory')
+    # cmip specifications
+    parser.add_argument('--model', type=str, default=None,
+                        help='model name')
+    parser.add_argument('--ensemble', type=str, default=None,
+                        help='variant label (ripf number for cmor)')
+    parser.add_argument('--consortium', type=str, default=None,
+                        help='consortium name (e.g. EC-Earth-Consortium, CNRM, etc.)')
+    parser.add_argument('--mip', type=str, default='CMIP',
+                        help='MIP name (e.g. CMIP, HighResMIP, etc.)')
+    parser.add_argument('-s', '--silent', action='store_true',
+                        help='do not print anything to std output')
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + __version__)
 

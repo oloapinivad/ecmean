@@ -38,6 +38,7 @@ dask.config.set(scheduler="synchronous")
 
 class GlobalMean:
     """
+
     Attributes:
         exp (str): Experiment name.
         year1 (int): Start year of the experiment.
@@ -78,17 +79,20 @@ class GlobalMean:
     """
 
     def __init__(self, exp, year1, year2, config='config.yml', loglevel='WARNING', numproc=1,
-                 interface=None, model=None, ensemble='r1i1p1f1', addnan=False, silent=None,
-                 trend=None, line=None, outputdir=None, xdataset=None, reference='EC23', title=None):
+                 interface=None, addnan=False, silent=None,
+                 trend=None, line=None, outputdir=None, xdataset=None, reference='EC23',
+                 model=None, ensemble=None, consortium=None, mip=None, title=None):
 
         self.loglevel = loglevel
         self.loggy = setup_logger(level=self.loglevel)
         self.diag = Diagnostic(exp, year1, year2, config,
                                funcname=self.__class__.__name__,
-                               numproc=numproc, ensemble=ensemble, interface=interface,
-                               modelname=model, addnan=addnan, silent=silent,
+                               numproc=numproc, interface=interface,
+                               addnan=addnan, silent=silent,
                                trend=trend, line=line, outputdir=outputdir,
-                               xdataset=xdataset, reference=reference)
+                               xdataset=xdataset, reference=reference,
+                               modelname=model, ensemble=ensemble,
+                               consortium=consortium, mip=mip)
         self.face = None
         self.ref = None
         self.util_dictionary = None
@@ -367,19 +371,22 @@ def gm_entry_point():
     global_mean(exp=args.exp, year1=args.year1, year2=args.year2, numproc=args.numproc,
                 trend=args.trend, line=args.line, loglevel=args.loglevel,
                 interface=args.interface, config=args.config, model=args.model,
-                ensemble=args.ensemble, addnan=args.addnan, outputdir=args.outputdir,
+                ensemble=args.ensemble, consortium=args.consortium, mip=args.mip,
+                addnan=args.addnan, outputdir=args.outputdir,
                 reference=args.reference)
     print('ECmean4 Global Mean successfully computed!')
 
 
 def global_mean(exp, year1, year2, config='config.yml', loglevel='WARNING', numproc=1,
-                interface=None, model=None, ensemble='r1i1p1f1', addnan=False, silent=None,
-                trend=None, line=None, outputdir=None, xdataset=None, reference=None, title=None):
+                interface=None, addnan=False, silent=None,
+                trend=None, line=None, outputdir=None, xdataset=None, reference=None,
+                model=None, ensemble=None, consortium=None, mip=None, title=None):
     """Wrapper function to compute the global mean."""
     gm = GlobalMean(exp, year1, year2, config,
-                    loglevel=loglevel, numproc=numproc, interface=interface, model=model,
-                    ensemble=ensemble, addnan=addnan, silent=silent, trend=trend,
-                    line=line, outputdir=outputdir, xdataset=xdataset, reference=reference, title=title)
+                    loglevel=loglevel, numproc=numproc, interface=interface, 
+                    addnan=addnan, silent=silent, trend=trend,
+                    line=line, outputdir=outputdir, xdataset=xdataset, reference=reference,
+                    model=model, ensemble=ensemble, consortium=consortium, mip=mip, title=title)
     gm.prepare()
     gm.run()
     gm.store()

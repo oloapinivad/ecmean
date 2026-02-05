@@ -66,10 +66,6 @@ Optional Arguments
 
    Specify the path of the output directory. This will create a `YAML` and `PDF` folders for table and figures.
 
-.. option:: -m MODEL, --model MODEL
-
-   Specify the model name, overriding the configuration specified in ``config.yml``.
-
 .. option:: --addnan
 
    Activate to plot also in the heatmap also fields which does not have a comparison against observations. Default is False.
@@ -82,16 +78,28 @@ Optional Arguments
 
    Specify the number of processors to use.
 
-.. option:: -e ENSEMBLE, --ensemble ENSEMBLE
+.. option:: --model MODEL
 
-   Specify the variant label (ripf number for cmor).
+   Specify the model name, overriding the configuration specified in ``config.yml``.
+
+.. option:: --ensemble ENSEMBLE
+
+   Specify the cmor ensemble variant label (ripf number for cmor).
+
+.. option:: --consortium CONSORTIUM
+
+   Specify the cmor consortium name (e.g. EC-Earth-Consortium, CNRM, etc.).
+
+.. option:: --mip MIP   
+
+   Specify the cmor MIP name (e.g. CMIP, HighRESMIP, etc.).
 
 Example
 ^^^^^^^
 
 Usage example for CMIP5::
 
-        global_mean historical 1990 1999 -j 12 -m EC-EARTH -e r1i1p1 -i CMIP5
+        global_mean historical 1990 1999 -j 12 --model EC-EARTH --ensemble r1i1p1 -i CMIP5
 
 will compute performance indices for member r1i1p1 of the EC-EARTH model in the CMIP5 historical experiment.
 

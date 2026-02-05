@@ -4,8 +4,8 @@
 # The full path is $basedir/$dir/$filename
 # 
 # basedir can be formatted with: expname
-# dir can be formatted with: expname, var and star (*)
-# filename can be formatted with: expname, year1, year2, var, model, ensemble, frequency and star (*)
+# dir can be formatted with: expname, var and some wildcards (?,*)
+# filename can be formatted with: expname, year1, year2, var, model, ensemble, consortium, mip, frequency and wildcards (?,*)
 #
 # The key 'component' is used to determine the specific type of grid fixes to apply
 # (defined in cdopipe for now)
@@ -15,7 +15,7 @@
 
 # Definition of model name and components belonging to it
 model:
-  basedir: 'CMIP6/CMIP/*/{model}/{expname}'
+  basedir: 'CMIP6/{mip}/{consortium}/{model}/{expname}'
   component:
     atm: cmoratm
     oce: cmoroce
@@ -24,19 +24,19 @@ model:
 # Each variable belongs to a filetype
 filetype: 
   atm2d:
-    filename: '{var}_{frequency}_{model}_{expname}_{ensemble}_{grid}_{year1}01-{year2}12.nc'
+    filename: '{var}_{frequency}_{model}_{expname}_{ensemble}_{grid}_{year1}??-{year2}??.nc'
     dir: '{ensemble}/Amon/{var}/*/*'
     component: cmoratm
   atm3d:
-    filename: '{var}_{frequency}_{model}_{expname}_{ensemble}_{grid}_{year1}01-{year2}12.nc'
+    filename: '{var}_{frequency}_{model}_{expname}_{ensemble}_{grid}_{year1}??-{year2}??.nc'
     dir: '{ensemble}/Amon/{var}/*/*'
     component: cmoratm
   oce2d:
-    filename: '{var}_{frequency}_{model}_{expname}_{ensemble}_{grid}_{year1}01-{year2}12.nc'
+    filename: '{var}_{frequency}_{model}_{expname}_{ensemble}_{grid}_{year1}??-{year2}??.nc'
     dir: '{ensemble}/Omon/{var}/gn/*'
     component: cmoroce
   ice:
-    filename: '{var}_{frequency}_{model}_{expname}_{ensemble}_{grid}_{year1}01-{year2}12.nc'
+    filename: '{var}_{frequency}_{model}_{expname}_{ensemble}_{grid}_{year1}??-{year2}??.nc'
     dir: '{ensemble}/SImon/{var}/gn/*'
     component: cmoroce
 
@@ -44,19 +44,19 @@ filetype:
 # maskfile: where the land-sea mask is, fundamental for atmospheric component 
 # gridfile: where the properties of the grid can be extracted, can be a standard file
 # areafile: where the grid cell area is
-# please not that for both grid area computation and itnerpolation weight computation
-# the code will look in priority from areafile to gridfile to maskfile. 
+# please note that for both grid area computation and interpolation weight computation
+# the code will look in priority from areafile to gridfile to maskfile.
 # inifile can be formatted with all the possible keywords listed above
 # If a relative path is used this is attached to $ECEDIR/$basedir
 component:
   cmoratm:
-    maskfile: 'r1i1p1f*/*/sftlf/*/*/sftlf_fx_{model}_*_{grid}.nc'
+    maskfile: 'r?i?p?f?/*/sftlf/*/*/sftlf_fx_*_*_{grid}.nc'
     gridfile: ''
-    areafile: 'r1i1p1f*/*/areacella/*/*/areacella_fx_{model}_*_{grid}.nc'
+    areafile: 'r?i?p?f?/*/areacella/*/*/areacella_fx_*_*_{grid}.nc'
   cmoroce:
-    maskfile: 'r1i1p1f*/*/sftof/*/*/sftof_Ofx_{model}_*_{grid}.nc'
+    maskfile: 'r?i?p?f?/*/sftof/*/*/sftof_Ofx_*_*_{grid}.nc'
     gridfile: ''
-    areafile: 'r1i1p1f*/*/areacello/*/*/areacello_Ofx_{model}_*_{grid}.nc'
+    areafile: 'r?i?p?f?/*/areacello/*/*/areacello_Ofx_*_*_{grid}.nc'
 
 # Definition of individual variables
 variables:

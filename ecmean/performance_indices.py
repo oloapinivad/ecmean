@@ -37,28 +37,6 @@ class PerformanceIndices:
     """
     Class to compute the performance indices for a given experiment and years.
 
-    Attributes:
-        exp (str): Experiment name.
-        year1 (int): Start year of the experiment.
-        year2 (int): End year of the experiment.
-        config (str): Path to the configuration file. Default is 'config.yml'.
-        loglevel (str): Logging level. Default is 'WARNING'.
-        numproc (int): Number of processes to use. Default is 1.
-        climatology (str): Climatology to use. Default is 'EC23'.
-        interface (str): Path to the interface file.
-        model (str): Model name.
-        ensemble (str): Ensemble identifier. Default is 'r1i1p1f1'.
-        silent (bool): If True, suppress output. Default is None.
-        xdataset (xarray.Dataset): Dataset to use.
-        outputdir (str): Directory to store output files.
-        loggy (logging.Logger): Logger instance.
-        diag (Diagnostic): Diagnostic instance.
-        face (dict): Interface dictionary.
-        piclim (dict): Climatology dictionary.
-        util_dictionary (Supporter): Utility dictionary for remapping and masks.
-        varstat (dict): Dictionary to store variable statistics.
-        funcname (str): Name of the class.
-        start_time (float): Start time for performance measurement.
         title (str): Title of the plot, overrides default title.
     Methods:
         toc(message):
@@ -77,9 +55,10 @@ class PerformanceIndices:
 
     def __init__(self, exp, year1, year2, config='config.yml',
                  loglevel='WARNING', numproc=1, climatology=None,
-                 interface=None, model=None, ensemble='r1i1p1f1',
+                 interface=None,
                  silent=None, xdataset=None, outputdir=None,
-                 extrafigure=False, title=None):
+                 extrafigure=False,
+                 model=None, ensemble=None, consortium=None, mip=None, title=None):
         """Initialize the PerformanceIndices class with the given parameters."""
 
         self.loglevel = loglevel
@@ -88,8 +67,9 @@ class PerformanceIndices:
                                funcname=self.__class__.__name__,
                                numproc=numproc, climatology=climatology,
                                interface=interface,
+                               outputdir=outputdir, xdataset=xdataset,
                                modelname=model, ensemble=ensemble,
-                               outputdir=outputdir, xdataset=xdataset)
+                               consortium=consortium, mip=mip)
         self.silent = silent
         self.face = None
         self.piclim = None
@@ -404,19 +384,24 @@ def pi_entry_point():
                         numproc=args.numproc, loglevel=args.loglevel,
                         climatology=args.climatology,
                         interface=args.interface, config=args.config,
-                        model=args.model, ensemble=args.ensemble, outputdir=args.outputdir)
+                        model=args.model, ensemble=args.ensemble, 
+                        consortium=args.consortium, mip=args.mip,
+                        outputdir=args.outputdir)
 
 
 def performance_indices(exp, year1, year2, config='config.yml', loglevel='WARNING',
                         numproc=1, climatology=None, interface=None, model=None,
-                        ensemble='r1i1p1f1', silent=None, xdataset=None, outputdir=None,
+                        ensemble=None, consortium=None, mip=None,
+                        silent=None, xdataset=None, outputdir=None,
                         title=None):
     """
     Wrapper function to compute the performance indices for a given experiment and years.
     """
     pi = PerformanceIndices(exp=exp, year1=year1, year2=year2, config=config,
                             loglevel=loglevel, numproc=numproc, climatology=climatology,
-                            interface=interface, model=model, ensemble=ensemble, silent=silent,
+                            interface=interface, model=model, ensemble=ensemble, 
+                            consortium=consortium, mip=mip,
+                            silent=silent,
                             xdataset=xdataset, outputdir=outputdir, 
                             title=title)
     pi.prepare()

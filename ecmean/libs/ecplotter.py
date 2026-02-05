@@ -75,8 +75,8 @@ class ECPlotter:
         title = title if title is not None else self.default_title
         climatology = climatology if climatology is not None else "EC23"
 
-        if climatology not in ["EC23", "EC24"]:
-            raise ValueError("Invalid climatology type. Choose 'EC23' or 'EC24'.")
+        if climatology not in ["EC23", "EC24", "HM25"]:
+            raise ValueError("Invalid climatology type. Choose 'EC23', 'EC24' or 'HM25'.")
         loggy.debug("Data is: %s", data)
         if isinstance(data, str):
             data = yaml.safe_load(data)

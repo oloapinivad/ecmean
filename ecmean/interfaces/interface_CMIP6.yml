@@ -15,7 +15,7 @@
 
 # Definition of model name and components belonging to it
 model:
-  basedir: 'CMIP6/CMIP/*/{model}/{expname}'
+  basedir: 'CMIP6/{mip}/{consortium}/{model}/{expname}'
   component:
     atm: cmoratm
     oce: cmoroce

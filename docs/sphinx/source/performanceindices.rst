@@ -81,7 +81,7 @@ Optional Arguments
 
 .. option:: --climatology CLIMATOLOGY
 
-    Specify the climatology you want to use (EC23: default).
+    Specify the climatology you want to use. Options are EC23 (default) or EC24.
 
 .. option:: --resolution RESOLUTION
 
@@ -252,8 +252,8 @@ Properties of the climatology - as which interpolation method and which CMIP6 mo
      - ESA-CCI-L4
      - 11 CMIP6 models over 1985-2014
 
-Climatology computaton
-^^^^^^^^^^^^^^^^^^^^^^
+Climatology computation
+^^^^^^^^^^^^^^^^^^^^^^^
 
 Climatology is computed by the ``ecmean/utils/clim-create.py`` script, which is included in the repository for documentation.
 It is based on a YML file which is tells the script where to retrieve the data, identifying all the required data folder, names and description. 

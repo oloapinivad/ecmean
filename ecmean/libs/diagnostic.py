@@ -78,7 +78,10 @@ class Diagnostic():
         self.addnan = addnan
         if self.year1 == self.year2:
             self.ftrend = False
-        print(f'Welcome to ECmean4 v{self.version}: Running {self.funcname} with {self.numproc} cores!')
+        
+        print(f'Welcome to ECmean4 v{self.version}: Running {self.funcname} '
+              f'with {self.numproc} cores on experiment {self.expname} '
+              f'for {len(self.years_joined)} years ({self.year1}-{self.year2})')
 
         #  These are here in prevision of future expansion to CMOR
         self.grid = '*'

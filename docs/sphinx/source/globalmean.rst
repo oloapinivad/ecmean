@@ -94,7 +94,6 @@ Optional Arguments
 
    Specify the cmor MIP name (e.g. CMIP, HighRESMIP, etc.).
 
-
 Example
 ^^^^^^^
 

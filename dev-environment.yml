@@ -7,7 +7,7 @@ name : dev-ecmean
 channels:
   - conda-forge
 dependencies:
-  - python>3.9
+  - python>=3.9,<=3.14
   - libnetcdf
   - xesmf
   - dask

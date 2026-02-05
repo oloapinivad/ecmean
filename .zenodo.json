@@ -19,6 +19,11 @@
             "name": "Tovazzi, Emanuele",
             "affiliation": "CNR-ISAC, Italy",
             "orcid": "0000-0001-9838-4249"
+        },
+        {
+            "name": "Albanese, Marianna",
+            "affiliation": "Politecnico di Torino, Italy",
+            "orcid": "0009-0001-6011-4849"
         }
     ],
     "description": "A lightweight global climate model evaluation tool",

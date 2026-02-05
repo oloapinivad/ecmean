@@ -2,7 +2,7 @@
 #most of the file properties are hard-coded from this file
 
 # climatology ID
-clim: EC26_1980_2010
+clim: HIST26
 
 # directories to be specified, machine dependent
 dirs: 
@@ -12,22 +12,14 @@ dirs:
   archivedir: "/work/datasets/obs"
 
 # climatological dataset, remapping method and other features
-# tas_land: 
-#   dataset: CRU
-#   longname: '2m Temperature (land-only)'
-#   description: CRU TS4.05 Mean Temperature
-#   varname: tmp
-#   units: degC
-#   remap: remapbil
-#   dir: "{datadir}/{dataset}/data/*.nc" 
 tas: 
-  dataset: BERKELEY-EARTH
-  longname: '2m Temperature'
-  description: Berkeley Earth Mean Temperature
-  varname: 2t
+  dataset: CRU
+  longname: '2m Temperature (land-only)'
+  description: CRU TS4.09 Mean Temperature
+  varname: tmp
   units: degC
   remap: remapbil
-  dir: "{datadir}/{dataset}/Berkeley-Earth_aqua-filled_1x1_1979-2024.nc"
+  dir: "{datadir}/{dataset}/data/v4.09/*.nc" 
 pr:
   dataset: MSWEP
   longname: Precipitation

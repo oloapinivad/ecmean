@@ -41,11 +41,11 @@ variables = ['tas', 'pr', 'net_sfc', 'tauu', 'tauv', 'psl',
              'ua', 'va', 'ta', 'hus', 'tos', 'sos', 'siconc']
 
 # to set: time period (default, can be shorter if data are missing) #WARNING MISSING
-year1 = 2000
-year2 = 2024
+year1 = 1980
+year2 = 2010
 
 # yml file to get information on dataset on some machine
-CLIM = 'EC26_2000_2024'
+CLIM = 'HIST26'
 clim_info = f'/work/users/malbanes/ECmean4/ecmean/utils/create-clim-wilma-{CLIM}.yml'
 
 # figures : some diagnostic figures can be saved to check the consistency of mean and variance fields

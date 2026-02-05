@@ -1,12 +1,12 @@
 tas:
-  dataset: BERKELEY-EARTH
-  description: Berkeley Earth Mean Temperature
-  longname: 2m Temperature
+  dataset: CRU
+  description: CRU TS4.09 Mean Temperature
+  longname: 2m Temperature (land-only)
   remap: remapbil
-  mask: global
+  mask: land
   units: degC
-  year1: 1980
-  year2: 2010
+  year1: 2000
+  year2: 2024
 pr:
   dataset: MSWEP
   description: Multi-Source Weighted-Ensemble Precipitation v2.1
@@ -14,8 +14,8 @@ pr:
   remap: remapcon
   mask: global
   units: mm/month
-  year1: 1980
-  year2: 2010
+  year1: 2000
+  year2: 2024
 net_sfc:
   dataset: NOCS
   description: NOCS Surface Flux Dataset v2.0
@@ -23,8 +23,8 @@ net_sfc:
   remap: remapcon
   mask: ocean
   units: W m-2
-  year1: 1980
-  year2: 2010
+  year1: 2000
+  year2: 2014
 tauu:
   dataset: ORAS5
   description: ECMWF Ocean Reanalysis System 5
@@ -32,8 +32,8 @@ tauu:
   remap: remapbil
   mask: ocean
   units: N/m2
-  year1: 1980
-  year2: 2010
+  year1: 2000
+  year2: 2022
 tauv:
   dataset: ORAS5
   description: ECMWF Ocean Reanalysis System 5
@@ -41,8 +41,8 @@ tauv:
   remap: remapbil
   mask: ocean
   units: N/m2
-  year1: 1980
-  year2: 2010
+  year1: 2000
+  year2: 2022
 psl:
   dataset: ERA5
   description: ECMWF ERA5 reanalysis
@@ -50,8 +50,8 @@ psl:
   remap: remapbil
   mask: global
   units: Pa
-  year1: 1980
-  year2: 2010
+  year1: 2000
+  year2: 2024
 ua:
   dataset: ERA5
   description: ECMWF ERA5 reanalysis
@@ -59,8 +59,8 @@ ua:
   remap: remapbil
   mask: global
   units: m s-1
-  year1: 1980
-  year2: 2010
+  year1: 2000
+  year2: 2019
 va:
   dataset: ERA5
   description: ECMWF ERA5 reanalysis
@@ -68,8 +68,8 @@ va:
   remap: remapbil
   mask: global
   units: m s-1
-  year1: 1980
-  year2: 2010
+  year1: 2000
+  year2: 2021
 ta:
   dataset: ERA5
   description: ECMWF ERA5 reanalysis
@@ -77,8 +77,8 @@ ta:
   remap: remapbil
   mask: global
   units: K
-  year1: 1980
-  year2: 2010
+  year1: 2000
+  year2: 2021
 hus:
   dataset: ERA5
   description: ECMWF ERA5 reanalysis
@@ -86,8 +86,8 @@ hus:
   remap: remapbil
   mask: global
   units: kg kg-1
-  year1: 1980
-  year2: 2010
+  year1: 2000
+  year2: 2021
 tos:
   dataset: ESA-CCI-L4
   description: ESA SST CCI OSTIA L4 product
@@ -95,8 +95,8 @@ tos:
   remap: remapbil
   mask: ocean
   units: K
-  year1: 1980
-  year2: 2010
+  year1: 2000
+  year2: 2023
 sos:
   dataset: ORAS5
   description: ECMWF Ocean Reanalysis System 5
@@ -104,14 +104,14 @@ sos:
   remap: remapbil
   mask: ocean
   units: PSU
-  year1: 1980
-  year2: 2010
+  year1: 2000
+  year2: 2022
 siconc:
   dataset: ESA-CCI-L4
   description: ESA SST CCI OSTIA L4 product
   longname: Sea-ice Concentration
   remap: remapbil
-  mask: land
+  mask: ocean
   units: fraction
-  year1: 1980
-  year2: 2010
+  year1: 2000
+  year2: 2023

@@ -29,9 +29,6 @@ from ecmean.libs.formula import _eval_formula
 
 cdo = Cdo()
 
-# === DEBUG MODE ===
-DEBUG = False
-
 # set default logging
 logging.basicConfig(level=logging.INFO)
 
@@ -48,16 +45,11 @@ ice_vars = ['siconc', 'siconc_north', 'siconc_south']
 variables = atm_vars + rad_vars + oce_vars + ice_vars
 
 # to set: time period (default, can be shorter if data are missing)
-year1 = 2000
-year2 = 2024
-
-if DEBUG:
-    variables = ['pme']   
-    year1 = 2000
-    year2 = 2024       
+year1 = 1980
+year2 = 2010  
 
 # climatology yml output
-CLIMNAME = 'EC26_2000_2024'
+CLIMNAME = 'HIST26'
 clim_info = f'create-reference-wilma-{CLIMNAME}.yml'
 # yml file to get information on dataset on some machine
 clim_file = os.path.join('../reference', f'gm_reference_{CLIMNAME}.yml')

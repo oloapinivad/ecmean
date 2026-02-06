@@ -1,0 +1,117 @@
+tas:
+  dataset: CRU
+  description: CRU TS4.09 Mean Temperature
+  longname: 2m Temperature (land-only)
+  remap: remapbil
+  mask: land
+  units: degC
+  year1: 1981
+  year2: 2010
+pr:
+  dataset: MSWEP
+  description: Multi-Source Weighted-Ensemble Precipitation v2.1
+  longname: Precipitation
+  remap: remapcon
+  mask: global
+  units: mm/month
+  year1: 1980
+  year2: 2010
+net_sfc:
+  dataset: NOCS
+  description: NOCS Surface Flux Dataset v2.0
+  longname: Net surface radiation flux (downward)
+  remap: remapcon
+  mask: ocean
+  units: W m-2
+  year1: 1980
+  year2: 2010
+tauu:
+  dataset: ORAS5
+  description: ECMWF Ocean Reanalysis System 5
+  longname: Eastward wind stress
+  remap: remapbil
+  mask: ocean
+  units: N/m2
+  year1: 1980
+  year2: 2010
+tauv:
+  dataset: ORAS5
+  description: ECMWF Ocean Reanalysis System 5
+  longname: Northward wind stress
+  remap: remapbil
+  mask: ocean
+  units: N/m2
+  year1: 1980
+  year2: 2010
+psl:
+  dataset: ERA5
+  description: ECMWF ERA5 reanalysis
+  longname: Mean Sea Level Pressure
+  remap: remapbil
+  mask: global
+  units: Pa
+  year1: 1980
+  year2: 2010
+ua:
+  dataset: ERA5
+  description: ECMWF ERA5 reanalysis
+  longname: Zonal Wind
+  remap: remapbil
+  mask: global
+  units: m s-1
+  year1: 1980
+  year2: 2010
+va:
+  dataset: ERA5
+  description: ECMWF ERA5 reanalysis
+  longname: Meridional Wind
+  remap: remapbil
+  mask: global
+  units: m s-1
+  year1: 1980
+  year2: 2010
+ta:
+  dataset: ERA5
+  description: ECMWF ERA5 reanalysis
+  longname: Air Temperature
+  remap: remapbil
+  mask: global
+  units: K
+  year1: 1980
+  year2: 2010
+hus:
+  dataset: ERA5
+  description: ECMWF ERA5 reanalysis
+  longname: Specific humidity
+  remap: remapbil
+  mask: global
+  units: kg kg-1
+  year1: 1980
+  year2: 2010
+tos:
+  dataset: ESA-CCI-L4
+  description: ESA SST CCI OSTIA L4 product
+  longname: Sea Surface Temperature
+  remap: remapbil
+  mask: ocean
+  units: K
+  year1: 1980
+  year2: 2010
+sos:
+  dataset: ORAS5
+  description: ECMWF Ocean Reanalysis System 5
+  longname: Sea Surface Salinity
+  remap: remapbil
+  mask: ocean
+  units: PSU
+  year1: 1980
+  year2: 2010
+siconc:
+  dataset: ESA-CCI-L4
+  description: ESA SST CCI OSTIA L4 product
+  longname: Sea-ice Concentration
+  remap: remapbil
+  mask: land
+  units: fraction
+  year1: 1980
+  year2: 2010

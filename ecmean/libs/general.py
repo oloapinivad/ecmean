@@ -23,16 +23,13 @@ loggy = logging.getLogger(__name__)
 def set_multiprocessing_start_method():
     """Function to set the multiprocessing spawn method to fork"""
     plat = platform.system()
-    # print('Running on %s', plat)
     if plat == 'Windows':
         raise OSError("Windows does not support 'fork' start method.")
-    elif plat == 'Darwin':
+    if plat in ['Darwin', 'Linux']:
         multiprocessing.set_start_method('fork', force=True)
-    elif plat == 'Linux':
-        pass
     else:
         raise OSError(f"Unsupported operative system {plat}")
-    # print('Multiprocessing start method is %s', multiprocessing.get_start_method())
+    loggy.debug('Multiprocessing start method is %s', multiprocessing.get_start_method())
     return plat, multiprocessing.get_start_method()
 
 
@@ -126,7 +123,7 @@ def check_var_climatology(varlist, reference):
     """Check if a var is defined in the climatology/reference file"""
 
     missing = [element for element in varlist if element not in reference]
-    if len(missing) > 0:
+    if missing:
         raise KeyError(f'Variable/Variables {missing} is/are not defined in the climatology, aborting!')
 
 
@@ -157,16 +154,20 @@ def dict_to_dataframe(varstat, allowed = ['ALL', 'DJF', 'JJA', 'MAM', 'SON']):
     Returns:
     pd.DataFrame: Transformed DataFrame with hierarchical keys.
     """
+    # Use set for O(1) lookup instead of O(n) list lookup
+    allowed_seasons = set(allowed)
+
     data_table = {}
-    for i in varstat.keys():
-        pippo = {}
-        for outerkey, innerdict in varstat[i].items():
-            if outerkey in allowed:
-                for innerkey, values in innerdict.items():
-                    pippo[(outerkey, innerkey)] = values
-        data_table[i] = pippo
-    data_table = pd.DataFrame(data_table).T
-    return data_table
+    for var, seasons_dict in varstat.items():
+        var_data = {}
+        for season, regions_dict in seasons_dict.items():
+            # Only process seasons that are in the allowed list
+            if season in allowed_seasons:
+                for region, value in regions_dict.items():
+                    var_data[(season, region)] = value
+
+        data_table[var] = var_data
+    return pd.DataFrame(data_table).T
 
 
 def write_tuning_table(linefile, varmean, var_table, diag, ref):

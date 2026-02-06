@@ -107,3 +107,4 @@ def test_pi_plot(tmp_path):
     pi.prepare()
     pi.plot(mapfile=outputfile)
     assert os.path.isfile(outputfile), "Plot not created."
+

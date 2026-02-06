@@ -1,0 +1,219 @@
+# Configuration yaml file for EC-Earth4 model and variables
+# 
+# Possible filetype attributes for variables are defined in the model section
+# The full path is $ECEDIR/$basedir/$dir/$filename
+# 
+# ECEDIR (defined in config) contains all experiments
+# basedir contains inifiles 
+# dir is where the output files can be found
+# filename is the filanamee maskc
+# All of these can be formatted with: expname, year1, year2, var, star (*) and others
+#
+# The key 'component' is used to determine the specific type of grid fixes to apply
+# (defined in cdopipe for now)
+# 
+# We also have the concept of 'domain' (atm or oce) later used to choose which fix to apply
+# Each component belongs to one and only one domain
+
+# Definition of model name and components belonging to it
+model:
+  basedir: '{expname}'
+  component:
+    atm: cmoratm
+    oce: nemo
+
+# Definition of filetypes (specific for each component)
+# Each variable belongs to a filetype
+filetype: 
+  atm2d:
+    filename: '{expname}_atm_cmip6_1m_{year1}-{year2}.nc'
+    dir: output/oifs
+    component: cmoratm
+  atm3d:
+    filename: '{expname}_atm_cmip6_pl_1m_{year1}-{year2}.nc'
+    dir: output/oifs
+    component: cmoratm
+  oceT:
+    filename: '{expname}_oce_1m_T_{year1}-{year2}.nc'
+    dir: output/nemo
+    component: nemo
+  ice:
+    filename: '{expname}_ice_1m_{year1}-{year2}.nc'
+    dir: output/nemo
+    component: nemo
+
+# Specify additional inifiles  of each component
+# maskfile: where the land-sea mask is, fundamental for atmospheric component 
+# gridfile: where the properties of the grid can be extracted, can be a standard file
+# areafile: where the grid cell area is
+# please not that for both grid area computation and itnerpolation weight computation
+# the code will look in priority from areafile to gridfile to maskfile. 
+# inifile can be formatted with all the possible keywords listed above
+# If a relative path is used this is attached to $ECEDIR/$basedir
+component:
+  cmoratm:
+    maskfile: 'output/oifs/{expname}_atm_cmip6_fx_{year1}-{year2}.nc'
+    gridfile: 'output/oifs/{expname}_atm_cmip6_1*_{year1}-{year2}.nc'
+    areafile: ''
+  nemo:
+    maskfile: 'domain_cfg.nc'
+    gridfile: ''
+    areafile: '/lus/h2resw01/hpcperm/ccpd/ECE4-DATA/nemo/domain/ORCA2/domain_cfg.nc'
+
+# Definition of individual variables
+variables:
+  tas:
+    varname: '2m Air Temperature'
+    filetype: atm2d 
+  cll:
+    varname: 'Low cloud cover'
+    filetype: atm2d
+  clm:
+    varname: 'Medium cloud cover'
+    filetype: atm2d
+  clh:
+    varname: 'High cloud cover'
+    filetype: atm2d
+  clt:
+    varname: 'Total cloud cover'
+    filetype: atm2d
+  ta: 
+    varname: 'Air Temperature'
+    filetype: atm3d
+  ua:
+    varname: 'Zonal Wind'
+    filetype: atm3d
+  va:
+    varname: 'Meridional Wind'
+    filetype: atm3d
+  hus:
+    varname: 'Specific Humidity'
+    filetype: atm3d
+  psl: 
+    varname: MSLP
+    filetype: atm2d
+  pr: 
+    varname: Precipitation
+    filetype: atm2d
+  evspsbl:
+    varname: Evaporation
+    filetype: atm2d
+    direction: up
+  tauu: 
+    varname: 'Zonal Wind Stress'
+    filetype: atm2d
+  tauv:
+    varname: 'Meridional Wind Stress'
+    filetype: atm2d
+  sos:
+    varname: SSS
+    filetype: oceT
+  zos:
+    varname: SSH
+    filetype: oceT
+  tos:
+    varname: SST
+    filetype: oceT
+  siconc:
+    varname: 'Sea-ice Concentration'
+    filetype: ice
+  rsnt:
+    varname: 'TOA net SW'
+    filetype: atm2d
+    direction: down
+  rlnt:
+    varname: 'TOA net LW'
+    filetype: atm2d
+    direction: down
+  net_toa:
+    varname: 'Net TOA'
+    units: W/m2
+    derived: 'rsnt+rlnt'
+    filetype: atm2d
+    direction: down
+  rlns:
+    varname: 'Surface net LW'
+    filetype: atm2d
+    direction: down
+  rsns:
+    varname: 'Surface net SW'
+    filetype: atm2d
+    direction: down
+  hfss:
+    varname: 'Surface SH'
+    filetype: atm2d
+    direction: up
+  hfls:
+    varname: 'Surface LH'
+    filetype: atm2d
+    direction: up
+  net_sfc_nosn:
+    varname: 'Net Surface (no snowfall)'
+    filetype: atm2d
+    derived: 'rsns+rlns-hfls-hfss'
+  net_sfc:
+    varname: 'Net Surface'
+    units: W/m2
+    filetype: atm2d
+    derived: 'rsns+rlns-hfls-hfss-prsn*334000'
+  toamsfc:
+    varname: 'TOA-Sfc net radiation'
+    units: W/m2
+    filetype: atm2d
+    derived: 'rsnt+rlnt-rsns-rlns+hfls+hfss+prsn*334000'
+  toamsfc_nosn:
+    varname: 'TOA-Sfc net rad. (no snowfall)'
+    filetype: atm2d
+    derived: 'rsnt+rlnt-rsns-rlns+hfls+hfss'
+  rsntcs:
+    varname: 'TOA net SW, CS'
+    filetype: atm2d
+  rlntcs:
+    varname: 'TOA net LW, CS'
+    filetype: atm2d
+  pme:
+    varname: 'Precip. minus evap.'
+    derived: 'pr-evspsbl'
+    filetype: atm2d
+  swcf:
+    varname: 'SW CRE'
+    derived: 'rsnt-rsntcs'
+    filetype: atm2d
+  lwcf:
+    varname: 'LW CRE'
+    derived: 'rlnt-rlntcs'
+    filetype: atm2d
+  wfo:
+    varname: 'Net Water Flux into ocean'
+    component: nemo
+    filetype: oceT
+    direction: up
+  pr_land:
+    varname: 'Precipitation (land)'
+    derived: pr
+    filetype: atm2d
+  pr_oce:
+    varname: 'Precipitation (ocean)'
+    derived: pr
+    filetype: atm2d
+  pme_land:
+    varname: 'Precip. minus evap. (land)'
+    derived: 'pr-evspsbl'
+    filetype: atm2d
+  pme_oce:
+    varname: 'Precip. minus evap. (ocean)'
+    derived: 'pr-evspsbl'
+    filetype: atm2d
+  snc:
+    varname: 'Snow fraction'
+    filetype: atm2d
+  siconc_north:
+    varname: 'Sea Ice Area (North Hemisphere)'
+    derived: siconc
+    filetype: ice
+  siconc_south:
+    varname: 'Sea Ice Area (South Hemisphere)'
+    derived: siconc
+    filetype: ice
+
+    

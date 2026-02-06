@@ -10,7 +10,6 @@
 
 import sys
 import os
-import logging
 from time import time
 from multiprocessing import Process, Manager
 import numpy as np
@@ -34,7 +33,6 @@ from ecmean.libs.loggy import setup_logger
 from ecmean.libs.pi_helpers import vertical_interpolation, extract_scalar
 
 dask.config.set(scheduler="synchronous")
-
 
 class PerformanceIndices:
     """
@@ -62,6 +60,7 @@ class PerformanceIndices:
         varstat (dict): Dictionary to store variable statistics.
         funcname (str): Name of the class.
         start_time (float): Start time for performance measurement.
+        title (str): Title of the plot, overrides default title.
     Methods:
         toc(message):
             Update the timer and log the elapsed time.
@@ -81,7 +80,7 @@ class PerformanceIndices:
                  loglevel='WARNING', numproc=1, climatology=None,
                  interface=None, model=None, ensemble='r1i1p1f1',
                  silent=None, xdataset=None, outputdir=None,
-                 extrafigure=False, tool='ESMF'):
+                 extrafigure=False, tool='ESMF', title=None):
         """Initialize the PerformanceIndices class with the given parameters."""
 
         self.loglevel = loglevel
@@ -101,12 +100,19 @@ class PerformanceIndices:
         self.outarray = None
         self.tool = tool
         self.start_time = time()
+        self.current_time = time()
+        self.title = title
 
     def toc(self, message):
         """Update the timer and log the elapsed time."""
-        elapsed_time = time() - self.start_time
-        self.start_time = time()
+        elapsed_time = time() - self.current_time
+        self.current_time = time()
         self.loggy.info('%s time: %.2f seconds', message, elapsed_time)
+    
+    def final_toc(self):
+        """Log the total elapsed time since the start."""
+        total_elapsed_time = time() - self.start_time
+        self.loggy.info('Total execution time: %.2f seconds', total_elapsed_time)
 
     def prepare(self):
         """Prepare the necessary components for performance indices calculation."""
@@ -135,9 +141,6 @@ class PerformanceIndices:
 
         # get file info files
         inifiles = get_inifiles(self.face, self.diag)
-
-        # add missing unit definitions
-        units_extra_definition()
 
         # create remap dictionary with atm and oce interpolators
         self.util_dictionary = Supporter(
@@ -173,7 +176,8 @@ class PerformanceIndices:
         for varlist in weight_split(self.diag.field_all, self.diag.numproc):
             core = Process(target=self.pi_worker, args=(self.util_dictionary, self.piclim,
                                                         self.face, self.diag, self.diag.field_atm3d,
-                                                        self.varstat, self.outarray, varlist, self.tool))
+                                                        self.varstat, self.outarray, varlist, self.tool,
+                                                        self.loglevel))
             core.start()
             processes.append(core)
 
@@ -217,10 +221,11 @@ class PerformanceIndices:
             self.varstat = load_output_yaml(self.diag.filenames('yml'))
         if mapfile is None:
             mapfile = self.diag.filenames(figformat)
+
         fig = plotter.heatmap_plot(
-            data=self.varstat, reference=self.piclim,
+            data=self.varstat, base=self.piclim,
             variables=self.diag.field_all, climatology=self.diag.climatology,
-            filename=mapfile, storefig=storefig)
+            filename=mapfile, storefig=storefig, title=self.title)
         
         self.toc('Plotting')
 
@@ -229,7 +234,7 @@ class PerformanceIndices:
             return fig
 
     @staticmethod
-    def pi_worker(util, piclim, face, diag, field_3d, varstat, dictarray, varlist, tool='ESMF'):
+    def pi_worker(util, piclim, face, diag, field_3d, varstat, dictarray, varlist, tool='ESMF', loglevel):
         """
         Main parallel diagnostic worker for performance indices.
 
@@ -243,7 +248,14 @@ class PerformanceIndices:
             dictarray (dict): Dictionary to store the output array.
             varlist (list): List of variables to process.
         """
-        loggy = logging.getLogger(__name__)
+        loggy = setup_logger(level=loglevel)
+
+        # Local accumulation - avoid Manager().dict() overhead during computation
+        local_varstat = {}
+
+        # from python 3.14 this has to be into the worker
+        units_extra_definition()
+
         for var in varlist:
             # store NaN in dict (can't use defaultdict due to multiprocessing)
             result = init_mydict(diag.seasons, diag.regions)
@@ -270,7 +282,9 @@ class PerformanceIndices:
 
                     # open file: chunking on time only, might be improved
                     if not isinstance(infile, (xr.DataArray, xr.Dataset)):
-                        xfield = xr.open_mfdataset(infile, preprocess=xr_preproc, chunks={'time': 12})
+                        xfield = xr.open_mfdataset(
+                            infile, preprocess=xr_preproc, chunks={'time': 12},
+                            data_vars='all', join='outer', compat='no_conflicts')
                     else:
                         xfield = infile
 
@@ -362,7 +376,10 @@ class PerformanceIndices:
                     dictarray['bias'][var] = final - cfield if 'final' in locals() else None
 
             # nested dictionary, to be redefined as a dict to remove lambdas
-            varstat[var] = result
+            local_varstat[var] = result
+        
+        # store the local results into the shared dictionary
+        varstat.update(local_varstat)
 
 
 def pi_entry_point():
@@ -383,15 +400,16 @@ def pi_entry_point():
 def performance_indices(exp, year1, year2, config='config.yml', loglevel='WARNING',
                         numproc=1, climatology=None, interface=None, model=None,
                         ensemble='r1i1p1f1', silent=None, xdataset=None, outputdir=None,
-                        tool='ESMF'):
+                        title=None, tool='ESMF'):
     """
     Wrapper function to compute the performance indices for a given experiment and years.
     """
     pi = PerformanceIndices(exp=exp, year1=year1, year2=year2, config=config,
                             loglevel=loglevel, numproc=numproc, climatology=climatology,
                             interface=interface, model=model, ensemble=ensemble, silent=silent,
-                            xdataset=xdataset, outputdir=outputdir, tool=tool)
+                            xdataset=xdataset, outputdir=outputdir, title=title, tool=tool)
     pi.prepare()
     pi.run()
     pi.store()
     pi.plot()
+    pi.final_toc()

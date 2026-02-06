@@ -36,7 +36,8 @@ dependencies = [
 
 [project.optional-dependencies]
 tests = [
-    "coverage",
+    "flake8",
+    "coverage>=7.10.0",
     "coveralls",
     "pytest"
 ]
@@ -66,4 +67,7 @@ version = {attr = "ecmean.__version__"}
 
 [tool.coverage.run]
 concurrency = ["multiprocessing"]
+
+[tool.coverage.report]
+ignore_errors = true
 

@@ -91,10 +91,6 @@ Optional Arguments
 
     Specify the climatology you want to use (EC24: default).
 
-.. option:: --resolution RESOLUTION
-
-    Specify the resolution of the climatology (r180x90 or r360x180).
-
 .. option:: -o DIR, --outputdir DIR
 
    Specify the path of the output directory. This will create a `YAML` and `PDF` folders for table and figures.

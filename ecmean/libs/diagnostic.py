@@ -195,9 +195,6 @@ class Diagnostic():
 
         self.field_all = self.field_atm2d + self.field_atm3d + self.field_oce + self.field_ice
 
-        if not self.resolution:
-            self.resolution = cfg['performance_indices']['resolution']
-
         if not self.climatology:
             self.climatology = cfg['performance_indices']['climatology']
 

@@ -59,7 +59,5 @@ def parse_arguments(args, script):
         parser.add_argument('--climatology', type=str, default='EC24',
                             help='climatology to be compared. default: EC24. Options: [EC23, EC24, PDAY26]',
                             choices=['EC23', 'EC24', 'PDAY26'])
-        parser.add_argument('--resolution', type=str, default='',
-                            help='climatology resolution')
         
     return parser.parse_args(args)

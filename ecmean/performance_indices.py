@@ -30,6 +30,7 @@ from ecmean.libs.ncfixers import xr_preproc, adjust_clim_file
 from ecmean.libs.ecplotter import ECPlotter
 from ecmean.libs.parser import parse_arguments
 from ecmean.libs.loggy import setup_logger
+from ecmean.libs.pi_helpers import vertical_interpolation, extract_scalar
 
 dask.config.set(scheduler="synchronous")
 
@@ -79,7 +80,7 @@ class PerformanceIndices:
                  loglevel='WARNING', numproc=1, climatology=None,
                  interface=None, model=None, ensemble='r1i1p1f1',
                  silent=None, xdataset=None, outputdir=None,
-                 extrafigure=False, title=None):
+                 extrafigure=False, tool='ESMF', title=None):
         """Initialize the PerformanceIndices class with the given parameters."""
 
         self.loglevel = loglevel
@@ -97,6 +98,7 @@ class PerformanceIndices:
         self.varstat = None
         self.extrafigure = extrafigure #special key to be set for manual debugging, producing extra figures: DO NOT USE
         self.outarray = None
+        self.tool = tool
         self.start_time = time()
         self.current_time = time()
         self.title = title
@@ -114,6 +116,7 @@ class PerformanceIndices:
 
     def prepare(self):
         """Prepare the necessary components for performance indices calculation."""
+        
         # set dask and multiprocessing fork
         plat, mprocmethod = set_multiprocessing_start_method()
         self.loggy.info('Running on %s and multiprocessing method set as "%s"', plat, mprocmethod)
@@ -142,7 +145,8 @@ class PerformanceIndices:
         # create remap dictionary with atm and oce interpolators
         self.util_dictionary = Supporter(
             comp, inifiles['atm'], inifiles['oce'],
-            areas=False, remap=True, targetgrid=target_remap_grid
+            areas=False, remap=True, targetgrid=target_remap_grid,
+            tool=self.tool
         )
 
         # verify if we can run amip, omip or coupled run
@@ -172,7 +176,7 @@ class PerformanceIndices:
         for varlist in weight_split(self.diag.field_all, self.diag.numproc):
             core = Process(target=self.pi_worker, args=(self.util_dictionary, self.piclim,
                                                         self.face, self.diag, self.diag.field_atm3d,
-                                                        self.varstat, self.outarray, varlist,
+                                                        self.varstat, self.outarray, varlist, self.tool,
                                                         self.loglevel))
             core.start()
             processes.append(core)
@@ -230,7 +234,7 @@ class PerformanceIndices:
             return fig
 
     @staticmethod
-    def pi_worker(util, piclim, face, diag, field_3d, varstat, dictarray, varlist, loglevel):
+    def pi_worker(util, piclim, face, diag, field_3d, varstat, dictarray, varlist, tool='ESMF', loglevel):
         """
         Main parallel diagnostic worker for performance indices.
 
@@ -314,39 +318,20 @@ class PerformanceIndices:
                             vfield = vfield.sel(time=vfield.time.dt.season.isin(season))
 
                         # averaging, applying offset and factor and loading
-                        tmean = (tmean.mean(dim='time') * factor + offset).load()
+                        tmean = (tmean.mean(dim='time') * factor + offset)
 
                         # averaging and loading the climatology
                         cfield = cfield.mean(dim='time').load()
                         vfield = vfield.mean(dim='time').load()
 
-                        # apply interpolation, if fixer is available and with different grids
-                        fix = getattr(util, f'{domain}fix')
-                        remap = getattr(util, f'{domain}remap')
-
-                        if fix:
-                            tmean = fix(tmean, keep_attrs=True)
-                        try:
-                            final = remap(tmean, keep_attrs=True)
-                        except ValueError:
-                            loggy.error('Cannot interpolate %s with the current weights...', var)
-                            continue
+                        # apply interpolation
+                        interpolator = getattr(util, f'{domain}interpolator')
+                        final = interpolator.interpolate(tmean, keep_attrs=True).load()
 
                         # vertical interpolation
                         if var in field_3d:
-                            # xarray interpolation on plev, forcing to be in Pascal
-                            final = final.metpy.convert_coordinate_units('plev', 'Pa')
-                            if set(final['plev'].data) != set(cfield['plev'].data):
-                                loggy.warning('%s: Need to interpolate vertical levels...', var)
-                                final = final.interp(plev=cfield['plev'].data, method='linear')
-
-                                # safety check for missing values
-                                sample = final.isel(lon=0, lat=0)
-                                if np.sum(np.isnan(sample)) != 0:
-                                    loggy.warning(
-                                        '%s: You have NaN after the interpolation, this will affect your PIs...', var)
-                                    levnan = cfield['plev'].where(np.isnan(sample))
-                                    loggy.warning(levnan[~np.isnan(levnan)].data)
+                            # Handle vertical interpolation with improved error handling
+                            final = vertical_interpolation(final, cfield, var)
 
                             # zonal mean
                             final = final.mean(dim='lon')
@@ -373,12 +358,16 @@ class PerformanceIndices:
 
                             # latitude-based averaging
                             weights = np.cos(np.deg2rad(slicearray.lat))
-                            out = slicearray.weighted(weights).mean().data
+                            weighted_mean = slicearray.weighted(weights).mean()
+                            
+                            # Safely extract scalar value avoiding dask issues
+                            out = extract_scalar(weighted_mean)
+                            
                             # store the PI
-                            result[season][region] = round(float(out), 3)
+                            result[season][region] = round(out, 3)
 
                             # diagnostic
-                            if region == 'Global':
+                            if region == 'Global' and season == 'ALL':
                                 loggy.info('PI for %s %s %s %s', region, season, var, result[season][region])
 
                 # debug array for extrafigures
@@ -404,21 +393,21 @@ def pi_entry_point():
                         numproc=args.numproc, loglevel=args.loglevel,
                         climatology=args.climatology,
                         interface=args.interface, config=args.config,
-                        model=args.model, ensemble=args.ensemble, outputdir=args.outputdir)
+                        model=args.model, ensemble=args.ensemble, outputdir=args.outputdir,
+                        tool=args.tool)
 
 
 def performance_indices(exp, year1, year2, config='config.yml', loglevel='WARNING',
                         numproc=1, climatology=None, interface=None, model=None,
                         ensemble='r1i1p1f1', silent=None, xdataset=None, outputdir=None,
-                        title=None):
+                        title=None, tool='ESMF'):
     """
     Wrapper function to compute the performance indices for a given experiment and years.
     """
     pi = PerformanceIndices(exp=exp, year1=year1, year2=year2, config=config,
                             loglevel=loglevel, numproc=numproc, climatology=climatology,
                             interface=interface, model=model, ensemble=ensemble, silent=silent,
-                            xdataset=xdataset, outputdir=outputdir, 
-                            title=title)
+                            xdataset=xdataset, outputdir=outputdir, title=title, tool=tool)
     pi.prepare()
     pi.run()
     pi.store()

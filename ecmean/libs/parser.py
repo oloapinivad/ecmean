@@ -41,6 +41,9 @@ def parse_arguments(args, script):
                         help='force the output directory')
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + __version__)
+    parser.add_argument('--tool', type=str, default='ESMF',
+                        help='tool to use for remapping. Default: ESMF. Options: [ESMF, CDO]',
+                        choices=['ESMF', 'CDO'])
 
     # specific to global mean
     if script == 'gm':

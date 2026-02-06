@@ -30,7 +30,8 @@ dependencies = [
     "matplotlib",
     "tabulate",
     "cfgrib",
-    "seaborn"
+    "seaborn",
+    "smmregrid"
 ]
 
 [project.optional-dependencies]

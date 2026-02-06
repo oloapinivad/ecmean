@@ -8,6 +8,7 @@ channels:
   - conda-forge
 dependencies:
   - python>=3.9,<=3.14
+  - cdo
   - xesmf
   - eccodes
   - pip

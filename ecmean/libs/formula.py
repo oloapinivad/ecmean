@@ -22,7 +22,9 @@ def formula_wrapper(var, face, xfield):
 
     if 'derived' in face['variables'][var].keys():
         cmd = face['variables'][var]['derived']
-        return _eval_formula(cmd, xfield)
+        field = _eval_formula(cmd, xfield)
+        field.name = var
+        return field
     return xfield[var]
 
 # this is a tool to parse a CDO-based formula into mathematical operatos

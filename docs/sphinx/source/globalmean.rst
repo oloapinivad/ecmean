@@ -5,7 +5,7 @@ Main concepts
 ^^^^^^^^^^^^^
 
 The ``global_mean`` command is based on ``global_mean.py`` script which computes the global averages for many dynamical and physical fields
-It compares the output against a set of pre-computed ``EC23`` or ``EC26_1980_2010`` ``EC26_2000_2024`` climatological values defined in ``ecmean/reference/gm_reference_EC23.yml`` or ``ecmean/reference/gm_reference_EC26_2000_2024.yml``, including the most important dynamical and physical fields 
+It compares the output against a set of pre-computed ``EC23`` or ``HIST26`` or ``PDAY26`` climatological values defined in ``ecmean/reference/gm_reference_EC23.yml`` or ``ecmean/reference/gm_reference/gm_reference_HIST26.yml`` or ``ecmean/reference/gm_reference/gm_reference_PDAY26.yml``, including the most important dynamical and physical fields 
 for both the atmosphere and the ocean (e.g. land temperature, salinity, etc.).
 Different datasates are taken in consideration, providing an estimate of the interannual variability in the form of standard deviation.
 

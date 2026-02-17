@@ -50,14 +50,14 @@ def parse_arguments(args, script):
                             help='appends also single line to a table')
         parser.add_argument('--reference', type=str, default='EC23',
                             help='reference climatology to be compared. default: EC23',
-                            choices=['EC23', 'PDAY26'])
+                            choices=['EC23', 'PDAY26', 'HIST26'])
         parser.add_argument('--addnan', action='store_true',
                         help='provide figures also where observations are missing')
 
     # specific to performance indices
     if script == 'pi':
         parser.add_argument('--climatology', type=str, default='EC24',
-                            help='climatology to be compared. default: EC24. Options: [EC23, EC24, PDAY26]',
-                            choices=['EC23', 'EC24', 'PDAY26'])
+                            help='climatology to be compared. default: EC24. Options: [EC23, EC24, PDAY26, HIST26]',
+                            choices=['EC23', 'EC24', 'PDAY26', 'HIST26'])
         
     return parser.parse_args(args)

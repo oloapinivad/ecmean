@@ -50,7 +50,7 @@ Modification to this is not necessary, but please be aware that the variable con
 	the list of seasons on which compute the PI. Four standard seasons are supported expressed as 3-string character (e.g. ``DJF``). ``ALL`` defines the yearly average. Default includes yearly, winter and summer.
 
 **reference**:
-	the global mean reference climatology. EC23 (without the tas global variable and for the period 1990-2020) and EC26 (with tas global variable and both for the period 1980-2010 and for the period 2000-2024) are available.
+	the global mean reference climatology. EC23 (without the tas global variable and for the period 1990-2020), HIST26 (with tas global variable and for the period 1980-2010) and PDAY26 (with tas global availabe and for the period 2000-2024) are available.
 
 Performance indices configuration
 ---------------------------------
@@ -70,7 +70,7 @@ Modification to this is not necessary, but please be aware that the variable con
 	the list of seasons on which compute the PI. ``ALL`` defines the yearly average. Also ``DJF`` and ``JJA`` are supported.
 
 **climatology**:
-	the climatology to be used. EC23, EC24 and EC26 (both for the period 1980-2010 and for the period 2000-2024) are avaiable. 
+	the climatology to be used. EC23, EC24, HIST26 (for the period 1980-2010) and PDAY26 (for the period 2000-2024) are avaiable. 
 
 
 Interface files

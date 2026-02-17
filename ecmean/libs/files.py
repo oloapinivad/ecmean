@@ -101,7 +101,7 @@ def get_clim_files(piclim, var, diag, season):
     datayear1 = piclim[var].get('year1', None)
     datayear2 = piclim[var].get('year2', None)
 
-    if diag.climatology not in ['EC23', 'EC24']:
+    if diag.climatology not in ['EC23', 'EC24', 'HIST26', 'PDAY26']:
         raise ValueError(f'Climatology {diag.climatology} not supported/existing!')
     
     stringname='climate' if season == 'ALL' else 'seasons'

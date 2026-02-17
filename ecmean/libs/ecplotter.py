@@ -64,7 +64,7 @@ class ECPlotter:
             variables (list): List of variable short names to plot.
             filename (str, optional): Path to save the plot. Defaults to None, it would be derived automatically.
             storefig (bool, optional): Whether to save the figure. Defaults to True.
-            climatology (str, optional): Type of PI climatology, either "EC23" or "EC24". Defaults to "EC23".
+            climatology (str, optional): Type of PI climatology, either "EC23", "EC24", "HIST26", or "PDAY26". Defaults to "EC23".
             addnan (bool, optional): Whether to add NaN values in the final plots. Defaults to False, only for global mean.
             title (str, optional): Title of the plot, overrides default title. Defaults to None.
             reference (str, optional): Name of the GM reference (e.g., "EC23"). Defaults to None, only for global mean.
@@ -75,8 +75,8 @@ class ECPlotter:
         title = title if title is not None else self.default_title
         climatology = climatology if climatology is not None else "EC23"
 
-        if climatology not in ["EC23", "EC24"]:
-            raise ValueError("Invalid climatology type. Choose 'EC23' or 'EC24'.")
+        if climatology not in ["EC23", "EC24", "HIST26", "PDAY26"]:
+            raise ValueError("Invalid climatology type. Choose 'EC23', 'EC24', 'HIST26', or 'PDAY26'.")
         loggy.debug("Data is: %s", data)
         if isinstance(data, str):
             data = yaml.safe_load(data)

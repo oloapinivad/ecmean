@@ -2,14 +2,14 @@
 interface: CMIP6_esgpull
 model:
    name: EC-Earth3
-
+  
 dirs:
    exp: /archive/paolo/esgpull
    tab: /work/scratch/users/paolo/ecmean_cmip6
    fig: /work/users/paolo/figures/ECmean4
 
 global:
-  atm_vars: [tas, psl, pr, evspsbl, pme, clt, cll, clm, clh,
+  atm_vars: [tas, tas_land, psl, pr, evspsbl, pme, clt, cll, clm, clh,
              pr_oce, pme_oce, pr_land, pme_land,
              net_toa, rsnt, rlnt, rsntcs, rlntcs, swcf, lwcf,
              rsns, rlns, hfss, hfls, net_sfc_nosn, net_sfc,

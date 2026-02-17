@@ -21,15 +21,15 @@ from ecmean.libs.files import load_yaml
 warnings.simplefilter("ignore")
 
 # the 30-year climatological window to be used as a baseline
-year1 = 1985
-year2 = 2014
+year1 = 2000
+year2 = 2024
 expname = 'historical'
-refclim = 'EC24'
+refclim = 'PDAY26'
 nprocs = 4
 do_compute = True
 do_create_clim = True
 do_definitive = True
-config_file = 'config_create_clim.yml'
+config_file = 'config_create_clim_new.yml'
 climdir = '../climatology/'
 
 #models = ['EC-Earth3', 'IPSL-CM6A-LR', 'FGOALS-g3', 'TaiESM1', 'CanESM5', 'CESM2',

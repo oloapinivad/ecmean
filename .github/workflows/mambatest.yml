@@ -66,12 +66,11 @@ jobs:
     needs: mamba-test
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v6
     - name: Download coverage artifact
       uses: actions/download-artifact@v4
       with:
         name: coverage-lcov
-    - name: List downloaded files
-      run: ls -la
     - name: Upload to Coveralls
       uses: coverallsapp/github-action@v2
       with:

@@ -52,8 +52,7 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude=__init__.py
     - name: Test with pytest and coverage
-      run: |
-        pytest
+      run: pytest
     - name: Upload coverage artifact for Python 3.14
       if: matrix.python-version == '3.14'
       uses: actions/upload-artifact@v4
@@ -61,6 +60,7 @@ jobs:
         name: coverage-lcov
         path: coverage.lcov
         retention-days: 1
+        if-no-files-found: error
 
   coveralls:
     needs: mamba-test
@@ -70,6 +70,8 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: coverage-lcov
+    - name: List downloaded files
+      run: ls -la
     - name: Upload to Coveralls
       uses: coverallsapp/github-action@v2
       with:

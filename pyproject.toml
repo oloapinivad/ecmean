@@ -67,7 +67,6 @@ version = {attr = "ecmean.__version__"}
 [tool.coverage.run]
 concurrency = ["multiprocessing"]
 source = ["ecmean"]
-parallel = true
 omit = [
     "*/tests/*",
     "*/test_*.py",

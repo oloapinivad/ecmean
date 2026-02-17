@@ -51,36 +51,26 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude=__init__.py
-    - name: Test with pytest
+    - name: Test with pytest and coverage
       run: |
-        python -m pytest
+        pytest
+    - name: Upload coverage artifact for Python 3.14
+      if: matrix.python-version == '3.14'
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-lcov
+        path: coverage.lcov
+        retention-days: 1
 
-  coverage:
+  coveralls:
     needs: mamba-test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash -el {0}
     steps:
-    - uses: actions/checkout@v6
-    - name: provision-with-micromamba
-      uses: mamba-org/setup-micromamba@v2
+    - name: Download coverage artifact
+      uses: actions/download-artifact@v4
       with:
-        environment-file: environment.yml
-        environment-name: ecmean
-        cache-downloads: true
-        cache-environment: true
-    - name: Upgrade pip and build tools
-      run: python -m pip install --upgrade pip setuptools wheel
-    - name: Install package and test dependencies from pyproject.toml
-      run: python -m pip install -e ".[tests]"
-    - name: Run coverage
-      run: |
-        coverage run -m pytest
-        coverage combine
-        coverage lcov
-        rm -f .coverage.*
-    - name: Run coveralls
+        name: coverage-lcov
+    - name: Upload to Coveralls
       uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -37,9 +37,8 @@ dependencies = [
 [project.optional-dependencies]
 tests = [
     "flake8",
-    "coverage>=7.10.0",
-    "coveralls",
-    "pytest"
+    "pytest",
+    "pytest-cov"
 ]
 
 docs = [
@@ -82,4 +81,9 @@ source = [
     "ecmean/",
     "*/ecmean/",
 ]
+
+[tool.pytest.ini_options]
+addopts = "--cov=ecmean --cov-report=html --cov-report=term --cov-report=lcov"
+testpaths = ["tests"]
+python_files = "test_*.py"
 

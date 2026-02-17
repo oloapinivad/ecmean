@@ -28,5 +28,27 @@
     ],
     "description": "A lightweight global climate model evaluation tool",
     "license": "Apache-2.0",
-    "title": "ECmean4"
+    "title": "ECmean4",
+    "upload_type": "software",
+    "keywords": [
+        "climate model",
+        "evaluation",
+        "EC-Earth",
+        "diagnostics",
+        "climate science",
+        "performance indices",
+        "global mean"
+    ],
+    "related_identifiers": [
+        {
+            "identifier": "https://github.com/oloapinivad/ECmean4",
+            "relation": "isSupplementTo",
+            "scheme": "url"
+        },
+        {
+            "identifier": "https://ecmean4.readthedocs.io",
+            "relation": "isDocumentedBy",
+            "scheme": "url"
+        }
+    ]
   }

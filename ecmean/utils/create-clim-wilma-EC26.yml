@@ -1,13 +1,8 @@
 #this is file is meant to create a climatology on the Wilma machine of CNR-ISAC
 #most of the file properties are hard-coded from this file
 
-# climatology ID
-clim: HIST26
-
 # directories to be specified, machine dependent
 dirs: 
-  tmpdir: "/work/scratch/users/malbanes/ecmean_datasets/tmp/"
-  tgtdir: "/work/users/malbanes/ECmean4/ecmean/climatology/{clim}"
   datadir: "/work/scratch/users/paolo/ecmean_datasets"
   archivedir: "/work/datasets/obs"
 
@@ -23,7 +18,7 @@ tas:
 pr:
   dataset: MSWEP
   longname: Precipitation
-  description: Multi-Source Weighted-Ensemble Precipitation v2.1
+  description: "v2.80; PAST+NRT"
   varname: precipitation
   units: mm/month
   remap: remapcon
@@ -56,7 +51,7 @@ psl:
   dataset: ERA5
   longname: Mean Sea Level Pressure
   description: ECMWF ERA5 reanalysis
-  varname: msl
+  varname: MSL
   remap: remapbil
   units: Pa
   dir: "{archivedir}/{dataset}/mean_sea_level_pressure/mon/{dataset}_*.nc"
@@ -92,7 +87,7 @@ tauv:
 tos: 
   dataset: ESA-CCI-L4
   longname: Sea Surface Temperature
-  description: ESA SST CCI OSTIA L4 product
+  description: ESA SST CCI OSTIA L4 v3.0.1
   varname: analysed_sst
   remap: remapbil
   units: K
@@ -101,7 +96,7 @@ siconc:
   dataset: ESA-CCI-L4
   longname: Sea-ice Concentration
   varname: sea_ice_fraction
-  description: ESA SST CCI OSTIA L4 product
+  description: ESA SST CCI OSTIA L4 v3.0.1
   remap: remapbil
   units: fraction
   dir: "{archivedir}/{dataset}/mon/{varname}/*{varname}*.nc"

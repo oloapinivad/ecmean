@@ -40,7 +40,7 @@ tas:
 psl: 
   dataset: ERA5
   longname: 'Mean Sea Level Pressure'
-  derived: msl
+  derived: MSL
   org_units: Pa
   tgt_units: hPa
   dir: "{eradir}/mean_sea_level_pressure/mon/*.nc"

@@ -124,4 +124,4 @@ def parse_create_args():
         choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
         help='Logging level (default: WARNING)'
     )
-    return parser.parse_args()
+    return parser

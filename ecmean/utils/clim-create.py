@@ -276,7 +276,7 @@ def main(climdata='EC26', timeframe='HIST', machine='wilma', do_figures=False):
 
 # setting up dask
 if __name__ == "__main__":
-    args = parse_create_args()
+    args = parse_create_args().parse_args()
 
     logging.getLogger().setLevel(args.loglevel.upper())
 

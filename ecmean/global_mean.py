@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-    python3 version of ECmean global mean tool.
-    Using a reference file from yaml and Xarray
+python3 version of ECmean global mean tool.
+Using a reference file from yaml and Xarray
 
-    @author Paolo Davini (p.davini@isac.cnr.it), Sep 2022.
-    @author Jost von Hardenberg (jost.hardenberg@polito.it), Sep 2022
+@author Paolo Davini (paolo.davini@cnr.it), Sep 2022.
+@author Jost von Hardenberg (jost.hardenberg@polito.it), Sep 2022
 """
 
-__author__ = "Paolo Davini (p.davini@isac.cnr.it), Sep 2022."
+__author__ = "Paolo Davini (paolo.davini@cnr.it)"
 
 import os
 import sys
@@ -24,7 +24,8 @@ from ecmean import Diagnostic, Supporter, UnitsHandler
 from ecmean.libs.general import weight_split, write_tuning_table, get_domain, \
     check_time_axis, init_mydict, \
     check_var_interface, check_var_climatology, set_multiprocessing_start_method
-from ecmean.libs.files import var_is_there, get_inifiles, load_yaml, make_input_filename, load_output_yaml
+from ecmean.libs.files import var_is_there, get_inifiles, load_yaml, \
+    make_input_filename, load_output_yaml
 from ecmean.libs.formula import formula_wrapper
 from ecmean.libs.masks import masked_meansum, select_region
 from ecmean.libs.units import units_extra_definition
@@ -79,7 +80,8 @@ class GlobalMean:
 
     def __init__(self, exp, year1, year2, config='config.yml', loglevel='WARNING', numproc=1,
                  interface=None, model=None, ensemble='r1i1p1f1', addnan=False, silent=None,
-                 trend=None, line=None, outputdir=None, xdataset=None, reference='EC23', title=None):
+                 trend=None, line=None, outputdir=None, xdataset=None, 
+                 reference='EC23', title=None):
 
         self.loglevel = loglevel
         self.loggy = setup_logger(level=self.loglevel)
@@ -255,7 +257,8 @@ class GlobalMean:
         )
         if self.diag.ftable:
             self.loggy.info('Line file is: %s', self.diag.linefile)
-            write_tuning_table(self.diag.linefile, self.varmean, self.diag.var_table, self.diag, self.ref)
+            write_tuning_table(self.diag.linefile, self.varmean,
+                               self.diag.var_table, self.diag, self.ref)
         
         self.toc('Plotting')
 
@@ -379,7 +382,8 @@ def global_mean(exp, year1, year2, config='config.yml', loglevel='WARNING', nump
     gm = GlobalMean(exp, year1, year2, config,
                     loglevel=loglevel, numproc=numproc, interface=interface, model=model,
                     ensemble=ensemble, addnan=addnan, silent=silent, trend=trend,
-                    line=line, outputdir=outputdir, xdataset=xdataset, reference=reference, title=title)
+                    line=line, outputdir=outputdir, xdataset=xdataset, 
+                    reference=reference, title=title)
     gm.prepare()
     gm.run()
     gm.store()

@@ -6,11 +6,10 @@
     It requires to have cdo and cdo-bindings installed
 """
 
-__author__ = "Paolo Davini (p.davini@isac.cnr.it), Sep 2022."
+__author__ = "Paolo Davini (paolo.davini@cnr.it), Sep 2022."
 
 import logging
 import os
-import sys
 import tempfile
 from time import time
 from dask.distributed import Client, LocalCluster
@@ -112,7 +111,7 @@ def main(climdata='EC26', timeframe='HIST', machine='wilma', do_figures=False):
         logging.debug(filedata)
 
         # load data and time select
-        print("Loading multiple files...")
+        logging.info("Loading multiple files...")
         # unable to operate with Parallel=True
         xfield = xr.open_mfdataset(filedata, chunks='auto',
                                    parallel=False, preprocess=xr_preproc, engine='netcdf4',
@@ -152,7 +151,7 @@ def main(climdata='EC26', timeframe='HIST', machine='wilma', do_figures=False):
         # preserve dtype for numerical reasons
         codes = ['dtype', '_FillValue', 'scale_factor', 'add_offset', 'missing_value']
         ftype = {k: v for k, v in cfield.encoding.items() if k in codes}
-        logging.info(ftype)
+        logging.debug(ftype)
         zfield.to_netcdf(tmpfile.name, encoding={var: ftype})
 
         # loop on grids

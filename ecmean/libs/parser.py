@@ -5,6 +5,7 @@ Shared functions for Ecmean4: parsers arguments from command line
 
 import argparse
 from ecmean import __version__
+from ecmean.libs.climatology import SUPPORTED_CLIMATOLOGY, SUPPORTED_REFERENCE
 
 
 def parse_arguments(args, script):
@@ -49,15 +50,15 @@ def parse_arguments(args, script):
         parser.add_argument('--line', action='store_true',
                             help='appends also single line to a table')
         parser.add_argument('--reference', type=str, default='EC23',
-                            help='reference climatology to be compared. default: EC23',
-                            choices=['EC23', 'PDAY26', 'HIST26'])
+                            help=f'reference climatology to be compared. default: EC23. Options: {SUPPORTED_REFERENCE}',
+                            choices=SUPPORTED_REFERENCE)
         parser.add_argument('--addnan', action='store_true',
                         help='provide figures also where observations are missing')
 
     # specific to performance indices
     if script == 'pi':
         parser.add_argument('--climatology', type=str, default='EC24',
-                            help='climatology to be compared. default: EC24. Options: [EC23, EC24, PDAY26, HIST26]',
-                            choices=['EC23', 'EC24', 'PDAY26', 'HIST26'])
+                            help=f'climatology to be compared. default: EC24. Options: {SUPPORTED_CLIMATOLOGY}',
+                            choices=SUPPORTED_CLIMATOLOGY)
         
     return parser.parse_args(args)

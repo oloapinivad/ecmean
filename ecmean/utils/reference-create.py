@@ -7,7 +7,7 @@
     The reference file (gm_reference.yml) specifies all the details for each dataset
 """
 
-__author__ = "Paolo Davini (p.davini@isac.cnr.it), Feb 2023." \
+__author__ = "Paolo Davini (paolo.davini@cnr.it), Feb 2023." \
 " Modified by Marianna Albanese (marianna.albanese@polito.it), Jan 2026."
 
 

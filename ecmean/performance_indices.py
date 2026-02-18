@@ -4,9 +4,11 @@
  python3 version of ECmean performance indices tool
  Using a reference file from yaml and cdo bindings
 
- @author Paolo Davini (p.davini@isac.cnr.it), 2022
+ @author Paolo Davini (paolo.davini@cnr.it), 2022
  @author Jost von Hardenberg (jost.hardenberg@polito.it), 2022
 '''
+
+__author__ = "Paolo Davini (paolo.davin@cnr.it)"
 
 import sys
 import os
@@ -106,7 +108,7 @@ class PerformanceIndices:
         elapsed_time = time() - self.current_time
         self.current_time = time()
         self.loggy.info('%s time: %.2f seconds', message, elapsed_time)
-    
+
     def final_toc(self):
         """Log the total elapsed time since the start."""
         total_elapsed_time = time() - self.start_time

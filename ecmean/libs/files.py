@@ -10,6 +10,7 @@ from pathlib import Path
 from glob import glob
 import yaml
 import xarray as xr
+from ecmean.libs.climatology import SUPPORTED_CLIMATOLOGY
 
 loggy = logging.getLogger(__name__)
 
@@ -57,7 +58,7 @@ def var_is_there(flist, var, face):
             loggy.error("No valid files found for variable %s. Ignoring it.", var)
             return False, None
         xfield = xr.open_mfdataset(
-            flist, combine='by_coords', data_vars='all', 
+            flist, combine='by_coords', data_vars='all',
             join='outer', compat='no_conflicts')
 
     # if variable is derived, extract required vars
@@ -101,7 +102,7 @@ def get_clim_files(piclim, var, diag, season):
     datayear1 = piclim[var].get('year1', None)
     datayear2 = piclim[var].get('year2', None)
 
-    if diag.climatology not in ['EC23', 'EC24', 'HIST26', 'PDAY26']:
+    if diag.climatology not in SUPPORTED_CLIMATOLOGY:
         raise ValueError(f'Climatology {diag.climatology} not supported/existing!')
     
     stringname='climate' if season == 'ALL' else 'seasons'

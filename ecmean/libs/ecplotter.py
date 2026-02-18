@@ -8,6 +8,7 @@ from matplotlib.colors import  TwoSlopeNorm, ListedColormap #, LogNorm
 import seaborn as sns
 import numpy as np
 from ecmean.libs.general import dict_to_dataframe, init_mydict
+from ecmean.libs.climatology import SUPPORTED_CLIMATOLOGY, SUPPORTED_REFERENCE
 
  # OPTIMIZATION: Use non-interactive backend (much faster)
 matplotlib.use('Agg')
@@ -54,7 +55,7 @@ class ECPlotter:
         
 
     def heatmap_plot(self, data, base, variables, filename=None, storefig=True,
-                     climatology="EC23", addnan=False, title=None, reference=None):
+                     climatology="EC23", addnan=False, title=None, reference="EC23"):
         """
         Prepare data for plotting performance indices or global mean.
 
@@ -64,7 +65,7 @@ class ECPlotter:
             variables (list): List of variable short names to plot.
             filename (str, optional): Path to save the plot. Defaults to None, it would be derived automatically.
             storefig (bool, optional): Whether to save the figure. Defaults to True.
-            climatology (str, optional): Type of PI climatology, either "EC23", "EC24", "HIST26", or "PDAY26". Defaults to "EC23".
+            climatology (str, optional): Type of PI climatology, either any of the supported ones. Defaults to "EC23".
             addnan (bool, optional): Whether to add NaN values in the final plots. Defaults to False, only for global mean.
             title (str, optional): Title of the plot, overrides default title. Defaults to None.
             reference (str, optional): Name of the GM reference (e.g., "EC23"). Defaults to None, only for global mean.
@@ -75,8 +76,10 @@ class ECPlotter:
         title = title if title is not None else self.default_title
         climatology = climatology if climatology is not None else "EC23"
 
-        if climatology not in ["EC23", "EC24", "HIST26", "PDAY26"]:
-            raise ValueError("Invalid climatology type. Choose 'EC23', 'EC24', 'HIST26', or 'PDAY26'.")
+        if climatology not in SUPPORTED_CLIMATOLOGY:
+            raise ValueError(f"Invalid climatology type. Choose from {SUPPORTED_CLIMATOLOGY}.")
+        if reference is not None and reference not in SUPPORTED_REFERENCE:
+            raise ValueError(f"Invalid reference type. Choose from {SUPPORTED_REFERENCE}.")
         loggy.debug("Data is: %s", data)
         if isinstance(data, str):
             data = yaml.safe_load(data)

@@ -93,7 +93,7 @@ def test_performance_indices_amip_xdataset(clim):
     file2 = 'tests/table/PI4_' + clim + '_amip_1990_1990.ref'
     if os.path.isfile(file1):
         os.remove(file1)
-    xfield = xr.open_mfdataset('tests/data/amip/output/oifs/*.nc', preprocess=xr_preproc)
+    xfield = xr.open_mfdataset('tests/data/amip/output/oifs/*.nc', preprocess=xr_preproc, compat='no_conflicts')
     performance_indices('amip', 1990, 1990, numproc=2, climatology=clim,
                         config='tests/config.yml', xdataset=xfield)
     with open(file1, 'r', encoding='utf8') as f1, open(file2, 'r', encoding='utf8') as f2:

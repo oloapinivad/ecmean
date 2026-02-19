@@ -1,0 +1,54 @@
+{
+    "creators": [
+        {
+            "affiliation": "CNR-ISAC, Italy",
+            "name": "Davini, Paolo",
+            "orcid": "0000-0003-3389-7849"
+        },
+        {
+            "affiliation": "Politecnico di Torino, Italy",
+            "name": "von Hardenberg, Jost",
+            "orcid": "0000-0002-5312-8070"
+        },
+        {
+            "affiliation": "Politecnico di Torino, Italy",
+            "name": "Nurisso, Matteo",
+            "orcid": "0000-0002-5962-0680"
+        },
+        { 
+            "name": "Tovazzi, Emanuele",
+            "affiliation": "CNR-ISAC, Italy",
+            "orcid": "0000-0001-9838-4249"
+        },
+        {
+            "name": "Albanese, Marianna",
+            "affiliation": "Politecnico di Torino, Italy",
+            "orcid": "0009-0001-6011-4849"
+        }
+    ],
+    "description": "A lightweight global climate model evaluation tool",
+    "license": "Apache-2.0",
+    "title": "ECmean4",
+    "upload_type": "software",
+    "keywords": [
+        "climate model",
+        "evaluation",
+        "EC-Earth",
+        "diagnostics",
+        "climate science",
+        "performance indices",
+        "global mean"
+    ],
+    "related_identifiers": [
+        {
+            "identifier": "https://github.com/oloapinivad/ECmean4",
+            "relation": "isSupplementTo",
+            "scheme": "url"
+        },
+        {
+            "identifier": "https://ecmean4.readthedocs.io",
+            "relation": "isDocumentedBy",
+            "scheme": "url"
+        }
+    ]
+  }

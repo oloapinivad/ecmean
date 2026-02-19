@@ -11,13 +11,14 @@ authors = [
 ]
 description = "A Global Climate Model lightweight evaluation tool"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.9,<=3.14"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
+keywords = ["climate", "evaluation", "EC-Earth", "climate-model", "diagnostics", "performance-indices", "global-mean"]
 dependencies = [
     "xarray",
     "numpy",
@@ -36,9 +37,8 @@ dependencies = [
 [project.optional-dependencies]
 tests = [
     "flake8",
-    "coverage>=7.10.0",
-    "coveralls",
-    "pytest"
+    "pytest",
+    "pytest-cov"
 ]
 
 docs = [
@@ -66,7 +66,23 @@ version = {attr = "ecmean.__version__"}
 
 [tool.coverage.run]
 concurrency = ["multiprocessing"]
+source = ["ecmean"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+]
 
 [tool.coverage.report]
 ignore_errors = true
+
+[tool.coverage.paths]
+source = [
+    "ecmean/",
+    "*/ecmean/",
+]
+
+[tool.pytest.ini_options]
+addopts = "--cov=ecmean --cov-report=html --cov-report=term --cov-report=lcov"
+testpaths = ["tests"]
+python_files = "test_*.py"
 

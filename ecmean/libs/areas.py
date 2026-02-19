@@ -64,6 +64,7 @@ class AreaCalculator:
 
     @staticmethod
     def _lonlat_to_sphere(lon, lat):
+        """Convert longitude and latitude to 3D Cartesian coordinates on a unit sphere."""
         return np.array([
             np.cos(np.deg2rad(lon)) * np.cos(np.deg2rad(lat)),
             np.sin(np.deg2rad(lon)) * np.cos(np.deg2rad(lat)),
@@ -72,17 +73,20 @@ class AreaCalculator:
 
     @staticmethod
     def _huilier(a, b, c):
+        """L'Huilier's formula to compute the area of a spherical triangle given its sides a, b, c."""
         s = (a + b + c) * 0.5
         t = np.tan(s * 0.5) * np.tan((s - a) * 0.5) * np.tan((s - b) * 0.5) * np.tan((s - c) * 0.5)
         return abs(4. * np.arctan(np.sqrt(abs(t))))
 
     def _vector_spherical_triangle(self, p1, p2, p3):
+        """Compute the area of a spherical triangle defined by three points on the sphere using vector cross products."""
         a = np.arcsin(np.linalg.norm(np.cross(p1, p2), axis=1))
         b = np.arcsin(np.linalg.norm(np.cross(p1, p3), axis=1))
         c = np.arcsin(np.linalg.norm(np.cross(p3, p2), axis=1))
         return self._huilier(a, b, c)
 
     def _area_by_triangles(self, bounds_lon, bounds_lat):
+        """Calculate the area of grid cells by dividing them into two spherical triangles."""
         p1 = self._lonlat_to_sphere(bounds_lon[:, 0], bounds_lat[:, 0]).T
         p2 = self._lonlat_to_sphere(bounds_lon[:, 0], bounds_lat[:, 1]).T
         p3 = self._lonlat_to_sphere(bounds_lon[:, 1], bounds_lat[:, 1]).T
@@ -92,35 +96,40 @@ class AreaCalculator:
                self._vector_spherical_triangle(p1, p4, p3)
         return area * self.earth_radius**2
 
-    def _area_by_trapezoids(self, bounds_lat):
+    # def _area_by_trapezoids(self, bounds_lat):
+    #     arclon1 = self.earth_radius * 
+    # np.abs(np.cos(np.deg2rad(bounds_lat[:, 0]))) * np.deg2rad(self.dlon)
+    #     arclon2 = self.earth_radius * 
+    # np.abs(np.cos(np.deg2rad(bounds_lat[:, 1]))) * np.deg2rad(self.dlon)
+    #     arclat = self.earth_radius * np.deg2rad(self.dlat)
 
+    #     return (arclon1 + arclon2) * arclat / 2
 
-        arclon1 = self.earth_radius * np.abs(np.cos(np.deg2rad(bounds_lat[:, 0]))) * np.deg2rad(self.dlon)
-        arclon2 = self.earth_radius * np.abs(np.cos(np.deg2rad(bounds_lat[:, 1]))) * np.deg2rad(self.dlon)
-        arclat = self.earth_radius * np.deg2rad(self.dlat)
+    # def _area_by_squares(self, full_lat):
 
-        return (arclon1 + arclon2) * arclat / 2
+    #     arclon = self.earth_radius * np.abs(np.cos(np.deg2rad(full_lat))) * np.deg2rad(self.dlon)
+    #     arclat = self.earth_radius * np.deg2rad(self.dlat)
 
-    def _area_by_squares(self, full_lat):
-
-        arclon = self.earth_radius * np.abs(np.cos(np.deg2rad(full_lat))) * np.deg2rad(self.dlon)
-        arclat = self.earth_radius * np.deg2rad(self.dlat)
-
-        return arclon * arclat
+    #     return arclon * arclat
 
     def _area_computation(self, bounds_lon, bounds_lat, formula='triangles', full_lat=None):
+        """
+        Compute the area of grid cells based on the specified formula. 
+        Only triangles is activated, other older method are kept for reference but not tested.
+        """
+
         if formula == 'triangles':
             return self._area_by_triangles(bounds_lon, bounds_lat)
 
-        self.dlon=abs(bounds_lon[:, 0] - bounds_lon[:, 1])
-        self.dlat=abs(bounds_lat[:, 0] - bounds_lat[:, 1])
+        # self.dlon=abs(bounds_lon[:, 0] - bounds_lon[:, 1])
+        # self.dlat=abs(bounds_lat[:, 0] - bounds_lat[:, 1])
 
-        if formula == 'trapezoids':
-            return self._area_by_trapezoids(bounds_lat)
-        if formula == 'squares':
-            if full_lat is None:
-                raise ValueError("full_lat is required for square-based area computation.")
-            return self._area_by_squares(full_lat)
+        # if formula == 'trapezoids':
+        #     return self._area_by_trapezoids(bounds_lat)
+        # if formula == 'squares':
+        #     if full_lat is None:
+        #         raise ValueError("full_lat is required for square-based area computation.")
+        #     return self._area_by_squares(full_lat)
 
         raise ValueError(f"Unknown area formula: {formula}")
 

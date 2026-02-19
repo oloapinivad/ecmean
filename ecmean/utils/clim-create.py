@@ -95,6 +95,7 @@ def main(climdata='EC26', timeframe='HIST', machine='wilma', do_figures=False, o
     xr.set_options(keep_attrs=True)
 
     # open the clim info file
+    logging.debug(f"Loading climatology info from %s", clim_info)
     info = load_yaml(clim_info)
 
     # directory definitions and creations

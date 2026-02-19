@@ -53,7 +53,7 @@ def format_rst_table(data):
     if has_cmip6_models:
         lines.append('     - # Models & Period')
 
-    for var, info in sorted(data.items()):
+    for _, info in data.items():
         if not isinstance(info, dict):
             continue
 
@@ -90,8 +90,6 @@ def format_rst_table(data):
             cmip6_period = f"{cmip6_year1}-{cmip6_year2}"
             lines.append(f'     - {nmodels} ({cmip6_period})')
     
-    return '\n'.join(lines)
-
     return '\n'.join(lines)
 
 
@@ -139,7 +137,7 @@ def main():
 
     # Output
     if args.output:
-        with open(args.output, 'w') as f:
+        with open(args.output, 'w', encoding='utf-8') as f:
             f.write(table)
             f.write('\n')
         print(f"Table written to {args.output}")

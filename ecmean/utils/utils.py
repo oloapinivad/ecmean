@@ -113,7 +113,8 @@ def parse_create_args():
         '-c', '--climdata',
         type=str,
         default='EC26',
-        help='Climate dataset name (default: EC26)'
+        choices=['EC26', 'EC24'],
+        help='Climatology/reference dataset name (default: EC26)'
     )
     parser.add_argument(
         '-t', '--timeframe',

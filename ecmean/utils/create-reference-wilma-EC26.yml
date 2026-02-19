@@ -304,7 +304,7 @@ siconc_north:
   operation: integral
   mask: north
   domain: ocean
-  outvalue: 9.562
+  outvalue: 0
   description: 'ESA SST CCI OSTIA L4 v3.0.1'
 siconc_south:
   dataset: ESA-CCI-L4
@@ -313,6 +313,6 @@ siconc_south:
   operation: integral
   mask: south
   domain: ocean
-  outvalue: 9.66
+  outvalue: 0
   description: 'ESA SST CCI OSTIA L4 v3.0.1'
   

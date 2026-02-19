@@ -46,7 +46,10 @@ rad_vars = ['net_toa', 'rsnt', 'rlnt', 'rsntcs', 'rlntcs', 'swcf', 'lwcf',
             'rsns', 'rlns', 'hfss', 'hfls', 'net_sfc_nosn', 'net_sfc',
             'toamsfc_nosn', 'toamsfc']
 oce_vars = ['tos', 'sos', 'zos', 'wfo']
-ice_vars = ['siconc', 'siconc_north', 'siconc_south']
+ice_vars = ['siconc']
+
+# fixed ice, deprecated
+FIXED_ICE_VARS = ['siconc_north', 'siconc_south']
 
 # put them together
 variables = atm_vars + rad_vars + oce_vars + ice_vars
@@ -99,6 +102,16 @@ def main(climdata='EC26', timeframe='HIST', machine='wilma'):
 
         # if outvalue exists, the variable is predifined and has not gridded dataset
         if 'outvalue' in info[var]:
+            # special treatment for ice concentration: if the variable is in FIXED_ICE_VARS, get the value from the siconc obs dataset
+            # need to run siconc first to get the obs values, but it is not a problem since they are fixed and do not depend on the time period
+            # question: do we really need it now?
+            if var in FIXED_ICE_VARS:
+                if 'north' in var:
+                    info[var]['outvalue'] = info[var]['siconc']['obs']['ALL']['North Midlat']['mean']
+                if 'south' in var:
+                    info[var]['outvalue'] = info[var]['siconc']['obs']['ALL']['South Midlat']['mean']
+                else:
+                    raise ValueError(f"Variable {var} is in FIXED_ICE_VARS but does not contain 'north' or 'south' in its name.")
             mf = info[var]['outvalue']
             real_year1 = ''
             real_year2 = ''

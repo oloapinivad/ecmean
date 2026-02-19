@@ -11,16 +11,18 @@ tas:
   dataset: CRU
   longname: '2m Temperature (land-only)'
   description: CRU TS4.09 Mean Temperature
+  version: '4.09'
   varname: tmp
-  units: degC
+  org_units: degC
   remap: remapbil
   dir: "{datadir}/{dataset}/data/v4.09/*.nc" 
 pr:
   dataset: MSWEP
   longname: Precipitation
   description: "v2.80; PAST+NRT"
+  version: '2.80'
   varname: precipitation
-  units: mm/month
+  org_units: mm/month
   remap: remapcon
   dir: "{archivedir}/{dataset}/mon/*.nc"
 ua: 
@@ -29,14 +31,14 @@ ua:
   description: ECMWF ERA5 reanalysis
   varname: var131
   remap: remapbil
-  units: m s-1
+  org_units: m s-1
   dir: "{archivedir}/{dataset}/u_component_of_wind/mon/{dataset}_*.nc"
 va: 
   dataset: ERA5
   longname: Meridional Wind
   description: ECMWF ERA5 reanalysis
   varname: v
-  units: m s-1  
+  org_units: m s-1
   remap: remapbil
   dir: "{archivedir}/{dataset}/v_component_of_wind/mon/{dataset}_*.nc"
 ta: 
@@ -45,7 +47,7 @@ ta:
   description: ECMWF ERA5 reanalysis
   varname: t
   remap: remapbil
-  units: K
+  org_units: K
   dir: "{archivedir}/{dataset}/temperature/mon/{dataset}_*.nc"
 psl: 
   dataset: ERA5
@@ -53,15 +55,15 @@ psl:
   description: ECMWF ERA5 reanalysis
   varname: MSL
   remap: remapbil
-  units: Pa
+  org_units: Pa
   dir: "{archivedir}/{dataset}/mean_sea_level_pressure/mon/{dataset}_*.nc"
 hus: 
   dataset: ERA5
-  longname: Specific humidity
+  longname: Specific Humidity
   description: ECMWF ERA5 reanalysis
   varname: q
   remap: remapbil
-  units: 'kg kg-1' 
+  org_units: 'kg kg-1'
   dir: "{archivedir}/{dataset}/specific_humidity/mon/{dataset}_*.nc"
 sos: 
   dataset: ORAS5
@@ -69,42 +71,48 @@ sos:
   description: ECMWF Ocean Reanalysis System 5
   varname: sosaline
   remap: remapbil
+  org_units: PSU
   dir: "{datadir}/{dataset}/data/{varname}*.nc"
 tauu: 
   dataset: ORAS5
-  longname: Eastward wind stress
+  longname: Eastward Wind Stress
   varname: sozotaux
   description: ECMWF Ocean Reanalysis System 5
   remap: remapbil
+  org_units: N m-2
   dir: "{datadir}/{dataset}/data/{varname}*.nc"
 tauv: 
   dataset: ORAS5
-  longname: Northward wind stress
+  longname: Northward Wind Stress
   varname: sometauy
   description: ECMWF Ocean Reanalysis System 5
   remap: remapbil
+  org_units: N m-2
   dir: "{datadir}/{dataset}/data/{varname}*.nc"
 tos: 
   dataset: ESA-CCI-L4
   longname: Sea Surface Temperature
   description: ESA SST CCI OSTIA L4 v3.0.1
+  version: '3.0.1'
   varname: analysed_sst
   remap: remapbil
-  units: K
+  org_units: K
   dir: "{archivedir}/{dataset}/mon/{varname}/*{varname}*.nc"
 siconc: 
   dataset: ESA-CCI-L4
   longname: Sea-ice Concentration
   varname: sea_ice_fraction
   description: ESA SST CCI OSTIA L4 v3.0.1
+  version: '3.0.1'
   remap: remapbil
-  units: fraction
+  org_units: fraction
   dir: "{archivedir}/{dataset}/mon/{varname}/*{varname}*.nc"
 net_sfc:
   dataset: NOCS
-  longname: Net surface radiation flux (downward)
+  longname: Net Surface Radiation Flux (downward)
   description: NOCS Surface Flux Dataset v2.0
+  version: '2.0'
   varname: net_sfc
   remap: remapcon
-  units: W m-2
+  org_units: W m-2
   dir: "{datadir}/{dataset}/data/*{varname}*.nc" 

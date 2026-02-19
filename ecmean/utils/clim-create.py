@@ -136,7 +136,10 @@ def main(climdata='EC26', timeframe='HIST', machine='wilma', do_figures=False, o
                 continue
 
         # check existence of unit, then apply from file
-        if 'units' in info[var]:
+        if 'org_units' in info[var]:
+            cfield.attrs['units'] = info[var]['org_units']
+        elif 'units' in info[var]:
+            # Backward compatibility
             cfield.attrs['units'] = info[var]['units']
         elif not hasattr(cfield, 'units'):
             raise ValueError('no unit found or defined!')
@@ -246,7 +249,7 @@ def main(climdata='EC26', timeframe='HIST', machine='wilma', do_figures=False, o
             ftype["zlib"] = True
             compression = {var: ftype, 'time': {'dtype': 'f8'}}
 
-            # save all climatology files
+            # save all climatology files (map climatology prefixes)
             climatology_data = [
                 full_variance,
                 full_mean,
@@ -279,6 +282,8 @@ def main(climdata='EC26', timeframe='HIST', machine='wilma', do_figures=False, o
             dclim[var]['dataset'] = info[var]['dataset']
             dclim[var]['description'] = info[var]['description']
             dclim[var]['longname'] = info[var]['longname']
+            if 'version' in info[var].keys():
+                dclim[var]['version'] = info[var]['version']
             # dclim[var]['dataname'] = info[var]['varname']
             dclim[var]['remap'] = info[var]['remap']
             dclim[var]['mask'] = mask_from_field(full_mean)

@@ -120,7 +120,7 @@ def main(climdata='EC26', timeframe='HIST', machine='wilma'):
                                     engine='netcdf4', join='outer', data_vars='all')
             
             # if derived, use the formula skill (or just rename)
-            cmd = info[var]['derived']
+            cmd = info[var]['varname']
             xfield = _eval_formula(cmd, xfield).to_dataset(name=var)
 
             # select time based on data availability
@@ -230,8 +230,10 @@ def main(climdata='EC26', timeframe='HIST', machine='wilma'):
         dclim[var]['units'] = info[var]['tgt_units']
         dclim[var]['year1'] = real_year1
         dclim[var]['year2'] = real_year2
-        if 'notes' in info[var].keys():
-            dclim[var]['notes'] = info[var]['notes']
+        if 'description' in info[var].keys():
+            dclim[var]['description'] = info[var]['description']
+        if 'version' in info[var].keys():
+            dclim[var]['version'] = info[var]['version']
         dclim[var]['obs'] = mf
 
         # dump the yaml file

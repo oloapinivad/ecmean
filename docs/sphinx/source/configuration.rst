@@ -13,7 +13,7 @@ and then edit the required folder before running the script.
 General configuration
 ---------------------
 
-These are the mandatory properties to be set up before running ECmean4.
+These are the mandatory properties to be set up before running ecmean.
 
 interface
 	The interface to access the model files (see below). So far supported interfaces are ``EC-Earth4``, ``CMIP6``, ``CMIP5``. 
@@ -26,10 +26,10 @@ dirs: tab
 dirs: fig
 	Where the output figures should be placed (for ``performance_indices`` only)
 dirs: clm
-	Where the ECmean4 climatology is installed, i.e. the ``ECmean4/climatology`` folder
+	Where the ecmean climatology is installed, i.e. the ``ecmean/climatology`` folder
 
 .. note::
-	You could call a specific configuration file with ``-c config_myconfig.yml`` when executing the ECmean4 commands (see Usage section), so that you can have multiple models on the same machine.
+	You could call a specific configuration file with ``-c config_myconfig.yml`` when executing the ecmean commands (see Usage section), so that you can have multiple models on the same machine.
 
 Global Mean configuration
 -------------------------
@@ -79,7 +79,7 @@ Conversion from model variables - as well as the correspondent file structure - 
 New interface files can be developed exploiting of the flexible file handling increasing the range of supported models. 
 
 It is important to provide land-sea mask for both atmospheric and oceanic grid, and when possible - recommended for non-regular grid - it is important to provide also files indicating grid cell areas.
-These latter are used for interpolation and weighted averages. ECmean4 has a few routines that tries to compute each grid cell area from lon/lat boundaries, but this can fail for non-regular grids.
+These latter are used for interpolation and weighted averages. ecmean has a few routines that tries to compute each grid cell area from lon/lat boundaries, but this can fail for non-regular grids.
 
 .. note::
 	It is not necessary to modify the interface file, but it could be required if - for example - your CMIP5/6 directory tree does not reflect exactly the one available on ESGF. 
@@ -91,7 +91,7 @@ A function named ``xr_preproc()``  within ``ecmean/libs/ncfixers.py``  might be 
 CMOR compatibility
 ------------------
 
-It is possible to use ECmean4 tools also to analyze CMOR-like files for CMIP5 or CMIP6. This assumes a standard ESGF directory structure but you can change it by modifying the corresponding interface files ``ecmean/interfaces/interface_CMIP6.yml`` and ``ecmean/interfaces/interface_CMIP6.yml``.
+It is possible to use ecmean tools also to analyze CMOR-like files for CMIP5 or CMIP6. This assumes a standard ESGF directory structure but you can change it by modifying the corresponding interface files ``ecmean/interfaces/interface_CMIP6.yml`` and ``ecmean/interfaces/interface_CMIP6.yml``.
 In order to allow masking and interpolation you will need some files to guide ECmean. `fx` variables ``sftlf`` and ``areacella`` are requried for atmospheric domain,
 while `Ofx` variables ``sftof``  and ``areacello``are required for oceanic domain. At least one of these files is required for each domain, but it is recommended to provide both.
 

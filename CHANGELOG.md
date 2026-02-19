@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to ECmean4 will be documented in this file.
+All notable changes to ecmean will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]

@@ -35,10 +35,10 @@ jobs:
           esmpy
           eccodes
           pytest
-    - name: Install ECmean4
+    - name: Install ecmean
       run: |
         # install package
-        python -m pip install ECmean4
+        python -m pip install ecmean
     - name: Test with pytest
       run: |
         python -m pytest

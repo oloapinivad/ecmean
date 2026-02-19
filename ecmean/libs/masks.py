@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Shared functions for masking in ECmean4
+Shared functions for masking in ecmean
 '''
 
 import logging

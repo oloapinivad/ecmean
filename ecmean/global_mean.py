@@ -375,7 +375,7 @@ def gm_entry_point():
 def global_mean(exp, year1, year2, config='config.yml', loglevel='WARNING', numproc=1,
                 interface=None, model=None, ensemble='r1i1p1f1', addnan=False, silent=None,
                 trend=None, line=None, outputdir=None, xdataset=None, reference=None, title=None):
-    """Wrapper function to compute the global mean."""
+    """Wrapecmeanction to compute the global mean."""
     gm = GlobalMean(exp, year1, year2, config,
                     loglevel=loglevel, numproc=numproc, interface=interface, model=model,
                     ensemble=ensemble, addnan=addnan, silent=silent, trend=trend,

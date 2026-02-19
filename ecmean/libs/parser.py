@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Shared functions for Ecmean4: parsers arguments from command line
+Shared functions for ecmean: parsers arguments from command line
 '''
 
 import argparse

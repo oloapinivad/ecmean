@@ -9,7 +9,7 @@ authors = [
   { name="Paolo Davini", email="p.davini@isac.cnr.it" },
   { name="Jost von Hardenberg", email="jost.hardenberg@polito.it" } 
 ]
-description = "ecmean Global Climate Model lightweight evaluation tool"
+description = "A Global Climate Model lightweight evaluation tool"
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [

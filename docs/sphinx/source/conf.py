@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath('../../../'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'ECmean4'
+project = 'ecmean'
 copyright = '2022, Paolo Davini and Jost von Hardenberg'
 author = 'Paolo Davini and Jost von Hardenberg'
 

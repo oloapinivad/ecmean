@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Shared functions for Support class for ECmean4
+Shared functions for Support class for ecmean
 '''
 
 import os
@@ -22,7 +22,7 @@ oce_mask_names = ['lsm', 'sftof', 'mask_opensea']
 
 class Supporter():
     """
-    Support class for ECmean4, including areas and masks to be used
+    Support class for ecmean, including areas and masks to be used
     in global mean and performance indices
     """
 

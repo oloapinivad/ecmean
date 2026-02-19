@@ -110,7 +110,7 @@ A txt table including the comparison with some predefined dataset, for the globa
 
 In the same time, data are stored in more machine-readable format in a YAML file, which includes much more details as the global and regional mean over different seasons.
 In addition, ECmean4 it produces also a figure including a more detailed comparison for different seasons and regions.
-This is available only for the datasets for which we have access to a gridded dataset.
+This is availecmeanly for the datasets for which we have access to a gridded dataset.
 
 .. figure:: _static/globaltestfigure.png
    :align: center

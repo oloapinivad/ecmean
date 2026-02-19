@@ -1,4 +1,4 @@
-# Create the ECmean4 environment:
+# Create the ecmean environment:
 # mamba env create -f environment.yml 
 # or 
 # conda env create -f environment.yml

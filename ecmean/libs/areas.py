@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Shared functions for XArray ECmean4
+Shared functions for XArray ecmean
 '''
 
 import logging

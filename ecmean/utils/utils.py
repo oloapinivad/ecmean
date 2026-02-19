@@ -7,6 +7,16 @@ import os
 import numpy as np
 
 
+# Climatology file prefixes
+CLIMATOLOGY_PREFIXES = [
+    'climate_variance_',
+    'climate_average_',
+    'seasons_variance_',
+    'seasons_average_'
+]
+
+
+
 def timeframe_years(timeframe):
     """Timeframe to years mapping."""
     if timeframe == 'HIST':
@@ -80,6 +90,20 @@ def select_time_period(xfield, var, year1, year2):
     return cfield, real_year1, real_year2
 
 
+def get_climatology_files(tgtdir, var, dataset, grid, year1, year2):
+    """Generate climatology file paths.
+    """
+    
+    suffix = f'{var}_{dataset}_{grid}_{year1}_{year2}.nc'
+    
+    climatology_files = {
+        prefix: os.path.join(tgtdir, grid, prefix + suffix)
+        for prefix in CLIMATOLOGY_PREFIXES
+    }
+    
+    return climatology_files
+
+
 def parse_create_args():
     """Parse command line arguments for reference/climatology creation."""
     parser = argparse.ArgumentParser(
@@ -103,12 +127,6 @@ def parse_create_args():
         type=str,
         default='wilma',
         help='Machine name for input data path (default: wilma)'
-    )
-    parser.add_argument(
-        '--figures',
-        action='store_true',
-        default=False,
-        help='Generate diagnostic figures (default: False)'
     )
     parser.add_argument(
         '-j', '--cores',

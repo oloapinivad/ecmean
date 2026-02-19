@@ -21,12 +21,13 @@ import yaml
 from cdo import *
 #from dask.distributed import Client, LocalCluster, progress
 
-from ecmean.libs.climatology import check_histogram, full_histogram, mask_from_field, variance_threshold
+from ecmean.libs.climatology import check_histogram, full_histogram, \
+    mask_from_field, variance_threshold
 from ecmean.libs.files import load_yaml
 from ecmean.libs.ncfixers import xr_preproc
 from ecmean.libs.units import units_extra_definition
 from ecmean.utils.utils import select_time_period, timeframe_years, \
-    parse_create_args, select_time_data
+    parse_create_args, select_time_data, get_climatology_files, CLIMATOLOGY_PREFIXES
 
 # activate CDO class
 cdo = Cdo(logging=True)
@@ -58,7 +59,7 @@ FIGDIR = '/work/users/malbanes/figures/ecmean-py-variances/'
 units_extra_definition()
 
 
-def main(climdata='EC26', timeframe='HIST', machine='wilma', do_figures=False):
+def main(climdata='EC26', timeframe='HIST', machine='wilma', do_figures=False, overwrite=False):
     """Main function to create the climatology.
     
     Parameters
@@ -71,6 +72,8 @@ def main(climdata='EC26', timeframe='HIST', machine='wilma', do_figures=False):
         Machine name for data paths (default: 'wilma')
     do_figures : bool
         Generate diagnostic figures (default: False)
+    overwrite : bool
+        Overwrite existing climatology files (default: False)
     """
     # define the years from timeframe
     year1, year2 = timeframe_years(timeframe)
@@ -120,6 +123,17 @@ def main(climdata='EC26', timeframe='HIST', machine='wilma', do_figures=False):
         
         # select time based on data availability
         cfield, real_year1, real_year2 = select_time_period(xfield, var, year1, year2)
+
+        # check if files already exist and skip if overwrite is False
+        if not overwrite:
+            files_to_check = []
+            for grid in grids:
+                files_to_check.extend(get_climatology_files(
+                    tgtdir, var, info[var]['dataset'], grid, real_year1, real_year2
+                ).values())
+            if all(os.path.isfile(f) for f in files_to_check):
+                logging.warning('All files for %s already exist. Skipping computation.', var)
+                continue
 
         # check existence of unit, then apply from file
         if 'units' in info[var]:
@@ -232,16 +246,21 @@ def main(climdata='EC26', timeframe='HIST', machine='wilma', do_figures=False):
             ftype["zlib"] = True
             compression = {var: ftype, 'time': {'dtype': 'f8'}}
 
-            # define file suffix
-            suffix = f'{var}_{info[var]["dataset"]}_{grid}_{real_year1}-{real_year2}.nc'
+            # save all climatology files
+            climatology_data = [
+                full_variance,
+                full_mean,
+                season_variance,
+                season_mean
+            ]
+            
+            climatology_files = get_climatology_files(
+                tgtdir, var, info[var]['dataset'], grid, real_year1, real_year2
+            )
 
-            # save full - standard format
-            full_variance.to_netcdf(os.path.join(tgtdir, grid, 'climate_variance_' + suffix), encoding=compression)
-            full_mean.to_netcdf(os.path.join(tgtdir, grid, 'climate_average_' + suffix), encoding=compression)
-
-            # save season - 4 season format
-            season_variance.to_netcdf(os.path.join(tgtdir, grid, 'seasons_variance_' + suffix), encoding=compression)
-            season_mean.to_netcdf(os.path.join(tgtdir, grid, 'seasons_average_' + suffix), encoding=compression)
+            for prefix, dataset in zip(CLIMATOLOGY_PREFIXES, climatology_data):
+                logging.info('Saving %s...', prefix)
+                dataset.to_netcdf(climatology_files[prefix], encoding=compression)
 
             toc = time()
             logging.warning('Processing in {:.4f} seconds'.format(toc - tic))
@@ -276,7 +295,20 @@ def main(climdata='EC26', timeframe='HIST', machine='wilma', do_figures=False):
 
 # setting up dask
 if __name__ == "__main__":
-    args = parse_create_args().parse_args()
+    parser = parse_create_args()
+    parser.add_argument(
+        '--overwrite',
+        action='store_true',
+        default=False,
+        help='Not working yet: overwrite existing climatology files (default: False)'
+    )
+    parser.add_argument(
+        '--figures',
+        action='store_true',
+        default=False,
+        help='Generate diagnostic figures (default: False)'
+    )
+    args = parser.parse_args()
 
     logging.getLogger().setLevel(args.loglevel.upper())
 
@@ -286,7 +318,7 @@ if __name__ == "__main__":
         client = Client(cluster)
         logging.warning(client)
 
-    main(args.climdata, args.timeframe, args.machine, args.figures)
+    main(args.climdata, args.timeframe, args.machine, args.figures, args.overwrite)
 
     if args.cores > 1:
         client.close()

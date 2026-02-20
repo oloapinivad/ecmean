@@ -14,6 +14,7 @@ import warnings
 import glob
 from collections import defaultdict
 import copy
+import logging
 
 import yaml
 import numpy as np
@@ -39,7 +40,7 @@ models = ['EC-Earth3', 'IPSL-CM6A-LR', 'FGOALS-g3', 'CanESM5', 'CESM2', 'CNRM-CM
 # models= ['CMCC-CM2-SR5', 'TaiESM1']
 
 
-def main(clim='EC26', timeframe='CMIP', nprocs=4, 
+def main(clim='EC26', timeframe='CMIP', nprocs=4,
          do_definitive=False, do_compute=True, do_create_clim=True):
     """
     Main function to compute the performance indices for the CMIP6 climatology 
@@ -55,7 +56,7 @@ def main(clim='EC26', timeframe='CMIP', nprocs=4,
     """
 
     climname = f'{clim}-{timeframe}'
-    year1, year2 = timeframe_years(climname)
+    year1, year2 = timeframe_years(timeframe)
 
     # call the loop of global mean on all the models
     if do_compute:
@@ -63,12 +64,12 @@ def main(clim='EC26', timeframe='CMIP', nprocs=4,
         defaultconfig = load_yaml(config_file)
 
         for model in sorted(models):
-            print(model)
+            logging.warning("Computing model %s", model)
 
             if model in ['CNRM-CM6-1', 'UKESM1-0-LL']:
-                ENSEMBLE = "r1i1p1f2"
+                ensemble = "r1i1p1f2"
             else:
-                ENSEMBLE = "r1i1p1f1"
+                ensemble = "r1i1p1f1"
 
             model_config = copy.deepcopy(defaultconfig)
 
@@ -81,8 +82,9 @@ def main(clim='EC26', timeframe='CMIP', nprocs=4,
                             model_config['PI'][kind]['field'].remove(var)
 
             performance_indices(expname, year1, year2, config=model_config, model=model,
-                                ensemble=ENSEMBLE, numproc=nprocs, climatology=climname,
-                                loglevel='debug')
+                                ensemble=ensemble, numproc=nprocs, climatology=climname,
+                                loglevel=logging.getLogger().getEffectiveLevel(),
+                                plot=False)
 
     if do_create_clim:
 
@@ -91,7 +93,7 @@ def main(clim='EC26', timeframe='CMIP', nprocs=4,
         # dictionary with all elements
         full = {}
         for model in models:
-            print(model)
+            logging.warning("Climatology for model %s", model)
             filein = glob.glob(os.path.join(cfg['dirs']['tab'], f'PI4_{climname}_{expname}_{model}_r1i1p1f*_{year1}_{year2}.yml'))
             full[model] = load_yaml(filein[0])
 
@@ -142,7 +144,7 @@ def main(clim='EC26', timeframe='CMIP', nprocs=4,
         with open(update_pifile, 'w', encoding='utf8') as file:
             yaml.safe_dump(piclim, file, sort_keys=False)
 
-def __main__():
+if __name__ == '__main__':
     parser = parse_create_args()
     parser.add_argument('--definitive', action='store_true',
                         help='overwrite the definitive climatology file instead of creating a test one')
@@ -152,5 +154,7 @@ def __main__():
                         help='create the climatology file after computing the performance indices')
 
     args = parser.parse_args()
-    main(clim=args.climatology, timeframe=args.timeframe, nprocs=args.cores, do_definitive=args.definitive,
+    logging.getLogger().setLevel(args.loglevel.upper())
+    main(clim=args.climdata, timeframe=args.timeframe,
+         nprocs=args.cores, do_definitive=args.definitive,
          do_compute=args.compute, do_create_clim=args.create_clim)

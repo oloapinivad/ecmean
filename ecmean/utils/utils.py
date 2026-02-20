@@ -93,14 +93,14 @@ def select_time_period(xfield, var, year1, year2):
 def get_climatology_files(tgtdir, var, dataset, grid, year1, year2):
     """Generate climatology file paths.
     """
-    
-    suffix = f'{var}_{dataset}_{grid}_{year1}_{year2}.nc'
-    
+
+    suffix = f'{var}_{dataset}_{grid}_{year1}-{year2}.nc'
+
     climatology_files = {
         prefix: os.path.join(tgtdir, grid, prefix + suffix)
         for prefix in CLIMATOLOGY_PREFIXES
     }
-    
+
     return climatology_files
 
 

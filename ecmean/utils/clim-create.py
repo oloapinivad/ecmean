@@ -41,6 +41,7 @@ logging.basicConfig(level=logging.INFO)
 # variable list
 variables = ['tas', 'pr', 'net_sfc', 'tauu', 'tauv', 'psl',
              'ua', 'va', 'ta', 'hus', 'tos', 'sos', 'siconc']
+#variables.reverse()
 
 # targets resolution
 grids = ['r360x180']
@@ -54,6 +55,7 @@ NANSKIP = False
 # a hack is to use 5 sigma from the mean of the log10 distribution of variance
 # define a couple of threshold to remove variance outliers
 FIGDIR = '/work/users/malbanes/figures/ecmean-py-variances/'
+TMPDIR = '/scratch/users/paolo'
 
 # add other units
 units_extra_definition()
@@ -95,7 +97,7 @@ def main(climdata='EC26', timeframe='HIST', machine='wilma', do_figures=False, o
     xr.set_options(keep_attrs=True)
 
     # open the clim info file
-    logging.debug(f"Loading climatology info from %s", clim_info)
+    logging.debug("Loading climatology info from %s", clim_info)
     info = load_yaml(clim_info)
 
     # directory definitions and creations
@@ -164,7 +166,7 @@ def main(climdata='EC26', timeframe='HIST', machine='wilma', do_figures=False, o
 
         # dump the netcdf file to disk
         logging.info("new file...")
-        tmpfile = tempfile.NamedTemporaryFile(suffix='.nc', delete=False)
+        tmpfile = tempfile.NamedTemporaryFile(suffix='.nc', dir=TMPDIR, delete=False)
 
         # preserve dtype for numerical reasons
         codes = ['dtype', '_FillValue', 'scale_factor', 'add_offset', 'missing_value']

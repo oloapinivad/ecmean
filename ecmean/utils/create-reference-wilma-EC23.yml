@@ -1,0 +1,281 @@
+# directories to be specified, machine dependent, simplify path serach
+dirs: 
+  datadir: "/work/scratch/users/paolo/ecmean_datasets"
+  eradir: "/work/datasets/obs/ERA5"
+  esadir: "/work/datasets/obs/ESA-CCI-L4/mon"
+  mswepdir: "/work/datasets/obs/MSWEP/mon"
+
+# mask, we are using land-sea mask from ERA5
+mask: "/work/datasets/obs/ERA5/land_sea_mask/landsea_mask.nc"
+
+# key parameters
+#  dataset: dataset name
+#  longname: full variable description
+#  derived: the variable in the file, follow the ECmean4 (CDO-derived) syntax
+#  operation: if do the "mean" or the "integral" (default if not defined, 'mean')
+#  mask: 'land', 'ocean', 'south', 'north' (default if not defined, 'global')
+#  domain: 'atm' or 'oce' variables  (default if not defined, 'atm')
+#  direction: for fluxes, can be 'up' or 'down' (default)
+#  org_units: original file units
+#  tgt_units: target file units: conversion done with metpy, integrals have a m^2 factor
+#  dir: where to find 
+
+tas: 
+  dataset: CRU
+  longname: '2m Temperature (land-only)'
+  derived: tmp
+  mask: land-no-antarctica
+  org_units: celsius
+  tgt_units: celsius
+  dir: "{datadir}/{dataset}/data/v4.05/*.nc"
+  notes: 'CRU TS4.05'
+psl: 
+  dataset: ERA5
+  longname: 'Mean Sea Level Pressure'
+  derived: msl
+  org_units: Pa
+  tgt_units: hPa
+  dir: "{eradir}/mean_sea_level_pressure/mon/*.nc"
+pr:
+  dataset: MSWEP
+  longname: 'Precipitation'
+  derived: precipitation
+  org_units: mm/month
+  tgt_units: mm/day
+  dir: "{mswepdir}/*.nc"
+evspsbl: 
+  dataset: ERA5
+  longname: 'Evaporation'
+  derived: e
+  org_units: m/day
+  tgt_units: mm/day
+  dir: "{eradir}/evaporation/mon/*.nc"
+pme: 
+  dataset: ERA5
+  longname: 'Precip. minus Evap.'
+  derived: TP+e
+  org_units: m/day
+  tgt_units: mm/day
+  dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_0.25x0.25_sfc_1950-2021.nc', '{eradir}/evaporation/mon/*.nc']
+clt: 
+  dataset: CERES-EBAF
+  longname: 'Total Cloud Cover'
+  derived: cldarea_total_daynight_mon
+  org_units: '%'
+  tgt_units: frac
+  dir: "{datadir}/{dataset}/nasa/CERES_EBAF-TOA_Ed4.2_Subset_200003-202211.nc"
+  notes: 'Edition 4.2; Release Date December 9, 2022'
+cll: 
+  dataset: ERA5
+  longname: 'Low Cloud Cover'
+  derived: lcc
+  org_units: frac
+  tgt_units: frac
+  dir: '{eradir}/low_cloud_cover/mon/*.nc'
+clm: 
+  dataset: ERA5
+  longname: 'Medium Cloud Cover'
+  derived: mcc
+  org_units: frac
+  tgt_units: frac
+  dir: '{eradir}/medium_cloud_cover/mon/*.nc'
+clh: 
+  dataset: ERA5
+  longname: 'High Cloud Cover'
+  derived: hcc
+  org_units: frac
+  tgt_units: frac
+  dir: '{eradir}/high_cloud_cover/mon/*.nc'
+pr_oce:
+  dataset: MSWEP
+  longname: 'Precipitation (ocean)'
+  derived: precipitation
+  mask: ocean
+  operation: integral
+  org_units: mm/month
+  tgt_units: Sv
+  dir: "{mswepdir}/*.nc"
+pme_oce: 
+  dataset: ERA5
+  longname: 'Precip. minus Evap. (ocean)'
+  mask: ocean
+  operation: integral
+  derived: TP+e
+  org_units: m/day
+  tgt_units: Sv
+  dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_0.25x0.25_sfc_1950-2021.nc', '{eradir}/evaporation/mon/*.nc']  
+pr_land:
+  dataset: MSWEP
+  longname: 'Precipitation (land)'
+  derived: precipitation
+  operation: integral
+  mask: land
+  operation: integral
+  org_units: mm/month
+  tgt_units: Sv
+  dir: "{mswepdir}/*.nc"
+pme_land: 
+  dataset: ERA5
+  longname: 'Precip. minus Evap. (land)'
+  mask: land
+  operation: integral
+  derived: TP+e
+  org_units: m/day
+  tgt_units: Sv
+  dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_0.25x0.25_sfc_1950-2021.nc', '{eradir}/evaporation/mon/*.nc']  
+tos: 
+  dataset: ESA-CCI-L4
+  longname: 'Sea Surface Temperature'
+  derived: 'analysed_sst'
+  mask: ocean
+  domain: oce
+  org_units: K
+  tgt_units: celsius
+  dir: '{esadir}/analysed_sst/*.nc'  
+sos: 
+  dataset: ESA-CCI
+  longname: 'Sea Surface Salinity'
+  derived: 'sss'
+  mask: ocean
+  domain: oce
+  org_units: PSU
+  tgt_units: PSU
+  dir: '{datadir}/ESA-CCI/data/ESA-sss.nc'  
+  notes: Weekly sea surface salinity product, v03.21
+siconc: 
+  dataset: ESA-CCI-L4
+  longname: 'Sea Ice Area'
+  derived: 'sea_ice_fraction'
+  operation: integral
+  mask: ocean
+  domain: oce
+  org_units: frac
+  tgt_units: Mm^2
+  dir: '{esadir}/sea_ice_fraction/*.nc'  
+rsnt: 
+  dataset: CERES-EBAF
+  longname: 'TOA SW Net'
+  derived: solar_mon-toa_sw_all_mon
+  org_units: W/m2
+  tgt_units: W/m2
+  dir: "{datadir}/{dataset}/nasa/CERES_EBAF-TOA_Ed4.2_Subset_200003-202211.nc"
+  notes: 'Edition 4.2; Release Date December 9, 2022'
+rlnt: 
+  dataset: CERES-EBAF
+  longname: 'TOA LW Net'
+  derived: toa_lw_all_mon
+  org_units: W/m2
+  tgt_units: W/m2
+  direction: up
+  dir: "{datadir}/{dataset}/nasa/CERES_EBAF-TOA_Ed4.2_Subset_200003-202211.nc"
+  notes: 'Edition 4.2; Release Date December 9, 2022'
+net_toa:
+  dataset: CERES-EBAF
+  longname: 'TOA Net'
+  derived: toa_net_all_mon
+  org_units: W/m2
+  tgt_units: W/m2
+  dir: "{datadir}/{dataset}/nasa/CERES_EBAF-TOA_Ed4.2_Subset_200003-202211.nc"
+  notes: 'Edition 4.2; Release Date December 9, 2022'
+rsntcs: 
+  dataset: CERES-EBAF
+  longname: 'TOA SW Net (clear sky)'
+  derived: solar_mon-toa_sw_clr_c_mon
+  org_units: W/m2
+  tgt_units: W/m2
+  dir: "{datadir}/{dataset}/nasa/CERES_EBAF-TOA_Ed4.2_Subset_200003-202211.nc"
+  notes: 'Edition 4.2; Release Date December 9, 2022'
+rlntcs: 
+  dataset: CERES-EBAF
+  longname: 'TOA LW Net (clear sky)'
+  derived: toa_lw_clr_c_mon
+  org_units: W/m2
+  tgt_units: W/m2
+  direction: up
+  dir: "{datadir}/{dataset}/nasa/CERES_EBAF-TOA_Ed4.2_Subset_200003-202211.nc"
+  notes: 'Edition 4.2; Release Date December 9, 2022'
+swcf: 
+  dataset: CERES-EBAF
+  longname: 'SW Cloud Forcing'
+  derived: toa_sw_clr_c_mon-toa_sw_all_mon
+  org_units: W/m2
+  tgt_units: W/m2
+  dir: "{datadir}/{dataset}/nasa/CERES_EBAF-TOA_Ed4.2_Subset_200003-202211.nc"
+  notes: 'Edition 4.2; Release Date December 9, 2022'
+lwcf: 
+  dataset: CERES-EBAF
+  longname: 'LW Cloud Forcing'
+  derived: toa_lw_clr_c_mon-toa_lw_all_mon
+  org_units: W/m2
+  tgt_units: W/m2
+  dir: "{datadir}/{dataset}/nasa/CERES_EBAF-TOA_Ed4.2_Subset_200003-202211.nc"
+  notes: 'Edition 4.2; Release Date December 9, 2022'
+
+# from here on dataset which are hard coded and does not require NetCDF files
+toamsfc: 
+  dataset: None
+  longname: 'TOA - Sfc Net Radiation'
+  tgt_units: W/m2
+  outvalue: 0
+toamsfc_nosn: 
+  dataset: None
+  longname: 'TOA - Sfc Net Radiation (no snow)'
+  tgt_units: W/m2
+  outvalue: 0
+rlns:
+  tgt_units: W/m2
+  longname: 'Surface Net LW'
+  outvalue: -56
+  dataset: 'Wild 2020'
+rsns:
+  tgt_units: W/m2
+  longname: 'Surface Net SW'
+  outvalue: 160
+  dataset: 'Wild 2020'
+hfss:
+  tgt_units: W/m2
+  longname: 'Surface SH'
+  outvalue: -21
+  dataset: 'Wild 2020'
+hfls:
+  tgt_units: W/m2
+  longname: 'Surface LH'
+  outvalue: -82
+  dataset: 'Wild 2020'
+net_sfc: 
+  tgt_units: W/m2
+  longname: 'Net Surface'
+  outvalue: 0.6
+  dataset: 'Wild 2020'
+net_sfc_nosn:
+  tgt_units: W/m2
+  longname: 'Net Surface (no snowfall)'
+  outvalue: 0.6
+  dataset: 'Wild 2020'
+zos:
+  tgt_units: m
+  longname: 'SSH'
+  outvalue: 0
+  dataset: None
+wfo:
+  tgt_units: m/century
+  longname: 'Net Water Flux into ocean'
+  outvalue: 0
+  dataset: None
+siconc_north:
+  dataset: ESA-CCI-L4
+  tgt_units: Mm^2
+  longname: 'Sea Ice Area (Northern Hemisphere)'
+  operation: integral
+  mask: north
+  domain: ocean
+  outvalue: 9.562
+siconc_south:
+  dataset: ESA-CCI-L4
+  longname: 'Sea Ice Area (Southern Hemisphere)'
+  tgt_units: Mm^2
+  operation: integral
+  mask: south
+  domain: ocean
+  outvalue: 9.66
+  

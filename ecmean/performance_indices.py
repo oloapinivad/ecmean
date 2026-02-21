@@ -4,9 +4,11 @@
  python3 version of ECmean performance indices tool
  Using a reference file from yaml and cdo bindings
 
- @author Paolo Davini (p.davini@isac.cnr.it), 2022
+ @author Paolo Davini (paolo.davini@cnr.it), 2022
  @author Jost von Hardenberg (jost.hardenberg@polito.it), 2022
 '''
+
+__author__ = "Paolo Davini (paolo.davin@cnr.it)"
 
 import sys
 import os
@@ -44,7 +46,7 @@ class PerformanceIndices:
         config (str): Path to the configuration file. Default is 'config.yml'.
         loglevel (str): Logging level. Default is 'WARNING'.
         numproc (int): Number of processes to use. Default is 1.
-        climatology (str): Climatology to use. Default is 'EC23'.
+        climatology (str): Climatology to use. Default is 'EC24'.
         interface (str): Path to the interface file.
         model (str): Model name.
         ensemble (str): Ensemble identifier. Default is 'r1i1p1f1'.
@@ -106,7 +108,7 @@ class PerformanceIndices:
         elapsed_time = time() - self.current_time
         self.current_time = time()
         self.loggy.info('%s time: %.2f seconds', message, elapsed_time)
-    
+
     def final_toc(self):
         """Log the total elapsed time since the start."""
         total_elapsed_time = time() - self.start_time
@@ -292,16 +294,17 @@ class PerformanceIndices:
 
                     # get the data-array field for the required var
                     outfield = formula_wrapper(var, face, xfield)
+                    
+                    # Load once to avoid recomputing for each season
+                    outfield = outfield.persist()
 
                     # mean over time and fixing of the units
                     for season in diag.seasons:
                         loggy.debug(season)
 
-                        # copy of the full field
-                        tmean = outfield.copy(deep=True)
-
-                        # get filenames for climatology
+                        # get filenames for climatology (season-specific files)
                         clim, vvvv = get_clim_files(piclim, var, diag, season)
+                        loggy.debug('Climatology files for %s %s: %s, %s', var, season, clim, vvvv)
 
                         # open climatology files, fix their metadata
                         cfield = adjust_clim_file(xr.open_mfdataset(clim, preprocess=xr_preproc))
@@ -309,16 +312,18 @@ class PerformanceIndices:
 
                         # season selection
                         if season != 'ALL':
-                            tmean = tmean.sel(time=tmean.time.dt.season.isin(season))
+                            tmean = outfield.sel(time=outfield.time.dt.season.isin(season))
                             cfield = cfield.sel(time=cfield.time.dt.season.isin(season))
                             vfield = vfield.sel(time=vfield.time.dt.season.isin(season))
-
-                        # averaging, applying offset and factor and loading
-                        tmean = (tmean.mean(dim='time') * factor + offset).load()
-
-                        # averaging and loading the climatology
-                        cfield = cfield.mean(dim='time').load()
-                        vfield = vfield.mean(dim='time').load()
+                        else:
+                            tmean = outfield
+                        
+                        # Single compute call for all three arrays
+                        tmean, cfield, vfield = dask.compute(
+                            tmean.mean(dim='time') * factor + offset,
+                            cfield.mean(dim='time'),
+                            vfield.mean(dim='time')
+                        )
 
                         # apply interpolation, if fixer is available and with different grids
                         fix = getattr(util, f'{domain}fix')
@@ -410,17 +415,18 @@ def pi_entry_point():
 def performance_indices(exp, year1, year2, config='config.yml', loglevel='WARNING',
                         numproc=1, climatology=None, interface=None, model=None,
                         ensemble='r1i1p1f1', silent=None, xdataset=None, outputdir=None,
-                        title=None):
+                        title=None, plot=True):
     """
     Wrapper function to compute the performance indices for a given experiment and years.
     """
     pi = PerformanceIndices(exp=exp, year1=year1, year2=year2, config=config,
                             loglevel=loglevel, numproc=numproc, climatology=climatology,
                             interface=interface, model=model, ensemble=ensemble, silent=silent,
-                            xdataset=xdataset, outputdir=outputdir, 
+                            xdataset=xdataset, outputdir=outputdir,
                             title=title)
     pi.prepare()
     pi.run()
     pi.store()
-    pi.plot()
+    if plot:
+        pi.plot()
     pi.final_toc()

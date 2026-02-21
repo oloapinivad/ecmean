@@ -12,7 +12,7 @@ mask: "/work/datasets/obs/ERA5/land_sea_mask/landsea_mask.nc"
 #  dataset: dataset name
 #  longname: full variable description
 #  derived: the variable in the file, follow the ECmean4 (CDO-derived) syntax
-#  operation: if do the "mean" or the "integral" (default if not defined, 'mean')
+#  operation: if do the "mean" or the "integral" (default if not defined, 'mean')cd an
 #  mask: 'land', 'ocean', 'south', 'north' (default if not defined, 'global')
 #  domain: 'atm' or 'oce' variables  (default if not defined, 'atm')
 #  direction: for fluxes, can be 'up' or 'down' (default)
@@ -20,196 +20,231 @@ mask: "/work/datasets/obs/ERA5/land_sea_mask/landsea_mask.nc"
 #  tgt_units: target file units: conversion done with metpy, integrals have a m^2 factor
 #  dir: where to find 
 
-tas: 
+tas_land: 
   dataset: CRU
   longname: '2m Temperature (land-only)'
-  derived: tmp
+  varname: tmp
   mask: land-no-antarctica
   org_units: celsius
   tgt_units: celsius
-  dir: "{datadir}/{dataset}/data/*.nc"
-  notes: 'CRU TS4.05'
+  dir: "{datadir}/{dataset}/data/v4.09/*.nc"
+  description: 'CRU TS4.09 Mean Temperature'
+  version: '4.09'
+tas: 
+  dataset: BERKELEY-EARTH
+  longname: '2m Temperature'
+  varname: 2t
+  org_units: celsius
+  tgt_units: celsius
+  dir: "{datadir}/{dataset}/Berkeley-Earth_aqua-filled_1x1_1979-2024.nc"
+  description: "Berkeley Earth Surface Temperature, version without missing points used in AQUA"
 psl: 
   dataset: ERA5
   longname: 'Mean Sea Level Pressure'
-  derived: msl
+  varname: MSL
   org_units: Pa
   tgt_units: hPa
   dir: "{eradir}/mean_sea_level_pressure/mon/*.nc"
+  description: 'ECMWF ERA5 reanalysis'
 pr:
   dataset: MSWEP
   longname: 'Precipitation'
-  derived: precipitation
+  varname: precipitation
   org_units: mm/month
   tgt_units: mm/day
   dir: "{mswepdir}/*.nc"
+  description: 'v2.80; PAST+NRT'
+  version: '2.80'
 evspsbl: 
   dataset: ERA5
   longname: 'Evaporation'
-  derived: e
+  varname: E
   org_units: m/day
   tgt_units: mm/day
   dir: "{eradir}/evaporation/mon/*.nc"
+  description: 'ECMWF ERA5 reanalysis'
 pme: 
   dataset: ERA5
   longname: 'Precip. minus Evap.'
-  derived: TP+e
+  varname: TP+E
   org_units: m/day
   tgt_units: mm/day
-  dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_0.25x0.25_sfc_1950-2021.nc', '{eradir}/evaporation/mon/*.nc']
+  dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_full_sfc_1940-2024.nc', '{eradir}/evaporation/mon/*.nc']
+  description: 'ECMWF ERA5 reanalysis'
 clt: 
-  dataset: CERES-EBAF
+  dataset: EBAF_v4.2.1
   longname: 'Total Cloud Cover'
-  derived: cldarea_total_daynight_mon
+  varname: cldarea_total_daynight_mon
   org_units: '%'
   tgt_units: frac
-  dir: "{datadir}/{dataset}/nasa/CERES_EBAF-TOA_Ed4.2_Subset_200003-202211.nc"
-  notes: 'Edition 4.2; Release Date December 9, 2022'
+  dir: "{datadir}/{dataset}/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  description: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
+  version: '4.2.1'
 cll: 
   dataset: ERA5
   longname: 'Low Cloud Cover'
-  derived: lcc
+  varname: LCC
   org_units: frac
   tgt_units: frac
-  dir: '{eradir}/low_cloud_cover/mon/*.nc'
+  dir: '{eradir}/low_cloud_cover/*.nc'
+  description: 'ECMWF ERA5 reanalysis'
 clm: 
   dataset: ERA5
   longname: 'Medium Cloud Cover'
-  derived: mcc
+  varname: MCC
   org_units: frac
   tgt_units: frac
   dir: '{eradir}/medium_cloud_cover/mon/*.nc'
+  description: 'ECMWF ERA5 reanalysis'
 clh: 
   dataset: ERA5
   longname: 'High Cloud Cover'
-  derived: hcc
+  varname: HCC
   org_units: frac
   tgt_units: frac
   dir: '{eradir}/high_cloud_cover/mon/*.nc'
+  description: 'ECMWF ERA5 reanalysis'
 pr_oce:
   dataset: MSWEP
   longname: 'Precipitation (ocean)'
-  derived: precipitation
+  varname: precipitation
   mask: ocean
   operation: integral
   org_units: mm/month
   tgt_units: Sv
   dir: "{mswepdir}/*.nc"
+  description: 'v2.80; PAST+NRT'
+  version: '2.80'
 pme_oce: 
   dataset: ERA5
   longname: 'Precip. minus Evap. (ocean)'
   mask: ocean
   operation: integral
-  derived: TP+e
+  varname: TP+E
   org_units: m/day
   tgt_units: Sv
-  dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_0.25x0.25_sfc_1950-2021.nc', '{eradir}/evaporation/mon/*.nc']  
+  dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_full_sfc_1940-2024.nc', '{eradir}/evaporation/mon/*.nc']
+  description: 'ECMWF ERA5 reanalysis'  
 pr_land:
   dataset: MSWEP
   longname: 'Precipitation (land)'
-  derived: precipitation
+  varname: precipitation
   operation: integral
   mask: land
   operation: integral
   org_units: mm/month
   tgt_units: Sv
   dir: "{mswepdir}/*.nc"
+  description: 'v2.80; PAST+NRT'
+  version: '2.80'
 pme_land: 
   dataset: ERA5
   longname: 'Precip. minus Evap. (land)'
   mask: land
   operation: integral
-  derived: TP+e
+  varname: TP+E
   org_units: m/day
   tgt_units: Sv
-  dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_0.25x0.25_sfc_1950-2021.nc', '{eradir}/evaporation/mon/*.nc']  
+  dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_full_sfc_1940-2024.nc', '{eradir}/evaporation/mon/*.nc']
+  description: 'ECMWF ERA5 reanalysis'  
 tos: 
   dataset: ESA-CCI-L4
   longname: 'Sea Surface Temperature'
-  derived: 'analysed_sst'
+  varname: 'analysed_sst'
   mask: ocean
   domain: oce
   org_units: K
   tgt_units: celsius
   dir: '{esadir}/analysed_sst/*.nc'  
+  description: 'ESA SST CCI OSTIA L4 v3.0.1'
+  version: '3.0.1'
 sos: 
-  dataset: ESA-CCI
+  dataset: Copernicus Global Analysed Sea Surface Salinity
   longname: 'Sea Surface Salinity'
-  derived: 'sss'
+  varname: 'sos'
   mask: ocean
   domain: oce
   org_units: PSU
   tgt_units: PSU
-  dir: '{datadir}/ESA-CCI/data/ESA-sss.nc'  
-  notes: Weekly sea surface salinity product, v03.21
+  dir: '{datadir}/COPERNICUS/processed/*.nc'
+  description: L4 Analysis product
 siconc: 
   dataset: ESA-CCI-L4
   longname: 'Sea Ice Area'
-  derived: 'sea_ice_fraction'
+  varname: 'sea_ice_fraction'
   operation: integral
   mask: ocean
   domain: oce
   org_units: frac
   tgt_units: Mm^2
   dir: '{esadir}/sea_ice_fraction/*.nc'  
+  description: 'ESA SST CCI OSTIA L4 v3.0.1'
+  version: '3.0.1'
 rsnt: 
-  dataset: CERES-EBAF
+  dataset: CERES EBAF
   longname: 'TOA SW Net'
-  derived: solar_mon-toa_sw_all_mon
+  varname: solar_mon-toa_sw_all_mon
   org_units: W/m2
   tgt_units: W/m2
-  dir: "{datadir}/{dataset}/nasa/CERES_EBAF-TOA_Ed4.2_Subset_200003-202211.nc"
-  notes: 'Edition 4.2; Release Date December 9, 2022'
+  dir: "{datadir}/EBAF_v4.2.1/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  description: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
+  version: '4.2.1'
 rlnt: 
-  dataset: CERES-EBAF
+  dataset: CERES EBAF
   longname: 'TOA LW Net'
-  derived: toa_lw_all_mon
+  varname: toa_lw_all_mon
   org_units: W/m2
   tgt_units: W/m2
   direction: up
-  dir: "{datadir}/{dataset}/nasa/CERES_EBAF-TOA_Ed4.2_Subset_200003-202211.nc"
-  notes: 'Edition 4.2; Release Date December 9, 2022'
+  dir: "{datadir}/EBAF_v4.2.1/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  description: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
+  version: '4.2.1'
 net_toa:
-  dataset: CERES-EBAF
+  dataset: CERES EBAF
   longname: 'TOA Net'
-  derived: toa_net_all_mon
+  varname: toa_net_all_mon
   org_units: W/m2
   tgt_units: W/m2
-  dir: "{datadir}/{dataset}/nasa/CERES_EBAF-TOA_Ed4.2_Subset_200003-202211.nc"
-  notes: 'Edition 4.2; Release Date December 9, 2022'
+  dir: "{datadir}/EBAF_v4.2.1/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  description: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
+  version: '4.2.1'
 rsntcs: 
-  dataset: CERES-EBAF
+  dataset: CERES EBAF
   longname: 'TOA SW Net (clear sky)'
-  derived: solar_mon-toa_sw_clr_c_mon
+  varname: solar_mon-toa_sw_clr_c_mon
   org_units: W/m2
   tgt_units: W/m2
-  dir: "{datadir}/{dataset}/nasa/CERES_EBAF-TOA_Ed4.2_Subset_200003-202211.nc"
-  notes: 'Edition 4.2; Release Date December 9, 2022'
+  dir: "{datadir}/EBAF_v4.2.1/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  description: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
+  version: '4.2.1'
 rlntcs: 
-  dataset: CERES-EBAF
+  dataset: CERES EBAF
   longname: 'TOA LW Net (clear sky)'
-  derived: toa_lw_clr_c_mon
+  varname: toa_lw_clr_c_mon
   org_units: W/m2
   tgt_units: W/m2
   direction: up
-  dir: "{datadir}/{dataset}/nasa/CERES_EBAF-TOA_Ed4.2_Subset_200003-202211.nc"
-  notes: 'Edition 4.2; Release Date December 9, 2022'
+  dir: "{datadir}/EBAF_v4.2.1/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  description: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
+  version: '4.2.1'
 swcf: 
-  dataset: CERES-EBAF
+  dataset: CERES EBAF
   longname: 'SW Cloud Forcing'
-  derived: toa_sw_clr_c_mon-toa_sw_all_mon
+  varname: toa_sw_clr_c_mon-toa_sw_all_mon
   org_units: W/m2
   tgt_units: W/m2
-  dir: "{datadir}/{dataset}/nasa/CERES_EBAF-TOA_Ed4.2_Subset_200003-202211.nc"
-  notes: 'Edition 4.2; Release Date December 9, 2022'
+  dir: "{datadir}/EBAF_v4.2.1/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  description: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
+  version: '4.2.1'
 lwcf: 
-  dataset: CERES-EBAF
+  dataset: CERES EBAF
   longname: 'LW Cloud Forcing'
-  derived: toa_lw_clr_c_mon-toa_lw_all_mon
+  varname: toa_lw_clr_c_mon-toa_lw_all_mon
   org_units: W/m2
   tgt_units: W/m2
-  dir: "{datadir}/{dataset}/nasa/CERES_EBAF-TOA_Ed4.2_Subset_200003-202211.nc"
-  notes: 'Edition 4.2; Release Date December 9, 2022'
+  dir: "{datadir}/EBAF_v4.2.1/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  description: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
+  version: '4.2.1'
 
 # from here on dataset which are hard coded and does not require NetCDF files
 toamsfc: 
@@ -234,12 +269,12 @@ rsns:
   dataset: 'Wild 2020'
 hfss:
   tgt_units: W/m2
-  longname: 'Surface SH'
+  longname: 'Surface Sensible Heat Flux'
   outvalue: -21
   dataset: 'Wild 2020'
 hfls:
   tgt_units: W/m2
-  longname: 'Surface LH'
+  longname: 'Surface Latent Heat Flux'
   outvalue: -82
   dataset: 'Wild 2020'
 net_sfc: 
@@ -269,7 +304,8 @@ siconc_north:
   operation: integral
   mask: north
   domain: ocean
-  outvalue: 9.562
+  outvalue: 0
+  description: 'ESA SST CCI OSTIA L4 v3.0.1'
 siconc_south:
   dataset: ESA-CCI-L4
   longname: 'Sea Ice Area (Southern Hemisphere)'
@@ -277,5 +313,6 @@ siconc_south:
   operation: integral
   mask: south
   domain: ocean
-  outvalue: 9.66
+  outvalue: 0
+  description: 'ESA SST CCI OSTIA L4 v3.0.1'
   

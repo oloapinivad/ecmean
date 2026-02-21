@@ -151,7 +151,7 @@ class AreaCalculator:
                                           xfield[blondim].isel(nvertex=2)))
             bounds_lat = np.column_stack((xfield[blatdim].isel(nvertex=2),
                                           xfield[blatdim].isel(nvertex=3)))
-            area_dims = 'cell'
+            area_dims = ['cell']
             full_lat = xfield['lat'].data
 
         elif gridtype in ['gaussian', 'lonlat']:
@@ -169,8 +169,7 @@ class AreaCalculator:
 
             bounds_lon = np.stack([blon] * len(blat), axis=0).reshape(-1, 2)
             bounds_lat = np.stack([blat] * len(blon), axis=1).reshape(-1, 2)
-            area_dims = ('lat', 'lon')
-
+            area_dims = ['lat', 'lon']
         else:
             raise ValueError("Gridtype undefined or unsupported.")
 
@@ -179,8 +178,8 @@ class AreaCalculator:
         if gridtype in ['gaussian', 'lonlat']:
             area = area.reshape([len(xfield['lat']), len(xfield['lon'])])
 
-        outfield = xr.DataArray(area, dims=area_dims, coords=xfield.coords, name='area')
-
+        outfield = xr.DataArray(area, dims=area_dims, coords=xfield.squeeze(drop=True).coords, name='area')
+        
         loggy.debug("Total Earth Surface: %s Km2", str(outfield.sum().values / 10**6))
 
         return outfield

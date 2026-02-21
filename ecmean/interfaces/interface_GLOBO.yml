@@ -129,6 +129,10 @@ variables:
     varname: 'Precip. minus evap.'
     derived: 'pr+evspsbl'
     filetype: atm_6hrs
+  tas_land:
+    varname: '2m Air Temperature (land-only)'
+    derived: tas
+    filetype: atm_6hrs
   pr_land:
     varname: 'Precipitation (land)'
     derived: pr

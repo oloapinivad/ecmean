@@ -5,7 +5,7 @@ Main concepts
 ^^^^^^^^^^^^^
 
 The ``global_mean`` command is based on ``global_mean.py`` script which computes the global averages for many dynamical and physical fields
-It compares the output against a set of pre-computed ``EC23`` climatological values defined in ``ecmean/reference/gm_reference_EC23.yml``, including the most important dynamical and physical fields 
+It compares the output against a set of pre-computed ``EC23`` or ``HIST26`` or ``PDAY26`` climatological values defined in ``ecmean/reference/gm_reference_EC23.yml`` or ``ecmean/reference/gm_reference/gm_reference_HIST26.yml`` or ``ecmean/reference/gm_reference/gm_reference_PDAY26.yml``, including the most important dynamical and physical fields 
 for both the atmosphere and the ocean (e.g. land temperature, salinity, etc.).
 Different datasates are taken in consideration, providing an estimate of the interannual variability in the form of standard deviation.
 
@@ -93,7 +93,7 @@ Usage example for CMIP5::
 
         global_mean historical 1990 1999 -j 12 -m EC-EARTH -e r1i1p1 -i CMIP5
 
-will compute performance indices for member r1i1p1 of the EC-EARTH model in the CMIP5 historical experiment.
+will compute global mean for member r1i1p1 of the EC-EARTH model in the CMIP5 historical experiment.
 
 Output
 ^^^^^^
@@ -126,5 +126,5 @@ Climatology computation
 
 Climatology is computed by the ``ecmean/utils/reference-create.py`` script, which is included in the repository for documentation.
 It is based on a YML file which is tells the script where to retrieve the data, identifying all the required data folder and names. 
-The results are produced into a YML file for in ``ecmean/reference/gm_reference_EC23.yml`` which includes the global and regional mean 
+The results are produced into a YML file for in ``ecmean/reference/gm_reference_EC**.yml`` which includes the global and regional mean 
 over different seasons as well the interannual standard deviation. All details on the datasets are found there. 

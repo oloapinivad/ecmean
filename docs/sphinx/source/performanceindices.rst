@@ -89,11 +89,7 @@ Optional Arguments
 
 .. option:: --climatology CLIMATOLOGY
 
-    Specify the climatology you want to use. Options are EC23 (default) or EC24.
-
-.. option:: --resolution RESOLUTION
-
-    Only EC23: Specify the resolution of the climatology (r180x90 or r360x180).
+    Specify the climatology you want to use (EC24: default).
 
 .. option:: -o DIR, --outputdir DIR
 
@@ -189,7 +185,7 @@ Properties of the climatology - as which interpolation method and which CMIP6 mo
 EC24
 ----
 
-This is an upgrade of EC23 - currently under testing - with the following improvements:
+This is an upgrade of EC23 - and currently the new default - with the following improvements:
   - It is scaled to 1985-2014, to be consistent with the CMIP6 historical simulations.
   - It removes data above 10hPa for 3D fields, to avoid unrealistic large PIs due to stratospheric low variances.
   - It extend the amount of regions to be considered, allowing also for Northern/Southern Hemisphere, Equatorial and South/North Pole regions.

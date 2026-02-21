@@ -11,6 +11,9 @@ import matplotlib.pyplot as plt
 loggy = logging.getLogger(__name__)
 
 
+SUPPORTED_REFERENCE = ['EC23', 'EC25', 'EC26-PDAY', 'EC26-CMIP', 'EC26-HIST']
+SUPPORTED_CLIMATOLOGY = ['EC23', 'EC24', 'EC26-HIST', 'EC26-CMIP']
+
 def variance_threshold(xvariance):
     """this defines the two thresholds (high and low) for filtering the dataset
     So far it is done on the 5-sigma of the log10 distribution"""

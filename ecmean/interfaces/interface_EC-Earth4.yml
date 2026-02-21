@@ -188,6 +188,10 @@ variables:
     component: nemo
     filetype: oceT
     direction: up
+  tas_land:
+    varname: '2m Air Temperature (land)'
+    derived: tas
+    filetype: atm2d 
   pr_land:
     varname: 'Precipitation (land)'
     derived: pr

@@ -31,6 +31,8 @@ dependencies = [
     "tabulate",
     "cfgrib",
     "seaborn",
+    "pip >= 26.2.2", # for pip certificate vulnerability 
+    "certifi >= 2026.10.19" # for pip certificate vulnerability 
 ]
 
 [project.optional-dependencies]

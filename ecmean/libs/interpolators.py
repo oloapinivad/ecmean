@@ -19,12 +19,9 @@ def cdo_available():
     Returns:
         bool: True when the `CDO` tool can be used.
     """
-    # two clauses: ruff (target py314) would strip the parentheses of a tuple, which breaks python < 3.14
     try:
         check_cdo_version()
-    except FileNotFoundError:
-        return False
-    except RuntimeError:
+    except (FileNotFoundError, RuntimeError):
         return False
     return True
 

@@ -174,7 +174,7 @@ def check_dependencies():
 year1 = 1990
 year2 = 1990
 expname = "historical"
-refclim = "EC24"
+refclim = "EC26-CMIP"
 nprocs = 1
 config_file = "config_create_clim.yml"
 

@@ -16,7 +16,7 @@ Under the hood
 
 |ecmean| is built on Xarray and Dask lazy calls which are executed in a single instance at the end of the script,
 exploiting parallelization on multiple variables with `Multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`_.
-This allows to have a fast data analysis without writing unnecessary files on disk. Interpolation is carried out with `xESMF <https://xesmf.readthedocs.io/en/latest/>`_.
+This allows to have a fast data analysis without writing unnecessary files on disk. Interpolation is carried out with `xESMF <https://xesmf.readthedocs.io/en/latest/>`_, or optionally with CDO weights through `smmregrid <https://github.com/jhardenberg/smmregrid>`_ (``--tool CDO``).
 Area weighting is internally assessed based on spherical triangles computation (i.e. L'Huilier theorem), and it uses coordinates boundaries as far as possible.
 Working with YML files in each configuration aspect allows for a more flexible usage, making it possible to expand the support to new climate models or to include new reference climatologies.
 Scripts are thought to be run from command line so that they can be easily integrated within an Earth System Model workflow.

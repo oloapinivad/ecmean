@@ -64,6 +64,12 @@ Optional Arguments
 
    Specify the number of processors to use.
 
+.. option:: --tool TOOL
+
+   Tool used for the horizontal interpolation on the climatology grid: ``ESMF`` (the default, through xESMF)
+   or ``CDO`` (through `smmregrid <https://github.com/jhardenberg/smmregrid>`_, which requires CDO >= 2.6.2).
+   Both use bilinear interpolation, with nearest neighbour on unstructured and gaussian reduced grids.
+
 .. option:: -c CONFIG, --config CONFIG
 
    Set up a specific configuration file. The default is ``config.yml`` in the current directory.

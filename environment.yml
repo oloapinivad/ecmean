@@ -10,6 +10,7 @@ dependencies:
   - python>=3.10,<3.16
   - xesmf
   - eccodes
+  - cdo>=2.6.2
   - pip
   - pip:
     - -e .

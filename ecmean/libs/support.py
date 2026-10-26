@@ -69,10 +69,7 @@ class Supporter:
                 self.atminterpolator = InterpolatorFactory.create_interpolator(
                     "atmospheric", self.atmcomponent, self.atmgridtype, self.targetgrid, self.tool
                 )
-                if self.tool == "ESMF":
-                    self.atminterpolator.create_weights(self.atmfield)
-                elif self.tool == "CDO":
-                    self.atminterpolator.create_weights(self.atmareafile)
+                self.atminterpolator.create_weights(self.atmfield)
 
             # init the land-sea mask for atm (mandatory)
             self.atmmask = self.make_atm_masks()
@@ -92,10 +89,7 @@ class Supporter:
                 self.oceinterpolator = InterpolatorFactory.create_interpolator(
                     "oceanic", self.ocecomponent, self.ocegridtype, self.targetgrid, self.tool
                 )
-                if self.tool == "ESMF":
-                    self.oceinterpolator.create_weights(self.ocefield)
-                elif self.tool == "CDO":
-                    self.oceinterpolator.create_weights(self.oceareafile)
+                self.oceinterpolator.create_weights(self.ocefield)
 
             # ocean mask
             if self.ocemaskfile:

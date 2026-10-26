@@ -4,7 +4,11 @@ import numpy as np
 import pytest
 import xarray as xr
 
+from ecmean.libs.interpolators import cdo_available, cdo_method
 from ecmean.libs.support import Supporter, check_file_exist, identify_grid
+
+# interpolation tools to test, CDO only when a recent enough executable is available
+TOOLS = ["ESMF", pytest.param("CDO", marks=pytest.mark.skipif(not cdo_available(), reason="CDO >= 2.6.2 not available"))]
 
 
 def _regular_field(lat):
@@ -53,7 +57,16 @@ def test_check_file_exist_found(tmp_path):
     assert check_file_exist(str(tmp_path / "ma*.nc")) == str(target)
 
 
-def test_supporter_omip_without_masks():
+@pytest.mark.parametrize(
+    "gridtype,method", [("lonlat", "bil"), ("gaussian", "bil"), ("curvilinear", "bil"), ("unstructured", "nn")]
+)
+def test_cdo_method(gridtype, method):
+    """Bilinear everywhere but on unstructured grids, as ESMF."""
+    assert cdo_method(gridtype) == method
+
+
+@pytest.mark.parametrize("tool", TOOLS)
+def test_supporter_omip_without_masks(tool):
     """OMIP: ocean grid only, no atmospheric files and no ocean mask, with remapping."""
     lon, lat = np.arange(0.5, 360, 10.0), np.arange(-85, 90, 10.0)
     targetgrid = xr.Dataset(
@@ -63,9 +76,11 @@ def test_supporter_omip_without_masks():
     atmdict = {"maskfile": "", "gridfile": "", "areafile": ""}
     ocedict = {"maskfile": "", "gridfile": "", "areafile": "tests/data/omip/domain_cfg.nc"}
 
-    support = Supporter({"atm": "oifs", "oce": "nemo"}, atmdict, ocedict, areas=False, remap=True, targetgrid=targetgrid)
+    support = Supporter(
+        {"atm": "oifs", "oce": "nemo"}, atmdict, ocedict, areas=False, remap=True, targetgrid=targetgrid, tool=tool
+    )
 
     assert support.atmmask is None
     assert support.atmarea is None
     assert support.ocemask is None
-    assert support.oceremap is not None
+    assert support.oceinterpolator is not None

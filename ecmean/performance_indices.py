@@ -94,6 +94,7 @@ class PerformanceIndices:
         xdataset=None,
         outputdir=None,
         extrafigure=False,
+        tool="ESMF",
         title=None,
     ):
         """Initialize the PerformanceIndices class with the given parameters."""
@@ -120,6 +121,7 @@ class PerformanceIndices:
         self.varstat = None
         self.extrafigure = extrafigure  # special key to be set for manual debugging, producing extra figures: DO NOT USE
         self.outarray = None
+        self.tool = tool
         self.timer = Timer(self.loggy)
         self.title = title
 
@@ -133,6 +135,7 @@ class PerformanceIndices:
 
     def prepare(self):
         """Prepare the necessary components for performance indices calculation."""
+
         # set dask and multiprocessing fork
         plat, mprocmethod = set_multiprocessing_start_method()
         self.loggy.info('Running on %s and multiprocessing method set as "%s"', plat, mprocmethod)
@@ -160,12 +163,7 @@ class PerformanceIndices:
 
         # create remap dictionary with atm and oce interpolators
         self.util_dictionary = Supporter(
-            comp,
-            inifiles["atm"],
-            inifiles["oce"],
-            areas=False,
-            remap=True,
-            targetgrid=target_remap_grid,
+            comp, inifiles["atm"], inifiles["oce"], areas=False, remap=True, targetgrid=target_remap_grid, tool=self.tool
         )
 
         # verify if we can run amip, omip or coupled run
@@ -354,8 +352,7 @@ def _pi_variable(var, util, piclim, face, diag, field_3d):
     # Load once to avoid recomputing for each season
     outfield = field.persist()
 
-    fix = getattr(util, f"{domain}fix")
-    remap = getattr(util, f"{domain}remap")
+    interpolator = getattr(util, f"{domain}interpolator")
 
     for season in diag.seasons:
         loggy.debug(season)
@@ -369,11 +366,9 @@ def _pi_variable(var, util, piclim, face, diag, field_3d):
             vfield.mean(dim="time"),
         )
 
-        # apply interpolation, if fixer is available and with different grids
-        if fix:
-            tmean = fix(tmean, keep_attrs=True)
+        # apply interpolation (ESMF or CDO) to the climatology grid
         try:
-            final = remap(tmean, keep_attrs=True)
+            final = interpolator.interpolate(tmean, keep_attrs=True).load()
         except ValueError:
             loggy.error("Cannot interpolate %s with the current weights...", var)
             continue
@@ -507,6 +502,7 @@ def pi_entry_point():
         model=args.model,
         ensemble=args.ensemble,
         outputdir=args.outputdir,
+        tool=args.tool,
     )
 
 
@@ -524,6 +520,7 @@ def performance_indices(
     xdataset=None,
     outputdir=None,
     title=None,
+    tool="ESMF",
     plot=True,
 ):
     """
@@ -561,6 +558,7 @@ def performance_indices(
         xdataset=xdataset,
         outputdir=outputdir,
         title=title,
+        tool=tool,
     )
     pi.prepare()
     pi.run()

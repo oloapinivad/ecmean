@@ -31,6 +31,13 @@ def parse_arguments(args, script):
     parser.add_argument("-l", "--loglevel", type=str, default="WARNING", help="define the level of logging.")
     parser.add_argument("-o", "--outputdir", type=str, help="force the output directory")
     parser.add_argument("--version", action="version", version="%(prog)s " + __version__)
+    parser.add_argument(
+        "--tool",
+        type=str,
+        default="ESMF",
+        help="tool to use for remapping. Default: ESMF. Options: [ESMF, CDO]",
+        choices=["ESMF", "CDO"],
+    )
 
     # specific to global mean
     if script == "gm":

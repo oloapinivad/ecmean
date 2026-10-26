@@ -36,15 +36,22 @@ def select_grid_variable(xfield):
         xfield (xarray.Dataset or xarray.DataArray): preprocessed field of the area/mask/grid file.
 
     Returns:
-        xarray.DataArray: the cell area when available (CMOR `areacello`, ECE4 NEMO `cell_area`),
-            otherwise the last variable of the dataset, or the DataArray itself.
+        xarray.DataArray: the cell area when available (CMOR `areacello`/`areacella`, ECE4 NEMO `cell_area`),
+            otherwise the last variable of the dataset with lon and lat coordinates (bounds are skipped),
+            or the DataArray itself.
+
+    Raises:
+        KeyError: if no variable with lon and lat coordinates is found.
     """
     if isinstance(xfield, xr.DataArray):
         return xfield
-    for name in ("areacello", "cell_area"):
+    for name in ("areacello", "areacella", "cell_area"):
         if name in xfield.data_vars:
             return xfield[name]
-    return xfield[list(xfield.data_vars)[-1]]
+    for name in reversed(list(xfield.data_vars)):
+        if all(coord in xfield[name].coords for coord in ("lon", "lat")):
+            return xfield[name]
+    raise KeyError(f"No variable with lon/lat coordinates to describe the grid among {list(xfield.data_vars)}")
 
 
 def gaussian_regular_grid(xfield):

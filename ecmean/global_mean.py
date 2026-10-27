@@ -151,7 +151,7 @@ class GlobalMean:
         self.util_dictionary = Supporter(comp, inifiles["atm"], inifiles["oce"], areas=True, remap=False)
 
         # verify if we can run amip, omip or coupled run
-        self.diag.configure_amip_omip_cpld(self.util_dictionary)
+        self.diag.configure_amip_omip_cpld(self.util_dictionary, self.ref)
 
         self.toc("Preparation")
 

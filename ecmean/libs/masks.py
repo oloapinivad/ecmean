@@ -12,6 +12,9 @@ import xarray as xr
 
 loggy = logging.getLogger(__name__)
 
+# mask types that, on the atmospheric domain, require the land-sea mask (see mask_field)
+LANDSEA_MASK_TYPES = ["land", "land-no-antarctica", "sea", "ocean"]
+
 
 def masked_meansum(xfield, weights, mask, operation, domain, mask_type):
     """For global variables evaluate the weighted averaged

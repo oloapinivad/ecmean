@@ -69,3 +69,18 @@ def test_supporter_omip_without_masks():
     assert support.atmarea is None
     assert support.ocemask is None
     assert support.oceremap is not None
+
+
+def test_supporter_without_atm_mask(tmp_path):
+    """An atmospheric grid without land-sea mask provides areas and no mask, without failing."""
+    gridfile = tmp_path / "grid.nc"
+    lat = np.linspace(-89.5, 89.5, 180)
+    lon = np.arange(0.5, 360.0, 1.0)
+    xr.Dataset({"tas": (("lat", "lon"), np.zeros((len(lat), len(lon))))}, coords={"lon": lon, "lat": lat}).to_netcdf(gridfile)
+    atmdict = {"maskfile": "", "gridfile": str(gridfile), "areafile": ""}
+    ocedict = {"maskfile": "", "gridfile": "", "areafile": ""}
+
+    support = Supporter({"atm": "cmoratm", "oce": "cmoroce"}, atmdict, ocedict, areas=True, remap=False)
+
+    assert support.atmmask is None
+    assert support.atmarea is not None

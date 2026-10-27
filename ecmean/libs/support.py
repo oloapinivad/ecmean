@@ -66,8 +66,12 @@ class Supporter:
             if self.targetgrid and remap:
                 self.atmfix, self.atmremap = self.make_atm_interp_weights(self.atmfield)
 
-            # init the land-sea mask for atm (mandatory)
-            self.atmmask = self.make_atm_masks()
+            # init the land-sea mask for atm: if missing, the variables that need it
+            # are dropped later by Diagnostic.configure_amip_omip_cpld()
+            if self.atmmaskfile:
+                self.atmmask = self.make_atm_masks()
+            else:
+                loggy.warning("No atmospheric land-sea mask available: land/ocean masked variables will be skipped.")
 
         # do the same if oceanic file is found
         if self.oceareafile:

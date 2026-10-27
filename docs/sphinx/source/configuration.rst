@@ -84,6 +84,8 @@ New interface files can be developed exploiting the flexible file handling to in
 It is important to provide land-sea masks for both atmospheric and oceanic grids, and when possible - recommended for non-regular grids - it is important to also provide files indicating grid cell areas.
 These latter are used for interpolation and weighted averages. ecmean has a few routines that try to compute each grid cell area from lon/lat boundaries, but this can fail for non-regular grids.
 
+If the atmospheric land-sea mask (``maskfile``) is not available, ecmean still runs using the ``areafile`` or ``gridfile``, but the atmospheric variables that require land or ocean masking (e.g. ``pr_land``, ``pr_oce`` in the global mean) are skipped with a warning.
+
 .. note::
 	It is not necessary to modify the interface file, but it could be required if - for example - your CMIP5/6 directory tree does not reflect exactly the one available on ESGF.
 

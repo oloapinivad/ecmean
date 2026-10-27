@@ -169,7 +169,7 @@ class PerformanceIndices:
         )
 
         # verify if we can run amip, omip or coupled run
-        self.diag.configure_amip_omip_cpld(self.util_dictionary)
+        self.diag.configure_amip_omip_cpld(self.util_dictionary, self.piclim)
 
         self.toc("Preparation")
 

@@ -19,6 +19,7 @@ from ecmean.libs.climatology import (
     SUPPORTED_RESOLUTION,
 )
 from ecmean.libs.files import load_yaml
+from ecmean.libs.masks import LANDSEA_MASK_TYPES
 
 ####################
 # DIAGNOSTIC CLASS #
@@ -288,15 +289,46 @@ class Diagnostic:
         """Helper function to remove variables from a list while preserving order."""
         return [var for var in var_list if var not in set(vars_to_remove)]
 
-    def configure_amip_omip_cpld(self, support_dictionary):
+    def _remove_masked_variables(self, var_list, atm_vars, reference):
+        """
+        Remove from a list the atmospheric variables that need the land-sea mask, when it is not available.
+
+        Args:
+            var_list (list): Variables to be filtered.
+            atm_vars (list): Variables of the atmospheric domain.
+            reference (dict): Reference or climatology dictionary, providing the mask type of each variable.
+
+        Returns:
+            list: The variables that can be processed without the land-sea mask.
+        """
+        masked_vars = [var for var in var_list if var in atm_vars and reference[var].get("mask") in LANDSEA_MASK_TYPES]
+        for var in masked_vars:
+            loggy.warning(
+                "Variable %s requires a land-sea mask (mask: %s), but no maskfile is available for the atmospheric "
+                "component: %s will be skipped. Set the atmospheric 'maskfile' in the interface file to compute it.",
+                var,
+                reference[var]["mask"],
+                var,
+            )
+        return self._remove_variables(var_list, masked_vars)
+
+    def configure_amip_omip_cpld(self, support_dictionary, reference=None):
         """
         Configure the experiment for AMIP, OMIP, or coupled simulations.
         Updates the variables/fields on which to run as a function of the
-        experiment type, which is deduced from the availabe grids
+        experiment type, which is deduced from the availabe grids. If the atmospheric
+        grid is available but its land-sea mask is not, the atmospheric variables
+        requiring land or sea masking are removed as well.
 
         Args:
-            util_dictionary: Dictionary containing output from Supporter()
+            support_dictionary: Supporter() object, with the available files, areas and masks
+            reference (dict, optional): Reference (global mean) or climatology (performance indices)
+                dictionary, used to find which variables need the land-sea mask. If None, no variable
+                is removed for a missing mask.
         """
+
+        # the atmospheric grid is there, but the land-sea mask is missing
+        missing_atm_mask = reference is not None and support_dictionary.atmareafile and support_dictionary.atmmask is None
 
         # check if we can run the performance indices
         if self.funcname == "PerformanceIndices":
@@ -308,6 +340,8 @@ class Diagnostic:
                 loggy.warning("No atmospheric file found, assuming this is an OMIP run without atmospheric variables.")
                 atmospheric_vars = self.field_atm2d + self.field_atm3d
                 self.field_all = self._remove_variables(self.field_all, atmospheric_vars)
+            if missing_atm_mask:
+                self.field_all = self._remove_masked_variables(self.field_all, self.field_atm2d, reference)
             if self.field_all == []:
                 raise ValueError("No variables to process due to missing area/mask files, check your configuration file!")
 
@@ -319,5 +353,7 @@ class Diagnostic:
             if not support_dictionary.atmareafile and not support_dictionary.atmmaskfile:
                 loggy.warning("No atmospheric file found, assuming this is an OMIP run without atmospheric variables.")
                 self.var_all = self._remove_variables(self.var_all, self.var_atm)
+            if missing_atm_mask:
+                self.var_all = self._remove_masked_variables(self.var_all, self.var_atm, reference)
             if self.var_all == []:
                 raise ValueError("No variables to process due to missing area/mask files, check your configuration file!")

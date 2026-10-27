@@ -1,6 +1,7 @@
 """Unit tests for the configuration checks of ecmean.libs.diagnostic."""
 
 import copy
+from types import SimpleNamespace
 
 import pytest
 import yaml
@@ -86,3 +87,53 @@ def test_default_config_in_current_directory(tmp_path, monkeypatch):
     (tmp_path / "config.yml").write_text(yaml.safe_dump(BASE_CONFIG))
     monkeypatch.chdir(tmp_path)
     assert _diagnostic("GlobalMean", config="").modelname == "EC-Earth4"
+
+
+MASK_REFERENCE = {
+    "tas": {"mask": "global"},
+    "tas_land": {"mask": "land"},
+    "net_sfc": {"mask": "ocean"},
+    "tos": {"mask": "ocean"},
+}
+
+
+@pytest.mark.parametrize(
+    "funcname, section, attribute",
+    [("GlobalMean", "global_mean", "var_all"), ("PerformanceIndices", "performance_indices", "field_all")],
+)
+def test_missing_atm_mask_drops_masked_variables(funcname, section, attribute, caplog):
+    """Without atmospheric land-sea mask, only atmospheric variables requiring land/sea masking are dropped."""
+    config = copy.deepcopy(BASE_CONFIG)
+    atm = "atm" if funcname == "GlobalMean" else "atm2d"
+    config[section]["variables"] = {atm: ["tas", "tas_land", "net_sfc"], "oce": ["tos"]}
+    diag = _diagnostic(funcname, config)
+    support = SimpleNamespace(atmareafile="grid.nc", atmmaskfile="", atmmask=None, oceareafile="area.nc", ocemaskfile="")
+
+    diag.configure_amip_omip_cpld(support, MASK_REFERENCE)
+
+    assert getattr(diag, attribute) == ["tas", "tos"]
+    assert "tas_land requires a land-sea mask (mask: land)" in caplog.text
+    assert "net_sfc requires a land-sea mask (mask: ocean)" in caplog.text
+
+
+def test_missing_atm_mask_without_reference_keeps_variables():
+    """Without reference, configure_amip_omip_cpld does not drop variables for a missing mask."""
+    config = copy.deepcopy(BASE_CONFIG)
+    config["global_mean"]["variables"] = {"atm": ["tas", "tas_land"]}
+    diag = _diagnostic("GlobalMean", config)
+    support = SimpleNamespace(atmareafile="grid.nc", atmmaskfile="", atmmask=None, oceareafile="", ocemaskfile="")
+
+    diag.configure_amip_omip_cpld(support)
+
+    assert diag.var_all == ["tas", "tas_land"]
+
+
+def test_missing_atm_mask_only_masked_variables_raises():
+    """If all variables need the missing mask, nothing is left to process."""
+    config = copy.deepcopy(BASE_CONFIG)
+    config["global_mean"]["variables"] = {"atm": ["tas_land"]}
+    diag = _diagnostic("GlobalMean", config)
+    support = SimpleNamespace(atmareafile="grid.nc", atmmaskfile="", atmmask=None, oceareafile="", ocemaskfile="")
+
+    with pytest.raises(ValueError, match="No variables to process"):
+        diag.configure_amip_omip_cpld(support, MASK_REFERENCE)

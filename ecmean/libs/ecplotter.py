@@ -1,6 +1,7 @@
 """Class to provide a complete plotting solution for the ECMean package."""
 
 import logging
+import re
 import textwrap
 from pathlib import Path
 
@@ -18,6 +19,33 @@ from ecmean.libs.general import dict_to_dataframe, init_mydict
 matplotlib.use("Agg")
 
 loggy = logging.getLogger(__name__)
+
+
+def unit_to_latex(unit):
+    """
+    Convert a unit string to LaTeX (matplotlib mathtext) notation for plot labels, as done in AQUA.
+    Only exponents are wrapped in math mode, and denominators become negative exponents:
+    W/m2 -> W m$^{-2}$, mm/day -> mm day$^{-1}$, Mm^2 -> Mm$^{2}$, kg m**-2 s-1 -> kg m$^{-2}$ s$^{-1}$.
+    Strings already containing LaTeX ($, \\ or {) are returned unchanged.
+
+    Args:
+        unit (str): unit string
+
+    Returns:
+        str: unit string in LaTeX notation
+    """
+    if not unit or any(x in unit for x in ["$", "\\", "{"]):
+        return unit
+
+    # W/(m2 s) -> W/m2/s, then every term after a "/" has its exponent inverted
+    unit = re.sub(r"/\s*\(([^)]+)\)", lambda m: "/" + "/".join(m.group(1).split()), unit.replace("**", "^"))
+    terms = []
+    for i, part in enumerate(unit.split("/")):
+        for name, exp in re.findall(r"([a-zA-Zµ°%]+)\^?(-?\d+)?", part):
+            exp = int(exp) if exp else 1
+            exp = -exp if i > 0 else exp
+            terms.append(name if exp == 1 else f"{name}$^{{{exp}}}$")
+    return " ".join(terms).replace("%", r"$\%$") if terms else unit
 
 
 class ECPlotter:
@@ -241,7 +269,7 @@ class ECPlotter:
             data_dict (dict): table of model data
             mean_dict (dict): table of observations
             std_dict (dict): table of standard deviation
-            units_list (list): list of units
+            units_list (list): list of units, converted to LaTeX notation in the labels
             filemap (str, optional): path to save the plot. Defaults to None.
             addnan (bool, optional): add to the final plots also fields which cannot be compared against observations. Defaults to True.
             storefig (bool, optional): Whether to save the figure. Defaults to True.
@@ -254,6 +282,8 @@ class ECPlotter:
         data_table = dict_to_dataframe(data_dict)
         mean_table = dict_to_dataframe(mean_dict)
         std_table = dict_to_dataframe(std_dict)
+        # non-breaking spaces keep each unit on one line when labels are wrapped
+        units_list = [unit_to_latex(unit).replace(" ", "\u00a0") for unit in units_list]
         for table in [data_table, mean_table, std_table]:
             table.index = table.index + " [" + units_list + "]"
 

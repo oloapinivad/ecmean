@@ -41,7 +41,7 @@ class Diagnostic:
         line=False,
         trend=False,
         resolution=None,
-        ensemble="r1i1p1f1",
+        ensemble=None,
         addnan=False,
         interface=None,
         modelname=None,
@@ -50,6 +50,8 @@ class Diagnostic:
         numproc=1,
         climatology=None,
         reference=None,
+        consortium=None,
+        mip=None,
     ):
         """
         Initialize the Diagnostic instance.
@@ -63,7 +65,7 @@ class Diagnostic:
             line (bool): Write the single-line tuning table (global mean only).
             trend (bool): Compute trends (global mean only).
             resolution (str): Target grid for the interpolation. Default is 'r360x180'.
-            ensemble (str): Ensemble identifier. Default is 'r1i1p1f1'.
+            ensemble (str): Ensemble identifier, overriding the configuration. Default is 'r1i1p1f1'.
             addnan (bool): Plot also variables without reference (global mean only).
             interface (str): Interface name or file, overriding the configuration.
             modelname (str): Model name, overriding the configuration.
@@ -72,6 +74,8 @@ class Diagnostic:
             numproc (int): Number of processes.
             climatology (str): Performance indices climatology, overriding the configuration.
             reference (str): Global mean reference, overriding the configuration.
+            consortium (str): Consortium name (CMOR institution_id), overriding the configuration. Default is '*'.
+            mip (str): MIP name (CMOR activity_id), overriding the configuration. Default is 'CMIP'.
         """
 
         # arguments from command line/function
@@ -85,7 +89,6 @@ class Diagnostic:
         self.climatology = climatology
         self.resolution = resolution  # for performance indices only: set in cfg_performance_indices
         self.reference = reference
-        self.ensemble = ensemble
         self.interface = interface
         self.funcname = funcname
         self.ecmean_version = version
@@ -153,8 +156,11 @@ class Diagnostic:
         # setting up interface file
         self.interface = interface or cfg["interface"]
 
-        # setting up model name
+        # setting up model name and CMOR identifiers: arguments override the model section of the config
         self.modelname = modelname or cfg["model"]["name"]
+        self.ensemble = ensemble or cfg["model"].get("ensemble") or "r1i1p1f1"
+        self.consortium = consortium or cfg["model"].get("consortium") or "*"
+        self.mip = mip or cfg["model"].get("mip") or "CMIP"
 
         # allow for both interface name or interface file
         if not os.path.exists(self.interface):

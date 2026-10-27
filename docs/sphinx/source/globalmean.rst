@@ -65,7 +65,15 @@ Optional Arguments
 
 .. option:: -e ENSEMBLE, --ensemble ENSEMBLE
 
-   Specify the variant label (ripf number for cmor).
+   Specify the variant label (ripf number for cmor), overriding the configuration specified in ``config.yml``. Default is r1i1p1f1.
+
+.. option:: --consortium CONSORTIUM
+
+   Specify the consortium name (CMOR institution_id, e.g. EC-Earth-Consortium), overriding the configuration specified in ``config.yml``. Default is any (``*``).
+
+.. option:: --mip MIP
+
+   Specify the MIP name (CMOR activity_id, e.g. CMIP, HighResMIP), overriding the configuration specified in ``config.yml``. Default is CMIP.
 
 .. option:: -o DIR, --outputdir DIR
 

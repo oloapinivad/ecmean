@@ -23,6 +23,7 @@ Unreleased is the current development version (target v0.3.0), which is currentl
 - Workers split into per-variable functions, with variable loading shared between GM and PI in `load_variable()` (#151)
 - Formulas of derived variables are parsed with Python's `ast` module instead of a hand-written tokenizer, with the same supported syntax (#157)
 - Performance: input files are opened once per variable, globbed once per variable instead of once per year, and variables are split across workers by total load (#155)
+- `consortium` and `mip` can be used in the interface files (`--consortium`/`--mip` command line flags, `consortium`/`mip` arguments, `model` section of the config); `ensemble`, `consortium` and `mip` are read from the config when not given, the CMIP6 interfaces use them in `basedir`, the esgpull interface accepts any month in the filenames, and filenames whose years cannot be parsed are skipped with a warning (#XXX)
 - Development: ruff pinned to 0.17.1 (pyproject, pre-commit and AGENTS.md)
 - Robustness fixes in `libs/support.py` (#156): `identify_grid` checks `lat.ndim` for curvilinear grids and compares latitude spacings with `np.isclose`; `check_file_exist` raises a clear error for empty strings and for patterns matching no file instead of `IndexError`
 - The atmospheric land-sea mask is no longer mandatory: without `maskfile`, `Supporter` sets `atmmask` to `None` and `Diagnostic.configure_amip_omip_cpld()` skips, with a warning, the atmospheric variables that require land/ocean masking (#132)

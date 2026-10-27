@@ -57,7 +57,9 @@ class GlobalMean:
         numproc (int): Number of processes to use. Default is 1.
         interface (str): Path to the interface file. Default is None.
         model (str): Model name. Default is None.
-        ensemble (str): Ensemble identifier. Default is 'r1i1p1f1'.
+        ensemble (str): Ensemble identifier. Default is None (from configuration, then 'r1i1p1f1').
+        consortium (str): Consortium name (cmor institution_id). Default is None (from configuration, then '*').
+        mip (str): MIP name (cmor activity_id). Default is None (from configuration, then 'CMIP').
         addnan (bool): Whether to add NaNs. Default is False.
         trend (bool): Whether to compute trends. Default is None.
         line (str): Line identifier. Default is None.
@@ -87,7 +89,9 @@ class GlobalMean:
         numproc=1,
         interface=None,
         model=None,
-        ensemble="r1i1p1f1",
+        ensemble=None,
+        consortium=None,
+        mip=None,
         addnan=False,
         trend=None,
         line=None,
@@ -107,6 +111,8 @@ class GlobalMean:
             funcname=self.__class__.__name__,
             numproc=numproc,
             ensemble=ensemble,
+            consortium=consortium,
+            mip=mip,
             interface=interface,
             modelname=model,
             addnan=addnan,
@@ -450,6 +456,8 @@ def gm_entry_point():
         config=args.config,
         model=args.model,
         ensemble=args.ensemble,
+        consortium=args.consortium,
+        mip=args.mip,
         addnan=args.addnan,
         outputdir=args.outputdir,
         reference=args.reference,
@@ -466,7 +474,9 @@ def global_mean(
     numproc=1,
     interface=None,
     model=None,
-    ensemble="r1i1p1f1",
+    ensemble=None,
+    consortium=None,
+    mip=None,
     addnan=False,
     trend=None,
     line=None,
@@ -489,7 +499,9 @@ def global_mean(
         numproc (int): Number of processes to use. Default is 1.
         interface (str): Interface name or path to the interface file. Default is None (from configuration).
         model (str): Model name. Default is None (from configuration).
-        ensemble (str): Ensemble identifier. Default is 'r1i1p1f1'.
+        ensemble (str): Ensemble identifier. Default is None (from configuration, then 'r1i1p1f1').
+        consortium (str): Consortium name (cmor institution_id). Default is None (from configuration, then '*').
+        mip (str): MIP name (cmor activity_id). Default is None (from configuration, then 'CMIP').
         addnan (bool): Whether to plot also variables without reference. Default is False.
         trend (bool): Whether to compute trends. Default is None.
         line (bool): Whether to write the single-line tuning table. Default is None.
@@ -509,6 +521,8 @@ def global_mean(
         interface=interface,
         model=model,
         ensemble=ensemble,
+        consortium=consortium,
+        mip=mip,
         addnan=addnan,
         trend=trend,
         line=line,

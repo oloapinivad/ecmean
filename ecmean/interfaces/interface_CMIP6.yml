@@ -3,9 +3,9 @@
 # Possible filetype attributes for variables are defined in the model section
 # The full path is $basedir/$dir/$filename
 #
-# basedir can be formatted with: expname
+# basedir can be formatted with: expname, model, consortium and mip
 # dir can be formatted with: expname, var and star (*)
-# filename can be formatted with: expname, year1, year2, var, model, ensemble, frequency and star (*)
+# filename can be formatted with: expname, year1, year2, var, model, ensemble, consortium, mip, frequency and wildcards (?,*)
 #
 # The key 'component' is used to determine the specific type of grid fixes to apply
 # (defined in cdopipe for now)
@@ -15,7 +15,7 @@
 
 # Definition of model name and components belonging to it
 model:
-  basedir: 'CMIP6/CMIP/*/{model}/{expname}'
+  basedir: 'CMIP6/{mip}/{consortium}/{model}/{expname}'
   component:
     atm: cmoratm
     oce: cmoroce

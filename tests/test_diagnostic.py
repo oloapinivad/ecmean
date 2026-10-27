@@ -137,3 +137,22 @@ def test_missing_atm_mask_only_masked_variables_raises():
 
     with pytest.raises(ValueError, match="No variables to process"):
         diag.configure_amip_omip_cpld(support, MASK_REFERENCE)
+
+
+def test_cmor_identifiers_default():
+    diag = _diagnostic("GlobalMean")
+    assert (diag.ensemble, diag.consortium, diag.mip) == ("r1i1p1f1", "*", "CMIP")
+
+
+def test_cmor_identifiers_from_config():
+    config = copy.deepcopy(BASE_CONFIG)
+    config["model"].update({"ensemble": "r1i1p2f1", "consortium": "EC-Earth-Consortium", "mip": "HighResMIP"})
+    diag = _diagnostic("GlobalMean", config)
+    assert (diag.ensemble, diag.consortium, diag.mip) == ("r1i1p2f1", "EC-Earth-Consortium", "HighResMIP")
+
+
+def test_cmor_identifiers_arguments_override_config():
+    config = copy.deepcopy(BASE_CONFIG)
+    config["model"].update({"ensemble": "r1i1p2f1", "consortium": "EC-Earth-Consortium", "mip": "HighResMIP"})
+    diag = _diagnostic("PerformanceIndices", config, ensemble="r2i1p1f1", consortium="CNRM-CERFACS", mip="CMIP")
+    assert (diag.ensemble, diag.consortium, diag.mip) == ("r2i1p1f1", "CNRM-CERFACS", "CMIP")

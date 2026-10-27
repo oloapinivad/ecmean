@@ -64,7 +64,9 @@ class PerformanceIndices:
         climatology (str): Climatology to use. Default is 'EC26-CMIP'.
         interface (str): Path to the interface file.
         model (str): Model name.
-        ensemble (str): Ensemble identifier. Default is 'r1i1p1f1'.
+        ensemble (str): Ensemble identifier. Default is None (from configuration, then 'r1i1p1f1').
+        consortium (str): Consortium name (cmor institution_id). Default is None (from configuration, then '*').
+        mip (str): MIP name (cmor activity_id). Default is None (from configuration, then 'CMIP').
         xdataset (xarray.Dataset): Dataset to use.
         outputdir (str): Directory to store output files.
         extrafigure (bool): Special key for manual debugging, producing extra figures. Do not use.
@@ -90,7 +92,9 @@ class PerformanceIndices:
         climatology=None,
         interface=None,
         model=None,
-        ensemble="r1i1p1f1",
+        ensemble=None,
+        consortium=None,
+        mip=None,
         xdataset=None,
         outputdir=None,
         extrafigure=False,
@@ -111,6 +115,8 @@ class PerformanceIndices:
             interface=interface,
             modelname=model,
             ensemble=ensemble,
+            consortium=consortium,
+            mip=mip,
             outputdir=outputdir,
             xdataset=xdataset,
         )
@@ -506,6 +512,8 @@ def pi_entry_point():
         config=args.config,
         model=args.model,
         ensemble=args.ensemble,
+        consortium=args.consortium,
+        mip=args.mip,
         outputdir=args.outputdir,
     )
 
@@ -520,7 +528,9 @@ def performance_indices(
     climatology=None,
     interface=None,
     model=None,
-    ensemble="r1i1p1f1",
+    ensemble=None,
+    consortium=None,
+    mip=None,
     xdataset=None,
     outputdir=None,
     title=None,
@@ -541,7 +551,9 @@ def performance_indices(
         climatology (str): Climatology to use. Default is None (from configuration, then EC26-CMIP).
         interface (str): Interface name or path to the interface file. Default is None (from configuration).
         model (str): Model name. Default is None (from configuration).
-        ensemble (str): Ensemble identifier. Default is 'r1i1p1f1'.
+        ensemble (str): Ensemble identifier. Default is None (from configuration, then 'r1i1p1f1').
+        consortium (str): Consortium name (cmor institution_id). Default is None (from configuration, then '*').
+        mip (str): MIP name (cmor activity_id). Default is None (from configuration, then 'CMIP').
         xdataset (xarray.Dataset): Dataset to use instead of reading the files. Default is None.
         outputdir (str): Output directory. Default is None (from configuration).
         title (str): Title of the plot, overrides default title. Default is None.
@@ -558,6 +570,8 @@ def performance_indices(
         interface=interface,
         model=model,
         ensemble=ensemble,
+        consortium=consortium,
+        mip=mip,
         xdataset=xdataset,
         outputdir=outputdir,
         title=title,

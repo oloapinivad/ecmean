@@ -229,6 +229,8 @@ def _expand_filename(filenames, var, diag):
             grid=diag.grid,
             model=diag.modelname,
             version=diag.version,
+            consortium=diag.consortium,
+            mip=diag.mip,
         )
     )
 
@@ -238,15 +240,20 @@ def _filter_filename_by_year(template, filenames, year):
 
     # if year1 is used in the file template
     if "year1" in template:
-        # Assumes that the file name ends with 199001-199012.nc or 1990-1991.nc
-        year1 = [int(x.split("_")[-1].split("-")[0][0:4]) for x in filenames]
-        # if year2 is used in the file template
-        if "year2" in template:
-            year2 = [int(x.split("_")[-1].split("-")[1][0:4]) for x in filenames]
-        else:
-            year2 = year1
-        # filter names
-        filternames = [fname for y1, y2, fname in zip(year1, year2, filenames) if year >= y1 and year <= y2]
+        filternames = []
+        for fname in filenames:
+            # Assumes that the file name ends with 199001-199012.nc or 1990-1991.nc:
+            # files matched by the glob wildcards that do not follow this pattern are skipped
+            try:
+                dates = fname.split("_")[-1].split("-")
+                year1 = int(dates[0][0:4])
+                # if year2 is used in the file template
+                year2 = int(dates[1][0:4]) if "year2" in template else year1
+            except (ValueError, IndexError) as err:
+                loggy.warning("Cannot extract the years from %s, skipping it: %s", fname, err)
+                continue
+            if year1 <= year <= year2:
+                filternames.append(fname)
     else:
         # this is introduced for file that does not have year in their filename
         filternames = filenames
@@ -326,6 +333,9 @@ def make_input_filename(cmorname, face, diag):
     # create the file structure according to the interface file
     # the pattern does not depend on the year (years are wildcards): glob once per variable
     globbed = {var: glob(str(_expand_filename(filepath, var, diag))) for var in varname}
+    for var, files in globbed.items():
+        if not files:
+            loggy.warning("No files found for variable %s with pattern %s", var, _expand_filename(filepath, var, diag))
 
     filename = []
     for year in diag.years_joined:

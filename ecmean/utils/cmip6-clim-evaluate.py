@@ -25,8 +25,6 @@ from ecmean.utils.utils import timeframe_years, parse_create_args
 
 warnings.simplefilter("ignore")
 
-# the 30-year climatological window to be used as a baseline
-expname = "historical"
 config_file = "config_create_clim.yml"
 climdir = "../climatology/"
 
@@ -55,8 +53,38 @@ models = [
 # models currently missing on the ESGF
 # models= ['CMCC-CM2-SR5', 'TaiESM1']
 
+# HighResMIP high-resolution coupled models (hist-1950), used for the -HR climatologies (e.g. EC26-CMIP-HR).
+# Several of them do not provide fx/Ofx files: the CMIP6_highresmip interface uses
+# a data file as gridfile, and the variables requiring the land-sea mask are skipped
+highresmip_models = [
+    "AWI-CM-1-1-HR",
+    "BCC-CSM2-HR",
+    "CESM1-CAM5-SE-HR",
+    "CMCC-CM2-VHR4",
+    "CNRM-CM6-1-HR",
+    "EC-Earth3P-HR",
+    "ECMWF-IFS-HR",
+    "HadGEM3-GC31-HH",
+    "INM-CM5-H",
+    "MPI-ESM1-2-XR",
+]
 
-def main(clim="EC26", timeframe="CMIP", nprocs=4, do_definitive=False, do_compute=True, do_create_clim=True):
+# experiment, MIP, interface and models for each climatology family (CMIP6 by default)
+CMIP6_SETUP = {"expname": "historical", "mip": "CMIP", "interface": None, "models": models}
+HIGHRESMIP_SETUP = {"expname": "hist-1950", "mip": "HighResMIP", "interface": "CMIP6_highresmip", "models": highresmip_models}
+
+# models whose ensemble member or consortium differ from the default r1i1p1f1 and '*'
+ENSEMBLES = {
+    "CNRM-CM6-1": "r1i1p1f2",
+    "UKESM1-0-LL": "r1i1p1f2",
+    "AWI-CM-1-1-HR": "r1i1p1f2",
+    "CNRM-CM6-1-HR": "r1i1p1f2",
+    "EC-Earth3P-HR": "r1i1p2f1",
+}
+CONSORTIA = {"HadGEM3-GC31-HH": "NERC"}
+
+
+def main(clim="EC26", timeframe="CMIP", highresmip=False, nprocs=4, do_definitive=False, do_compute=True, do_create_clim=True):
     """
     Main function to compute the performance indices for the CMIP6 climatology
     and then create the new climatology file.
@@ -64,26 +92,25 @@ def main(clim="EC26", timeframe="CMIP", nprocs=4, do_definitive=False, do_comput
         clim (str): Climatology name, e.g., 'EC26'.
         timeframe (str): Time period for the climatology, e.g., 'HIST',
                             'PDAY', or 'CMIP'.
+        highresmip (bool): Whether to compute the reference PIs on the HighResMIP models
+                            instead of the CMIP6 ones, creating the '-HR' climatology (e.g. EC26-CMIP-HR).
         nprocs (int): Number of processors to use for computation.
         do_definitive (bool): Whether to overwrite the definitive climatology file.
         do_compute (bool): Whether to compute the performance indices.
         do_create_clim (bool): Whether to create the climatology file after computation.
     """
 
-    climname = f"{clim}-{timeframe}"
+    climname = f"{clim}-{timeframe}-HR" if highresmip else f"{clim}-{timeframe}"
     year1, year2 = timeframe_years(timeframe)
+    setup = HIGHRESMIP_SETUP if highresmip else CMIP6_SETUP
+    expname = setup["expname"]
 
     # call the loop of global mean on all the models
     if do_compute:
         defaultconfig = load_yaml(config_file)
 
-        for model in sorted(models):
+        for model in sorted(setup["models"]):
             logging.warning("Computing model %s", model)
-
-            if model in ["CNRM-CM6-1", "UKESM1-0-LL"]:
-                ensemble = "r1i1p1f2"
-            else:
-                ensemble = "r1i1p1f1"
 
             model_config = copy.deepcopy(defaultconfig)
 
@@ -101,7 +128,10 @@ def main(clim="EC26", timeframe="CMIP", nprocs=4, do_definitive=False, do_comput
                 year2,
                 config=model_config,
                 model=model,
-                ensemble=ensemble,
+                ensemble=ENSEMBLES.get(model, "r1i1p1f1"),
+                consortium=CONSORTIA.get(model),
+                mip=setup["mip"],
+                interface=setup["interface"],
                 numproc=nprocs,
                 climatology=climname,
                 loglevel=logging.getLogger().getEffectiveLevel(),
@@ -113,19 +143,30 @@ def main(clim="EC26", timeframe="CMIP", nprocs=4, do_definitive=False, do_comput
 
         # dictionary with all elements
         full = {}
-        for model in models:
+        for model in setup["models"]:
             logging.warning("Climatology for model %s", model)
+            ensemble = ENSEMBLES.get(model, "r1i1p1f1")
             filein = glob.glob(
-                os.path.join(cfg["dirs"]["tab"], f"PI_{climname}_{expname}_{model}_r1i1p1f*_{year1}_{year2}.yml")
+                os.path.join(cfg["dirs"]["tab"], f"PI_{climname}_{expname}_{model}_{ensemble}_{year1}_{year2}.yml")
             )
+            if not filein:
+                logging.warning("No PI file found for model %s, skipping it", model)
+                continue
             full[model] = load_yaml(filein[0])
 
+        # union of the variables of all models, in order of appearance: a variable can be missing
+        # in some models (e.g. no land-sea mask or no atmosphere), and it is then averaged on the others.
+        # seasons and regions are taken from the first model providing the variable
+        first = {}
+        for model_data in full.values():
+            for var, var_data in model_data.items():
+                first.setdefault(var, var_data)
+
         # idiot averaging
-        M0 = models[0]
         out = defaultdict(lambda: defaultdict(lambda: defaultdict(float)))
-        for var in full[M0].keys():
-            for season in full[M0][var].keys():
-                for region in full[M0][var][season].keys():
+        for var, var_data in first.items():
+            for season in var_data.keys():
+                for region in var_data[season].keys():
                     element = []
                     for model, model_data in full.items():
                         if var in model_data:
@@ -135,7 +176,7 @@ def main(clim="EC26", timeframe="CMIP", nprocs=4, do_definitive=False, do_comput
 
         # clumsy way to get the models for each var
         mout = {}
-        for var in full[M0].keys():
+        for var in first:
             melement = []
             for model, model_data in full.items():
                 if var in model_data:
@@ -171,6 +212,11 @@ def main(clim="EC26", timeframe="CMIP", nprocs=4, do_definitive=False, do_comput
 if __name__ == "__main__":
     parser = parse_create_args()
     parser.add_argument(
+        "--highresmip",
+        action="store_true",
+        help="compute the reference PIs on the HighResMIP models, creating the -HR climatology (e.g. EC26-CMIP-HR)",
+    )
+    parser.add_argument(
         "--definitive", action="store_true", help="overwrite the definitive climatology file instead of creating a test one"
     )
     parser.add_argument(
@@ -191,6 +237,7 @@ if __name__ == "__main__":
     main(
         clim=args.climdata,
         timeframe=args.timeframe,
+        highresmip=args.highresmip,
         nprocs=args.cores,
         do_definitive=args.definitive,
         do_compute=args.compute,

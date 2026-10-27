@@ -84,3 +84,22 @@ def test_supporter_without_atm_mask(tmp_path):
 
     assert support.atmmask is None
     assert support.atmarea is not None
+
+
+def test_supporter_gridfile_from_data_file(tmp_path):
+    """A data file with a time axis can be used as gridfile: only its first time step is loaded."""
+    gridfile = tmp_path / "tas.nc"
+    lat = np.linspace(-89.5, 89.5, 180)
+    lon = np.arange(0.5, 360.0, 1.0)
+    time = np.array(["1990-01-15", "1990-02-15", "1990-03-15"], dtype="datetime64[ns]")
+    xr.Dataset(
+        {"tas": (("time", "lat", "lon"), np.zeros((len(time), len(lat), len(lon))))},
+        coords={"time": time, "lon": lon, "lat": lat},
+    ).to_netcdf(gridfile)
+    atmdict = {"maskfile": "", "gridfile": str(gridfile), "areafile": ""}
+    ocedict = {"maskfile": "", "gridfile": "", "areafile": ""}
+
+    support = Supporter({"atm": "cmoratm", "oce": "cmoroce"}, atmdict, ocedict, areas=True, remap=False)
+
+    assert "time" not in support.atmfield.dims
+    assert support.atmarea.dims == ("lat", "lon")

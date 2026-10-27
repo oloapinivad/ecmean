@@ -27,6 +27,8 @@ Unreleased is the current development version (target v0.3.0), which is currentl
 - Development: ruff pinned to 0.17.1 (pyproject, pre-commit and AGENTS.md)
 - Robustness fixes in `libs/support.py` (#156): `identify_grid` checks `lat.ndim` for curvilinear grids and compares latitude spacings with `np.isclose`; `check_file_exist` raises a clear error for empty strings and for patterns matching no file instead of `IndexError`
 - The atmospheric land-sea mask is no longer mandatory: without `maskfile`, `Supporter` sets `atmmask` to `None` and `Diagnostic.configure_amip_omip_cpld()` skips, with a warning, the atmospheric variables that require land/ocean masking (#132)
+- New `CMIP6_highresmip` interface, using a data file (`tas`/`tos`) as `gridfile` for HighResMIP models without fx/Ofx files; `Supporter` loads only the first time step of the area/grid file (#139)
+- New `EC26-CMIP-HR` PI climatology (same observations as EC26-CMIP), whose reference PIs are computed on HighResMIP `hist-1950` models by `utils/cmip6-clim-evaluate.py -c EC26 -t CMIP --highresmip`; the script now averages each variable over all the models providing it, instead of only the variables of the first model (#139)
 - `Supporter` initialises `atmmask`/`atmarea` to `None`, so an OMIP run with remapping and no ocean mask no longer fails with `AttributeError` (#156)
 - `Diagnostic` raises a clear `ValueError` if the global mean regions do not include `Global` or the seasons do not include `ALL`, which its tables and plots require (#156)
 - The ecmean version printed in the welcome message is now stored in `Diagnostic.ecmean_version`, so `Diagnostic.version` only holds the `*` CMOR filename wildcard (#156)

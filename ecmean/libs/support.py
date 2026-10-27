@@ -173,12 +173,16 @@ class Supporter:
         return mask
 
     def load_area_field(self, areafile, comp):
-        """Loading files for area and interpolation"""
+        """Loading files for area and interpolation.
+        A data file can be used as gridfile: only its first time step is loaded, since the grid is all we need."""
 
         if areafile:
             loggy.info("%smareafile is %s", comp, areafile)
         areafile = check_file_exist(areafile)
-        return xr.open_mfdataset(areafile, preprocess=xr_preproc).load()
+        xfield = xr.open_mfdataset(areafile, preprocess=xr_preproc)
+        if "time" in xfield.dims:
+            xfield = xfield.isel(time=0)
+        return xfield.load()
 
     def make_areas(self, gridtype, xfield):
         """Create weights for area operations.
@@ -200,7 +204,7 @@ class Supporter:
         if self.atmcomponent == "oifs":
             # this is to get lon and lat from the Equator
             xname = list(xfield.data_vars)[-1]
-            m = xfield[xname].isel(time=0).load()
+            m = xfield[xname].load()
             # use numpy since it is faster
             g = np.unique(m.lat.data)
             f = np.unique(m.sel(cell=m.lat == g[int(len(g) / 2)]).lon.data)

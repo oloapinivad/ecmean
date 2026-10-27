@@ -32,6 +32,7 @@ Unreleased is the current development version (target v0.3.0), which is currentl
 - `performance_indices.resolution` is now read from the config file (argument > config > default `r360x180`) and a `ValueError` is raised if it is not in `SUPPORTED_RESOLUTION` (defined in `libs/climatology.py`) (only `r360x180` for now). `Diagnostic.resolution` is now `None` for `GlobalMean`, where it was never used (#156)
 - Without `-c`/`--config`, `config.yml` is now searched in the current directory instead of next to the source tree (`libs/../../config.yml`), with a clear `FileNotFoundError` if it is missing (#156)
 - `ECPlotter.heatmap_plot()` loads `data` and `base` from YAML files when given as paths (`str` or `Path`), as documented, instead of parsing the path string itself (#154)
+- Units in the global mean heatmap are shown in LaTeX notation (e.g. `W/m2` -> W m$^{-2}$) through `ecplotter.unit_to_latex()`, consistently with AQUA; text and YAML tables are unchanged (#129)
 - Python 3.9 is no longer supported: the minimum version is now 3.10
 
 ## [v0.2.2]

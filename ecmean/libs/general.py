@@ -107,8 +107,11 @@ def season_means(xfield, seasons):
     Returns:
         xarray.DataArray: Time means with a season dimension, NaN where a season has no data.
     """
+    # chunks of the data only: chunksizes would also look at the coordinates, which xarray may chunk
+    # differently (e.g. the 2D lon/lat of large curvilinear grids) and raise an inconsistency error
+    chunks = xfield.chunks[xfield.get_axis_num("time")] if xfield.chunks else (xfield.sizes["time"],)
     total = count = 0
-    for tslice in _time_blocks(xfield.chunksizes.get("time", (xfield.sizes["time"],))):
+    for tslice in _time_blocks(chunks):
         grouped = xfield.isel(time=tslice).load().groupby("time.season")
         total = total + grouped.sum("time").reindex(season=SEASONS, fill_value=0).astype("float64")
         count = count + grouped.count("time").reindex(season=SEASONS, fill_value=0)

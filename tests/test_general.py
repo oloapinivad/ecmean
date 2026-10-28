@@ -58,6 +58,18 @@ def test_season_means_subset_and_order():
     assert list(means.season.values) == ["JJA", "ALL"]
 
 
+def test_season_means_coordinates_chunked_differently():
+    """2D dask coordinates chunked differently from the data (large curvilinear grids) do not break the blocks."""
+    field = _field(chunks=12)
+    lon = xr.DataArray(np.zeros((3, 4)), dims=("lat", "lon")).chunk({"lat": 1, "lon": 2})
+    field = field.assign_coords(lon2d=lon)
+    with pytest.raises(ValueError, match="inconsistent chunks"):
+        _ = field.chunksizes
+
+    means = season_means(field, ["ALL", "DJF", "JJA"])
+    _assert_matches_mean(field, means)
+
+
 @pytest.mark.parametrize(
     "chunks, blocks",
     [

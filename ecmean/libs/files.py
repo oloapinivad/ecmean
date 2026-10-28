@@ -17,6 +17,9 @@ from ecmean.libs.ncfixers import xr_preproc
 
 loggy = logging.getLogger(__name__)
 
+# maximum number of input files kept open by xarray (see open_input_files)
+FILE_CACHE_MAXSIZE = 16
+
 ##################
 # FILE FUNCTIONS #
 ##################
@@ -44,6 +47,10 @@ def open_input_files(flist, **kwargs):
     options for all the diagnostics. Extra keyword arguments (e.g. preprocess,
     chunks) are passed to xarray.open_mfdataset."""
 
+    # xarray keeps up to 128 files open, each holding the 64 MiB chunk cache of netCDF-C: streaming monthly
+    # files, a worker would accumulate gigabytes of useless cache (12 GB instead of 5 GB on 10 years of 3D
+    # CMCC-CM2-VHR4 fields), so the open files are limited to about one block of time chunks (season_means)
+    xr.set_options(file_cache_maxsize=FILE_CACHE_MAXSIZE)
     return xr.open_mfdataset(flist, combine="by_coords", data_vars="all", join="outer", compat="no_conflicts", **kwargs)
 
 

@@ -11,6 +11,7 @@ from time import time
 
 import numpy as np
 import pandas as pd
+import xarray as xr
 
 ##################
 # HELP FUNCTIONS #
@@ -70,6 +71,70 @@ def check_time_axis(xtime, years):
     if missing:
         loggy.warning("Check your data: some years are missing")
         loggy.warning("Year missing: %s", missing)
+
+
+def select_season(xfield, season):
+    """Select the time steps of a season from an xarray object (lazily if dask-backed).
+
+    Args:
+        xfield (xarray.DataArray or xarray.Dataset): Field with a time axis.
+        season (str): Season name (DJF, MAM, JJA, SON), or ALL for the whole record.
+
+    Returns:
+        xarray object: The field restricted to the season, unchanged for ALL.
+    """
+    if season == "ALL":
+        return xfield
+    return xfield.sel(time=xfield.time.dt.season == season)
+
+
+SEASONS = ["DJF", "MAM", "JJA", "SON"]
+
+
+def season_means(xfield, seasons):
+    """Time mean of a field for each season (ALL for the whole record), in a single pass over the data.
+
+    The record is loaded one block of time chunks at a time (see _time_blocks) and the seasonal sums and
+    counts of valid points are accumulated, so memory holds one block plus the seasonal maps, whatever the
+    length of the record: a single dask graph with one reduction per season would instead keep each chunk
+    in memory until all the reductions have used it. ALL is the sum of the four seasons. Each mean is the
+    plain mean of the available time steps: NaNs are skipped as in mean(), sums are accumulated in float64.
+
+    Args:
+        xfield (xarray.DataArray): Field with a time dimension, chunked on time.
+        seasons (list): Season names among ALL, DJF, MAM, JJA and SON.
+
+    Returns:
+        xarray.DataArray: Time means with a season dimension, NaN where a season has no data.
+    """
+    total = count = 0
+    for tslice in _time_blocks(xfield.chunksizes.get("time", (xfield.sizes["time"],))):
+        grouped = xfield.isel(time=tslice).load().groupby("time.season")
+        total = total + grouped.sum("time").reindex(season=SEASONS, fill_value=0).astype("float64")
+        count = count + grouped.count("time").reindex(season=SEASONS, fill_value=0)
+    total, count = (xr.concat([stat.sum("season").expand_dims(season=["ALL"]), stat], "season") for stat in (total, count))
+    return (total / count.where(count > 0)).sel(season=seasons)
+
+
+def _time_blocks(chunks, minsize=12):
+    """Slices of the time axis made of whole consecutive chunks, merged up to at least minsize steps
+    (e.g. one file per month into one year); the last block can be shorter.
+
+    Args:
+        chunks (tuple): Sizes of the chunks along the time axis.
+        minsize (int): Minimum number of time steps of a block.
+
+    Yields:
+        slice: The time steps of each block.
+    """
+    start = end = 0
+    for size in chunks:
+        end += size
+        if end - start >= minsize:
+            yield slice(start, end)
+            start = end
+    if start < end:
+        yield slice(start, end)
 
 
 def runtime_weights(varlist):

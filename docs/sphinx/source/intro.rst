@@ -35,14 +35,14 @@ Computational performances
 Performance indices are inherently slower than global mean, but with a few cores available both can be completed in a couple of minutes.
 Since parallelization is done along variables, it does not make sense (especially for performance indices) to use more than 6 cores due to the limited number of variables.
 
-Scaling has been tested on a Xeon 16-Core 6130 2.1Ghz machine, analysing EC-Earth3 CMIP6 historical runs (i.e. TL255L91, about 0.7x0.7 deg), using ``ecmean/utils/config_benchmark.yml`` (i.e. for performance indices evaluating on 3 seasons and 4 regions).
+Scaling has been tested on a Xeon 16-Core 6130 2.1Ghz machine, analysing EC-Earth3 CMIP6 historical runs (i.e. TL255L91, about 0.7x0.7 deg), using ``ecmean/utils/config_benchmark.yml`` (i.e. for performance indices evaluating on 3 seasons and 4 regions). The benchmark is produced by ``ecmean/utils/benchmarking.py``, which also samples the memory of the workers (it requires ``psutil``) and can plot several runs side by side (``--compare``), e.g. to assess a branch against ``main``.
 
 .. figure:: _static/benchmark.png
    :align: center
    :width: 600px
    :alt: Benchmark for EC-Earth3
 
-   A multi-core (upper panel) and multi-year (lower-panel) benchmarking for Global Mean and Performance Indices for CMIP6 EC-Earth3 historical data
+   A multi-core and multi-year benchmarking of the execution time (upper panels) and of the peak memory (lower panels) for Global Mean and Performance Indices for CMIP6 EC-Earth3 historical data
 
 .. note ::
 	So far we cannot completely exploit Dask's full potential due to the adoption of the multiprocessing library to work along variables. This issue will be addressed in a future release, but so far the dask scheduler is set to synchronous with ``dask.config.set(scheduler="synchronous")``.

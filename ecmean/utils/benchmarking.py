@@ -52,9 +52,12 @@ nrepeat = 5
 nyears_fixed = 10
 nprocs_fixed = 4
 
-# what is measured: column of the dataframe, axis label, upper limit of the axis (None for automatic)
-# and seaborn palette (the bars get one shade per script or label)
-metrics = {"time": ("Execution time (sec)", 300, "Blues_d"), "memory": ("Peak memory (GB)", None, "Oranges_d")}
+# what is measured: column of the dataframe, axis label, upper limit of the axis (None for automatic),
+# colors of the scripts in a single run and seaborn palette of the labels in a comparison
+metrics = {
+    "time": ("Execution time (sec)", 300, ["teal", "gold"], "Blues_d"),
+    "memory": ("Peak memory (GB)", None, ["darkslategrey", "darkgoldenrod"], "Oranges_d"),
+}
 
 
 def parse_args():
@@ -230,7 +233,7 @@ def plot_benchmark(howmuch, figurepath):
     fig, axs = plt.subplots(len(rows), ncols, tight_layout=True, figsize=(8 * ncols, 5 * len(rows)), squeeze=False)
 
     for row, (metric, (xcol, fixcol, fixval, xlabel, fixdesc)) in enumerate(rows):
-        ylabel, ymax, palette = metrics[metric]
+        ylabel, ymax, colors, palette = metrics[metric]
         what = ylabel.split(" (")[0].lower()
         data = howmuch[howmuch[fixcol] == fixval]
         for col in range(ncols):
@@ -240,7 +243,7 @@ def plot_benchmark(howmuch, figurepath):
                 chart = sns.barplot(data=sub, x=xcol, y=metric, hue="label", hue_order=labels, palette=palette, ax=ax)
                 ax.set_title(f"{scripts[col]} {what} for CMIP6 {model} ({fixdesc})", fontsize=14)
             else:
-                chart = sns.barplot(data=data, x=xcol, y=metric, hue="script", palette=palette, ax=ax)
+                chart = sns.barplot(data=data, x=xcol, y=metric, hue="script", palette=colors, ax=ax)
                 ax.set_title(f"ECmean {version} {what} for CMIP6 {model} ({fixdesc})", fontsize=15)
             for i in chart.containers:
                 chart.bar_label(i)

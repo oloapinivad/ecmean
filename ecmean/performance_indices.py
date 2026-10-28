@@ -35,6 +35,8 @@ from ecmean.libs.general import (
     check_workers,
     get_domain,
     init_mydict,
+    season_means,
+    select_season,
     set_multiprocessing_start_method,
     weight_split,
 )
@@ -357,23 +359,21 @@ def _pi_variable(var, util, piclim, face, diag, field_3d):
     domain = get_domain(var, face)
     offset, factor = UnitsHandler(var, org_units=varunit, clim=piclim, face=face).units_converter()
 
-    # Load once to avoid recomputing for each season
-    outfield = field.persist()
-
     fix = getattr(util, f"{domain}fix")
     remap = getattr(util, f"{domain}remap")
 
+    # time means of all the seasons in a single pass on the data, so memory does not scale with the record
+    tmeans = season_means(field, diag.seasons)
+
+    # climatology average and variance of all the seasons (small files), computed together
+    (clims,) = dask.compute(
+        {season: tuple(c.mean(dim="time") for c in _load_clim(piclim, var, diag, season)) for season in diag.seasons}
+    )
+
     for season in diag.seasons:
         loggy.debug(season)
-        cfield, vfield = _load_clim(piclim, var, diag, season)
-        tmean = outfield if season == "ALL" else outfield.sel(time=outfield.time.dt.season.isin(season))
-
-        # Single compute call for all three arrays
-        tmean, cfield, vfield = dask.compute(
-            apply_units_conversion(tmean.mean(dim="time"), offset, factor),
-            cfield.mean(dim="time"),
-            vfield.mean(dim="time"),
-        )
+        tmean = apply_units_conversion(tmeans.sel(season=season, drop=True), offset, factor)
+        cfield, vfield = clims[season]
 
         # apply interpolation, if fixer is available and with different grids
         if fix:
@@ -435,10 +435,7 @@ def _load_clim(piclim, var, diag, season):
     cfield = adjust_clim_file(xr.open_mfdataset(clim, preprocess=xr_preproc))
     vfield = adjust_clim_file(xr.open_mfdataset(vvvv, preprocess=xr_preproc), remove_zero=True)
 
-    if season != "ALL":
-        cfield = cfield.sel(time=cfield.time.dt.season.isin(season))
-        vfield = vfield.sel(time=vfield.time.dt.season.isin(season))
-    return cfield, vfield
+    return select_season(cfield, season), select_season(vfield, season)
 
 
 def _match_vertical_levels(final, cfield, var):

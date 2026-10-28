@@ -54,6 +54,15 @@ def xr_preproc(ds):
                     to_rename[name] = target
                     break
 
+    # skip renames whose target already exists, keeping the existing one: e.g. CMOR files
+    # with both a 1D 'lat' dimension and a 2D 'latitude' auxiliary coordinate (BCC-CSM2-HR ocean)
+    taken = set(ds.dims) | set(ds.variables)
+    for name, target in list(to_rename.items()):
+        if target in taken:
+            del to_rename[name]
+        else:
+            taken.add(target)
+
     if to_rename:
         ds = ds.rename(to_rename)
 

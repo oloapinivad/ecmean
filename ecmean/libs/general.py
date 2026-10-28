@@ -115,6 +115,7 @@ def season_means(xfield, seasons):
         grouped = xfield.isel(time=tslice).load().groupby("time.season")
         total = total + grouped.sum("time").reindex(season=SEASONS, fill_value=0).astype("float64")
         count = count + grouped.count("time").reindex(season=SEASONS, fill_value=0)
+        del grouped  # release the block before loading the next one, otherwise two blocks are in memory
     total, count = (xr.concat([stat.sum("season").expand_dims(season=["ALL"]), stat], "season") for stat in (total, count))
     return (total / count.where(count > 0)).sel(season=seasons)
 

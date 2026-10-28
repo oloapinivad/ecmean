@@ -12,6 +12,7 @@ Unreleased is the current development version (target v0.3.0), which is currentl
 2. The new default PI climatology is EC26-CMIP6, and the new GM climatology is now EC26-CMIP. Results cannot be compared against previous ecmean version
 
 - Fix vertical weights for 3D performance indices with descending pressure levels (#150)
+- `utils/benchmarking.py` samples the peak memory of ecmean and its workers (with `psutil`), labels each run (`--label`, by default the git branch), plots several runs side by side (`--compare`), accepts the config/loglevel options passed by the job file and has a `--quick` smoke test (#169)
 - CMIP6 reference PIs for 3D fields regenerated for EC26-CMIP and EC26-HIST; 2D references unchanged (#150)
 - Default PI climatology is now EC26-CMIP; EC23 and EC24 are deprecated (#150)
 - Default global mean reference is now EC26-CMIP; EC23 is deprecated (#150)

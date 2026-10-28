@@ -220,7 +220,11 @@ class Supporter:
 
         elif self.atmcomponent in ["cmoratm", "globo"]:
             fix = None
-            remap = xe.Regridder(xfield, self.targetgrid, periodic=True, method="bilinear")
+            # nearest neighbour for unstructured grids (e.g. CESM spectral element), as for the ocean
+            if self.atmgridtype == "unstructured":
+                remap = xe.Regridder(xfield, self.targetgrid, method="nearest_s2d", locstream_in=True, periodic=True)
+            else:
+                remap = xe.Regridder(xfield, self.targetgrid, periodic=True, method="bilinear")
 
         else:
             raise KeyError("ERROR: Atm weights not defined for this component, this cannot be handled!")

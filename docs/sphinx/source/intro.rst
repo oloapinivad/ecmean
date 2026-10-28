@@ -42,7 +42,7 @@ Scaling has been tested on a Xeon 16-Core 6130 2.1Ghz machine, analysing EC-Eart
    :width: 600px
    :alt: Benchmark for EC-Earth3
 
-   A multi-core and multi-year benchmarking of the execution time (upper panels) and of the peak memory (lower panels) for Global Mean and Performance Indices for CMIP6 EC-Earth3 historical data
+   A multi-core and multi-year benchmarking of the execution time (left panels) and of the peak memory (right panels) for Global Mean and Performance Indices for CMIP6 EC-Earth3 historical data
 
 .. note ::
 	So far we cannot completely exploit Dask's full potential due to the adoption of the multiprocessing library to work along variables. This issue will be addressed in a future release, but so far the dask scheduler is set to synchronous with ``dask.config.set(scheduler="synchronous")``.

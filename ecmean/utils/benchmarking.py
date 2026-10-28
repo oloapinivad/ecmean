@@ -214,14 +214,13 @@ def load_benchmarks(csvfiles):
 
 
 def plot_benchmark(howmuch, figurepath):
-    """One row per metric and scaling: time and memory against cores (fixed years) and against
-    years (fixed cores). A single run is plotted with one panel per row (bars by script); several
-    runs (labels) get one panel per script, with bars by label."""
+    """One column per metric (time, memory) and one row per scaling: against cores (fixed years)
+    and against years (fixed cores). A single run is plotted with bars by script; several runs
+    (labels) get one row per script and scaling, with bars by label."""
 
     model = models[0]
     labels = list(dict.fromkeys(howmuch["label"]))
     compare = len(labels) > 1
-    ncols = len(scripts) if compare else 1
 
     scalings = [
         ("nprocs", "nyears", nyears_fixed, "Number of cores", f"{nyears_fixed} years"),
@@ -229,22 +228,24 @@ def plot_benchmark(howmuch, figurepath):
     ]
     # metrics not measured (e.g. old csv without memory) are left out
     measured = [metric for metric in metrics if metric in howmuch and howmuch[metric].notna().any()]
-    rows = [(metric, scaling) for metric in measured for scaling in scalings]
-    fig, axs = plt.subplots(len(rows), ncols, tight_layout=True, figsize=(8 * ncols, 5 * len(rows)), squeeze=False)
+    rows = [(script, scaling) for script in (scripts if compare else [None]) for scaling in scalings]
+    fig, axs = plt.subplots(
+        len(rows), len(measured), tight_layout=True, figsize=(8 * len(measured), 5 * len(rows)), squeeze=False
+    )
 
-    for row, (metric, (xcol, fixcol, fixval, xlabel, fixdesc)) in enumerate(rows):
-        ylabel, ymax, colors, palette = metrics[metric]
-        what = ylabel.split(" (")[0].lower()
+    for row, (script, (xcol, fixcol, fixval, xlabel, fixdesc)) in enumerate(rows):
         data = howmuch[howmuch[fixcol] == fixval]
-        for col in range(ncols):
+        for col, metric in enumerate(measured):
+            ylabel, ymax, colors, palette = metrics[metric]
+            what = ylabel.split(" (")[0].lower()
             ax = axs[row, col]
             if compare:
-                sub = data[data["script"] == scripts[col]]
+                sub = data[data["script"] == script]
                 chart = sns.barplot(data=sub, x=xcol, y=metric, hue="label", hue_order=labels, palette=palette, ax=ax)
-                ax.set_title(f"{scripts[col]} {what} for CMIP6 {model} ({fixdesc})", fontsize=14)
+                ax.set_title(f"{script} {what} for CMIP6 {model} ({fixdesc})", fontsize=14)
             else:
                 chart = sns.barplot(data=data, x=xcol, y=metric, hue="script", palette=colors, ax=ax)
-                ax.set_title(f"ECmean {version} {what} for CMIP6 {model} ({fixdesc})", fontsize=15)
+                ax.set_title(f"ECmean {version} {what} for CMIP6 {model} ({fixdesc})", fontsize=14)
             for i in chart.containers:
                 chart.bar_label(i)
             ax.set_xlabel(xlabel, fontsize=15)
@@ -255,7 +256,6 @@ def plot_benchmark(howmuch, figurepath):
 
     fig.savefig(figurepath)
     print("Figure saved in", figurepath)
-
 
 if __name__ == "__main__":
     args = parse_args()

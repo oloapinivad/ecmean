@@ -1,5 +1,5 @@
 # Configuration yaml file for CMIP6 HighResMIP model output files and variables (esgpull directory tree)
-# Many HighResMIP models do not provide fx/Ofx files: a data file is used as gridfile, and
+# Many HighResMIP models do not provide fx/Ofx files: a data file (any year) is used as gridfile, and
 # without land-sea mask the variables requiring land/ocean masking are skipped
 #
 # Possible filetype attributes for variables are defined in the model section
@@ -53,11 +53,11 @@ filetype:
 component:
   cmoratm:
     maskfile: 'r?i?p?f?/*/sftlf/*/*/sftlf_fx_*_*_{grid}.nc'
-    gridfile: '{ensemble}/Amon/tas/*/*/tas_Amon_{model}_{expname}_{ensemble}_*_{year1}??-{year2}??.nc'
+    gridfile: '{ensemble}/Amon/tas/*/*/tas_Amon_{model}_{expname}_{ensemble}_*.nc'
     areafile: 'r?i?p?f?/*/areacella/*/*/areacella_fx_*_*_{grid}.nc'
   cmoroce:
     maskfile: 'r?i?p?f?/*/sftof/*/*/sftof_Ofx_*_*_{grid}.nc'
-    gridfile: '{ensemble}/Omon/tos/gn/*/tos_Omon_{model}_{expname}_{ensemble}_gn_{year1}??-{year2}??.nc'
+    gridfile: '{ensemble}/Omon/tos/gn/*/tos_Omon_{model}_{expname}_{ensemble}_gn_*.nc'
     areafile: 'r?i?p?f?/*/areacello/*/*/areacello_Ofx_*_*_{grid}.nc'
 
 # Definition of individual variables

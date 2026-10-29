@@ -83,8 +83,13 @@ ENSEMBLES = {
 }
 CONSORTIA = {"HadGEM3-GC31-HH": "NERC"}
 # performance indices left out of the climatology for a specific model, because its output is biased
-# (the PI files are kept as they are): CESM1-CAM5-SE-HR sos has about 7000 ocean cells with unphysical values
-EXCLUDE = {"CESM1-CAM5-SE-HR": ["sos"]}
+# (the PI files are kept as they are): CESM1-CAM5-SE-HR sos has about 7000 ocean cells with unphysical values,
+# CNRM-CM6-1-HR and INM-CM5-H have 3D PIs several times larger than the other models (ta 197 and 51 against 8-19)
+EXCLUDE = {
+    "CESM1-CAM5-SE-HR": ["sos"],
+    "CNRM-CM6-1-HR": ["ta", "hus"],
+    "INM-CM5-H": ["ta", "hus"],
+}
 
 
 def main(

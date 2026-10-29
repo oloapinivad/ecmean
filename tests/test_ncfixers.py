@@ -31,3 +31,19 @@ def test_xr_preproc_keeps_existing_target():
     out = xr_preproc(ds)
     assert out["lat"].dims == ("lat",)
     assert out["lon"].dims == ("lon",)
+
+
+def _lev_dataset(standard_name):
+    lev = xr.DataArray(np.array([100000.0, 85000.0]), dims="lev", attrs={"standard_name": standard_name, "units": "Pa"})
+    return xr.Dataset({"ta": (("lev", "lat"), np.zeros((2, 3)))}, coords={"lev": lev, "lat": np.arange(3.0)})
+
+
+def test_xr_preproc_pressure_lev_to_plev():
+    """A 'lev' axis declared as air pressure is renamed to plev (MPI-ESM1-2-XR)."""
+    assert xr_preproc(_lev_dataset("air_pressure"))["ta"].dims == ("plev", "lat")
+
+
+def test_xr_preproc_other_lev_untouched():
+    """Hybrid sigma levels and ocean depths named 'lev' are not renamed."""
+    for standard_name in ["atmosphere_hybrid_sigma_pressure_coordinate", "depth", ""]:
+        assert xr_preproc(_lev_dataset(standard_name))["ta"].dims == ("lev", "lat")

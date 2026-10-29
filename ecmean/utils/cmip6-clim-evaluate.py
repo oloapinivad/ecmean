@@ -82,9 +82,21 @@ ENSEMBLES = {
     "EC-Earth3P-HR": "r1i1p2f1",
 }
 CONSORTIA = {"HadGEM3-GC31-HH": "NERC"}
+# performance indices left out of the climatology for a specific model, because its output is biased
+# (the PI files are kept as they are): CESM1-CAM5-SE-HR sos has about 7000 ocean cells with unphysical values
+EXCLUDE = {"CESM1-CAM5-SE-HR": ["sos"]}
 
 
-def main(clim="EC26", timeframe="CMIP", highresmip=False, nprocs=4, do_definitive=False, do_compute=True, do_create_clim=True):
+def main(
+    clim="EC26",
+    timeframe="CMIP",
+    highresmip=False,
+    nprocs=4,
+    do_definitive=False,
+    do_compute=True,
+    do_create_clim=True,
+    models=None,
+):
     """
     Main function to compute the performance indices for the CMIP6 climatology
     and then create the new climatology file.
@@ -98,6 +110,8 @@ def main(clim="EC26", timeframe="CMIP", highresmip=False, nprocs=4, do_definitiv
         do_definitive (bool): Whether to overwrite the definitive climatology file.
         do_compute (bool): Whether to compute the performance indices.
         do_create_clim (bool): Whether to create the climatology file after computation.
+        models (list): Models whose performance indices are computed (default: all the models of the setup).
+                            The climatology is always created averaging all the models of the setup.
     """
 
     climname = f"{clim}-{timeframe}-HR" if highresmip else f"{clim}-{timeframe}"
@@ -109,18 +123,10 @@ def main(clim="EC26", timeframe="CMIP", highresmip=False, nprocs=4, do_definitiv
     if do_compute:
         defaultconfig = load_yaml(config_file)
 
-        for model in sorted(setup["models"]):
+        for model in sorted(models or setup["models"]):
             logging.warning("Computing model %s", model)
 
             model_config = copy.deepcopy(defaultconfig)
-
-            # to possibly drop biased figures
-            drop = []
-            if drop:
-                for var in drop:
-                    for kind in ["2d_vars", "3d_vars", "oce_vars", "ice_vars"]:
-                        if var in model_config["PI"][kind]["field"]:
-                            model_config["PI"][kind]["field"].remove(var)
 
             performance_indices(
                 expname,
@@ -153,6 +159,8 @@ def main(clim="EC26", timeframe="CMIP", highresmip=False, nprocs=4, do_definitiv
                 logging.warning("No PI file found for model %s, skipping it", model)
                 continue
             full[model] = load_yaml(filein[0])
+            for var in EXCLUDE.get(model, []):
+                full[model].pop(var, None)
 
         # union of the variables of all models, in order of appearance: a variable can be missing
         # in some models (e.g. no land-sea mask or no atmosphere), and it is then averaged on the others.
@@ -232,6 +240,10 @@ if __name__ == "__main__":
         help="create the climatology file after computing the performance indices",
     )
 
+    parser.add_argument(
+        "--models", nargs="+", help="compute the performance indices of these models only (the climatology uses all of them)"
+    )
+
     args = parser.parse_args()
     logging.getLogger().setLevel(args.loglevel.upper())
     main(
@@ -242,4 +254,5 @@ if __name__ == "__main__":
         do_definitive=args.definitive,
         do_compute=args.compute,
         do_create_clim=args.create_clim,
+        models=args.models,
     )

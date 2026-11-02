@@ -174,5 +174,6 @@ def test_climatology_highres_shares_files_with_cmip():
     for var, info in piclim.items():
         assert info["cmip6"]["models"]
         assert info["cmip6"]["nmodels"] == len(info["cmip6"]["models"])
+        assert not set(info["cmip6"].get("excluded", {})) & set(info["cmip6"]["models"])
         assert info["dataset"] == piclim_cmip[var]["dataset"]
         assert list(diag.resclmdir.glob(f"climate_average_{var}_*.nc"))

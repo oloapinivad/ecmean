@@ -636,6 +636,11 @@ ta:
     nmodels: 6
     year1: 1985
     year2: 2014
+    excluded:
+      CNRM-CM6-1-HR: 'troposphere about 4 K colder than ERA5 (500 hPa global mean
+        254.4 K against 258.5 K): PI 197'
+      INM-CM5-H: 'troposphere about 2 K warmer than ERA5 and tropopause biases (PI
+        137 at 150 hPa): PI 51'
 hus:
   dataset: ERA5
   description: ECMWF ERA5 reanalysis
@@ -705,6 +710,10 @@ hus:
     nmodels: 5
     year1: 1985
     year2: 2014
+    excluded:
+      CNRM-CM6-1-HR: '35-65% of the ERA5 humidity between 300 and 100 hPa: PI 80'
+      INM-CM5-H: '30-50% more humid than ERA5 in the upper troposphere (PI 342 at
+        150 hPa): PI 72'
 tos:
   dataset: ESA-CCI-L4
   description: ESA SST CCI OSTIA L4 v3.0.1
@@ -790,67 +799,71 @@ sos:
   year2: 2014
   cmip6:
     ALL:
-      Global: 31.343
-      North Midlat: 83.717
-      Tropical: 23.884
-      South Midlat: 14.292
-      NH: 79.875
-      SH: 13.566
-      Equatorial: 18.632
-      North Pole: 89.533
-      South Pole: 5.749
+      Global: 21.554
+      North Midlat: 62.529
+      Tropical: 12.852
+      South Midlat: 13.389
+      NH: 49.277
+      SH: 12.61
+      Equatorial: 12.855
+      North Pole: 44.498
+      South Pole: 5.883
     DJF:
-      Global: 22.614
-      North Midlat: 63.018
-      Tropical: 16.402
-      South Midlat: 10.294
-      NH: 59.177
-      SH: 9.806
-      Equatorial: 12.412
-      North Pole: 68.603
-      South Pole: 3.99
+      Global: 15.558
+      North Midlat: 46.748
+      Tropical: 8.785
+      South Midlat: 9.606
+      NH: 36.918
+      SH: 9.056
+      Equatorial: 8.446
+      North Pole: 33.769
+      South Pole: 4.15
     JJA:
-      Global: 21.733
-      North Midlat: 60.532
-      Tropical: 14.834
-      South Midlat: 11.527
-      NH: 52.696
-      SH: 11.071
-      Equatorial: 12.809
-      North Pole: 68.355
-      South Pole: 5.674
+      Global: 16.072
+      North Midlat: 45.303
+      Tropical: 9.503
+      South Midlat: 10.885
+      NH: 35.602
+      SH: 10.336
+      Equatorial: 9.35
+      North Pole: 37.51
+      South Pole: 6.102
     MAM:
-      Global: 23.71
-      North Midlat: 61.043
-      Tropical: 19.426
-      South Midlat: 9.756
-      NH: 60.71
-      SH: 9.286
-      Equatorial: 14.98
-      North Pole: 69.13
-      South Pole: 4.385
+      Global: 15.208
+      North Midlat: 45.229
+      Tropical: 8.982
+      South Midlat: 8.986
+      NH: 36.157
+      SH: 8.458
+      Equatorial: 8.636
+      North Pole: 34.427
+      South Pole: 4.555
     SON:
-      Global: 21.39
-      North Midlat: 57.133
-      Tropical: 14.706
-      South Midlat: 12.527
-      NH: 50.936
-      SH: 12.143
-      Equatorial: 11.909
-      North Pole: 62.78
-      South Pole: 7.443
+      Global: 16.001
+      North Midlat: 43.024
+      Tropical: 9.485
+      South Midlat: 11.951
+      NH: 33.849
+      SH: 11.484
+      Equatorial: 9.074
+      North Pole: 33.527
+      South Pole: 7.978
     models:
-    - AWI-CM-1-1-HR
-    - BCC-CSM2-HR
     - CMCC-CM2-VHR4
     - CNRM-CM6-1-HR
     - EC-Earth3P-HR
     - ECMWF-IFS-HR
     - HadGEM3-GC31-HH
     - MPI-ESM1-2-XR
-    nmodels: 8
+    nmodels: 6
     year1: 1985
     year2: 2014
+    excluded:
+      AWI-CM-1-1-HR: 'Baltic Sea 13-24 psu against 5-7 psu in ORAS5: 64 cells give
+        53% of the global PI'
+      BCC-CSM2-HR: 'Red Sea up to 59 psu against 38 psu in ORAS5: 29 cells give 66%
+        of the global PI'
+      CESM1-CAM5-SE-HR: unphysical values over about 7000 ocean cells
 siconc:
   dataset: ESA-CCI-L4
   description: ESA SST CCI OSTIA L4 v3.0.1

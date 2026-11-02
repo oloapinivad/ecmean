@@ -173,10 +173,17 @@ The number of models is therefore smaller than for EC26-CMIP and differs from va
 .. include:: tables/climatology_EC26-CMIP-HR.rst
 
 .. note::
-   Not all the models provide all the variables, and some model-variable pairs have been left out because their output is biased:
-   the 3D variables ``ta`` and ``hus`` of CNRM-CM6-1-HR and INM-CM5-H have PIs several times larger than the other models,
-   and ``sos`` of CESM1-CAM5-SE-HR has unphysical values over a few thousand ocean cells.
-   The list of models actually used for each variable can be inspected in the ``ecmean/climatology/EC26-CMIP-HR/pi_climatology_EC26-CMIP-HR.yml`` file.
+   Not all the models provide all the variables, and some model-variable pairs have been left out because a few cells or a mean-state bias
+   dominate their PI, which is the squared bias divided by the interannual variance of the reference, very small for ``ta`` and ``hus`` in ERA5.
+   These are the biases in the models, not processing issues: the fields have been checked before and after the remapping, and they do not drift in time.
+
+   * ``sos``: AWI-CM-1-1-HR (Baltic Sea, 13-24 psu against 5-7 psu in ORAS5), BCC-CSM2-HR (Red Sea, up to 59 psu against 38 psu)
+     and CESM1-CAM5-SE-HR (unphysical values over about 7000 ocean cells). Few tens of cells give more than half of the PI of AWI and BCC.
+   * ``ta``: CNRM-CM6-1-HR (troposphere about 4 K colder than ERA5, PI 197) and INM-CM5-H (about 2 K warmer, PI 51), against 8-19 of the other models.
+   * ``hus``: CNRM-CM6-1-HR (35-65% of the ERA5 humidity in the upper troposphere, PI 80) and INM-CM5-H (30-50% more humid, PI 72), against 9-25.
+
+   The models used for each variable and the reasons of each exclusion are stored in the ``models`` and ``excluded`` entries of the
+   ``cmip6`` block of each variable in the ``ecmean/climatology/EC26-CMIP-HR/pi_climatology_EC26-CMIP-HR.yml`` file.
    Since the average is done on a small number of models, the reference PIs are less robust than the ones of EC26-CMIP.
 
 EC24 (deprecated)

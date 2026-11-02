@@ -82,13 +82,20 @@ ENSEMBLES = {
     "EC-Earth3P-HR": "r1i1p2f1",
 }
 CONSORTIA = {"HadGEM3-GC31-HH": "NERC"}
-# performance indices left out of the climatology for a specific model, because its output is biased
-# (the PI files are kept as they are): CESM1-CAM5-SE-HR sos has about 7000 ocean cells with unphysical values,
-# CNRM-CM6-1-HR and INM-CM5-H have 3D PIs several times larger than the other models (ta 197 and 51 against 8-19)
+# performance indices left out of the climatology for a specific model, as {model: {variable: reason}}.
+# The PI files are kept as they are, and the reasons are stored in the `excluded` entry of the climatology file
 EXCLUDE = {
-    "CESM1-CAM5-SE-HR": ["sos"],
-    "CNRM-CM6-1-HR": ["ta", "hus"],
-    "INM-CM5-H": ["ta", "hus"],
+    "CESM1-CAM5-SE-HR": {"sos": "unphysical values over about 7000 ocean cells"},
+    "AWI-CM-1-1-HR": {"sos": "Baltic Sea 13-24 psu against 5-7 psu in ORAS5: 64 cells give 53% of the global PI"},
+    "BCC-CSM2-HR": {"sos": "Red Sea up to 59 psu against 38 psu in ORAS5: 29 cells give 66% of the global PI"},
+    "CNRM-CM6-1-HR": {
+        "ta": "troposphere about 4 K colder than ERA5 (500 hPa global mean 254.4 K against 258.5 K): PI 197",
+        "hus": "35-65% of the ERA5 humidity between 300 and 100 hPa: PI 80",
+    },
+    "INM-CM5-H": {
+        "ta": "troposphere about 2 K warmer than ERA5 and tropopause biases (PI 137 at 150 hPa): PI 51",
+        "hus": "30-50% more humid than ERA5 in the upper troposphere (PI 342 at 150 hPa): PI 72",
+    },
 }
 
 
@@ -154,6 +161,7 @@ def main(
 
         # dictionary with all elements
         full = {}
+        excluded = {}
         for model in setup["models"]:
             logging.warning("Climatology for model %s", model)
             ensemble = ENSEMBLES.get(model, "r1i1p1f1")
@@ -164,8 +172,9 @@ def main(
                 logging.warning("No PI file found for model %s, skipping it", model)
                 continue
             full[model] = load_yaml(filein[0])
-            for var in EXCLUDE.get(model, []):
-                full[model].pop(var, None)
+            for var, reason in EXCLUDE.get(model, {}).items():
+                if full[model].pop(var, None) is not None:
+                    excluded.setdefault(var, {})[model] = reason
 
         # union of the variables of all models, in order of appearance: a variable can be missing
         # in some models (e.g. no land-sea mask or no atmosphere), and it is then averaged on the others.
@@ -216,6 +225,8 @@ def main(
             piclim[var]["cmip6"]["nmodels"] = len(mout[var])
             piclim[var]["cmip6"]["year1"] = year1
             piclim[var]["cmip6"]["year2"] = year2
+            if var in excluded:
+                piclim[var]["cmip6"]["excluded"] = excluded[var]
 
         # dump the new file
         with open(update_pifile, "w", encoding="utf8") as file:

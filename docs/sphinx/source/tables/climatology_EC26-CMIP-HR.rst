@@ -67,7 +67,7 @@
      - ORAS5
      - ocean
      - 1985-2014
-     - 8 (1985-2014)
+     - 6 (1985-2014)
    * - Sea-ice Concentration
      - ESA-CCI-L4 (v3.0.1)
      - ocean

@@ -16,7 +16,7 @@ Unreleased is the current development version, which is currently lying in `main
 4. Breaking: the unused `silent` argument and `-s/--silent` flag are removed; Python 3.9 is no longer supported (minimum 3.10)
 
 Added
-- HighResMIP support: `CMIP6_highresmip` interface and `EC26-CMIP-HR` PI climatology (#139)
+- HighResMIP support: `CMIP6_highresmip` interface, nearest-neighbour remapping of unstructured atmospheric grids and of ocean grids with placeholder cells, and `EC26-CMIP-HR` PI climatology with per-model exclusions (#139)
 - `consortium` and `mip` options in interface files, CLI and config (#139)
 - Atmospheric land-sea mask is now optional (#132)
 - LaTeX notation for units in the global mean heatmap (#129)
@@ -37,6 +37,7 @@ Fixed
 - `--addnan` forwarded to GM plots; `--line` works with missing variables (#152, #153)
 - `heatmap_plot()` loads `data`/`base` from YAML paths (#154)
 - Grid detection, empty/missing file patterns and AMIP/OMIP without ocean mask (#156)
+- `xr_preproc` no longer fails on conflicting coordinate names and renames `air_pressure` `lev` axes to `plev` (#139)
 
 ## [v0.2.2]
 - Remove a wrong dependency with esmpy

@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from ecmean.libs.support import Supporter, check_file_exist, identify_grid
+from ecmean.libs.support import Supporter, check_file_exist, identify_grid, mask_coincident_cells
 
 
 def _regular_field(lat):
@@ -69,6 +69,25 @@ def test_supporter_omip_without_masks():
     assert support.atmarea is None
     assert support.ocemask is None
     assert support.oceremap is not None
+    assert support.oceremap.method == "bilinear"
+
+
+def test_mask_coincident_cells():
+    """Cells sharing their coordinates with many others (placeholders outside the domain) are masked,
+    the few duplicates of tripolar folds are not, regular grids are untouched."""
+    lon2d, lat2d = np.meshgrid(np.arange(0.5, 360, 10.0), np.arange(-85.0, 90, 10.0))
+    lat2d[-1] = lat2d[-2]  # fold: the last row duplicates the previous one
+    lon2d[:5, :10], lat2d[:5, :10] = -1.0, -1.0  # placeholder block outside the domain
+    grid = xr.Dataset(
+        {"tos": (("y", "x"), np.ones(lon2d.shape))}, coords={"lon": (("y", "x"), lon2d), "lat": (("y", "x"), lat2d)}
+    )
+
+    masked = mask_coincident_cells(grid)
+    assert int((~masked["mask"]).sum()) == 50
+    assert bool(masked["mask"][-1].all())
+
+    regular = xr.Dataset({"tos": (("lat", "lon"), np.ones((18, 36)))}, coords={"lon": lon2d[0], "lat": lat2d[:, 0]})
+    assert "mask" not in mask_coincident_cells(regular)
 
 
 def test_supporter_without_atm_mask(tmp_path):

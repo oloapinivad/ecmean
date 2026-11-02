@@ -156,3 +156,24 @@ def test_cmor_identifiers_arguments_override_config():
     config["model"].update({"ensemble": "r1i1p2f1", "consortium": "EC-Earth-Consortium", "mip": "HighResMIP"})
     diag = _diagnostic("PerformanceIndices", config, ensemble="r2i1p1f1", consortium="CNRM-CERFACS", mip="CMIP")
     assert (diag.ensemble, diag.consortium, diag.mip) == ("r2i1p1f1", "CNRM-CERFACS", "CMIP")
+
+
+def test_climatology_highres_shares_files_with_cmip():
+    """EC26-CMIP-HR has its own PI file but uses the observational files of EC26-CMIP through a link."""
+    config = copy.deepcopy(BASE_CONFIG)
+    config["performance_indices"]["climatology"] = "EC26-CMIP-HR"
+    diag = _diagnostic("PerformanceIndices", config)
+    cmip = _diagnostic("PerformanceIndices")
+
+    assert diag.climfile.name == "pi_climatology_EC26-CMIP-HR.yml"
+    assert diag.resclmdir.resolve() == cmip.resclmdir.resolve()
+
+    piclim = yaml.safe_load(diag.climfile.read_text())
+    piclim_cmip = yaml.safe_load(cmip.climfile.read_text())
+    assert set(piclim) == set(piclim_cmip)
+    for var, info in piclim.items():
+        assert info["cmip6"]["models"]
+        assert info["cmip6"]["nmodels"] == len(info["cmip6"]["models"])
+        assert not set(info["cmip6"].get("excluded", {})) & set(info["cmip6"]["models"])
+        assert info["dataset"] == piclim_cmip[var]["dataset"]
+        assert list(diag.resclmdir.glob(f"climate_average_{var}_*.nc"))

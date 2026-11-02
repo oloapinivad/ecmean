@@ -69,7 +69,7 @@ Modifications to this are not necessary, but please be aware that the variable c
 	the list of seasons on which to compute the PI. ``ALL`` defines the yearly average. Also ``DJF`` and ``JJA`` are supported.
 
 **climatology**:
-	the climatology to be used. EC26-CMIP (default, for the period 1985-2014) and EC26-HIST (for the period 1981-2010) are available. EC24 and EC23 are deprecated.
+	the climatology to be used. EC26-CMIP (default, for the period 1985-2014), EC26-HIST (for the period 1981-2010) and EC26-CMIP-HR (for the period 1985-2014, reference PIs computed on HighResMIP models, to be used for high-resolution simulations) are available. EC24 and EC23 are deprecated.
 
 **resolution**:
 	the horizontal resolution of the climatology. Only ``r360x180`` (default) is currently available, an error is raised otherwise.

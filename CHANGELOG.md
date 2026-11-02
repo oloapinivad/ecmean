@@ -5,46 +5,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
-Unreleased is the current development version (target v0.3.0), which is currently lying in `main` branch.
+Unreleased is the current development version, which is currently lying in `main` branch.
 
-*IMPORTANT*: 
-1. 3D performance indices (ta, ua, va, hus) change values
-2. The new default PI climatology is EC26-CMIP6, and the new GM climatology is now EC26-CMIP. Results cannot be compared against previous ecmean version
+## [v0.3.0]
 
-- Fix vertical weights for 3D performance indices with descending pressure levels (#150)
-- `utils/benchmarking.py` samples the peak memory of ecmean and its workers (with `psutil`), labels each run (`--label`, by default the git branch), plots several runs side by side (`--compare`), accepts the config/loglevel options passed by the job file and has a `--quick` smoke test (#169)
-- CMIP6 reference PIs for 3D fields regenerated for EC26-CMIP and EC26-HIST; 2D references unchanged (#150)
-- Default PI climatology is now EC26-CMIP; EC23 and EC24 are deprecated (#150)
-- Default global mean reference is now EC26-CMIP; EC23 is deprecated (#150)
-- A variable failing in a worker no longer drops the other variables of the same worker: it is logged and stored as NaN, and dead workers raise an explicit error (#151)
-- `addnan` option and `--addnan` flag of global mean are now forwarded to the plot, so variables without reference are hidden by default (#152)
-- `global_mean --line` no longer crashes when variables of the tuning table are missing, as in OMIP/AMIP runs: they are written as NaN (#153)
-- Remove the unused `silent` argument of `GlobalMean`, `PerformanceIndices`, `Diagnostic` and of the wrapper functions, and the `-s/--silent` command line flag: it never had any effect (breaking for calls passing `silent`)
-- Documentation: document the variable keys and the derived variables of the interface files; complete docstrings of `global_mean()`, `performance_indices()` and `Diagnostic`, add Python API usage to the Sphinx docs and remove the non-working `./script.py` instructions
-- Workers split into per-variable functions, with variable loading shared between GM and PI in `load_variable()` (#151)
-- Formulas of derived variables are parsed with Python's `ast` module instead of a hand-written tokenizer, with the same supported syntax (#157)
-- Performance: input files are opened once per variable, globbed once per variable instead of once per year, and variables are split across workers by total load (#155)
-- `consortium` and `mip` can be used in the interface files (`--consortium`/`--mip` command line flags, `consortium`/`mip` arguments, `model` section of the config); `ensemble`, `consortium` and `mip` are read from the config when not given, the CMIP6 interfaces use them in `basedir`, the esgpull interface accepts any month in the filenames, and filenames whose years cannot be parsed are skipped with a warning (#XXX)
-- Development: ruff pinned to 0.17.1 (pyproject, pre-commit and AGENTS.md)
-- Robustness fixes in `libs/support.py` (#156): `identify_grid` checks `lat.ndim` for curvilinear grids and compares latitude spacings with `np.isclose`; `check_file_exist` raises a clear error for empty strings and for patterns matching no file instead of `IndexError`
-- The atmospheric land-sea mask is no longer mandatory: without `maskfile`, `Supporter` sets `atmmask` to `None` and `Diagnostic.configure_amip_omip_cpld()` skips, with a warning, the atmospheric variables that require land/ocean masking (#132)
-- *IMPORTANT*: global mean and performance indices compute the time means of all seasons in a single pass over the data with the new `season_means()` (`libs/general.py`), loading one block of whole time chunks at a time (xarray/dask) instead of the whole record: worker memory no longer grows with the length of the record (PI `ta` of BCC-CSM2-HR over 30 years: 9.6 GB to 2.0 GB; GM `tas` of CMCC-CM2-VHR4 over 30 years: 4.4 GB to 1.1 GB, 3.2 GB to 1.1 GB with trends). Means are accumulated in float64, so results move at the last printed decimal (PIs by at most 0.001) (#168) xarray's cache of open input files is limited to 16 in `open_input_files()`, since each open netCDF file holds a 64 MiB chunk cache (12 GB instead of 5 GB per worker on 10 years of monthly 0.25 degree 3D fields)
-- New `CMIP6_highresmip` interface, using a data file (`tas`/`tos`) as `gridfile` for HighResMIP models without fx/Ofx files; `Supporter` loads only the first time step of the area/grid file (#139)
-- `xr_preproc` no longer renames a coordinate onto an existing name (e.g. a 2D `latitude` auxiliary coordinate next to the 1D `lat`, as in BCC-CSM2-HR ocean files), which raised `ValueError: the new name 'lat' conflicts` (#139)
-- Unstructured atmospheric grids (e.g. CESM1-CAM5-SE-HR spectral element) are remapped with nearest neighbour weights, as the oceanic ones, instead of failing on a bilinear regridder (#139)
-- Oceanic grid cells sharing their coordinates with many other cells (placeholders outside the model domain, e.g. a third of the CESM1-CAM5-SE-HR POP grid at lon = lat = -1) are masked and remapped with nearest neighbour weights, since the coincident points make the ESMF weights generation take hours instead of seconds; target cells without valid source are NaN instead of zero (`unmapped_to_nan`) (#139)
-- `xr_preproc` renames a `lev` axis to `plev` when it is declared as `air_pressure` (e.g. MPI-ESM1-2-XR 3D fields, previously NaN PIs); other `lev` axes are untouched (#139)
-- `cmip6-clim-evaluate.py`: `EXCLUDE` table to leave a biased variable of a single model out of the climatology (CESM1-CAM5-SE-HR, AWI-CM-1-1-HR and BCC-CSM2-HR `sos`, CNRM-CM6-1-HR and INM-CM5-H `ta` and `hus`), with the reason of each exclusion stored in the `excluded` entry of the `cmip6` block of the climatology file, replacing the non-working `drop` hook, and `--models` option to compute the PIs of selected models only (#139)
-- New `EC26-CMIP-HR` PI climatology (same observations as EC26-CMIP), whose reference PIs are computed on HighResMIP `hist-1950` models by `utils/cmip6-clim-evaluate.py -c EC26 -t CMIP --highresmip`; the script now averages each variable over all the models providing it, instead of only the variables of the first model (#139)
-- Documentation of the `EC26-CMIP-HR` climatology (description, table of the variables, models left out) and test that it shares the observational files of `EC26-CMIP` through a link (#139)
-- `Supporter` initialises `atmmask`/`atmarea` to `None`, so an OMIP run with remapping and no ocean mask no longer fails with `AttributeError` (#156)
-- `Diagnostic` raises a clear `ValueError` if the global mean regions do not include `Global` or the seasons do not include `ALL`, which its tables and plots require (#156)
-- The ecmean version printed in the welcome message is now stored in `Diagnostic.ecmean_version`, so `Diagnostic.version` only holds the `*` CMOR filename wildcard (#156)
-- `performance_indices.resolution` is now read from the config file (argument > config > default `r360x180`) and a `ValueError` is raised if it is not in `SUPPORTED_RESOLUTION` (defined in `libs/climatology.py`) (only `r360x180` for now). `Diagnostic.resolution` is now `None` for `GlobalMean`, where it was never used (#156)
-- Without `-c`/`--config`, `config.yml` is now searched in the current directory instead of next to the source tree (`libs/../../config.yml`), with a clear `FileNotFoundError` if it is missing (#156)
-- `ECPlotter.heatmap_plot()` loads `data` and `base` from YAML files when given as paths (`str` or `Path`), as documented, instead of parsing the path string itself (#154)
-- Units in the global mean heatmap are shown in LaTeX notation (e.g. `W/m2` -> W m$^{-2}$) through `ecplotter.unit_to_latex()`, consistently with AQUA; text and YAML tables are unchanged (#129)
-- Python 3.9 is no longer supported: the minimum version is now 3.10
+*IMPORTANT*:
+1. 3D performance indices (ta, ua, va, hus) change values (#150)
+2. New default climatologies: EC26-CMIP for PI and GM (EC23/EC24 deprecated). Results are not comparable with previous versions (#150)
+3. Time means are now accumulated in float64 in a single pass: results may move at the last printed decimal (#168)
+4. Breaking: the unused `silent` argument and `-s/--silent` flag are removed; Python 3.9 is no longer supported (minimum 3.10)
+
+Added
+- HighResMIP support: `CMIP6_highresmip` interface, nearest-neighbour remapping of unstructured atmospheric grids and of ocean grids with placeholder cells, and `EC26-CMIP-HR` PI climatology with per-model exclusions (#139)
+- `consortium` and `mip` options in interface files, CLI and config (#139)
+- Atmospheric land-sea mask is now optional (#132)
+- LaTeX notation for units in the global mean heatmap (#129)
+- Benchmark script `utils/benchmarking.py` with memory sampling and run comparison (#169)
+- Python 3.15 support (#164); `AGENTS.md` for contributors and coding agents (#163)
+
+Changed
+- Seasonal means computed in a single pass with bounded memory: up to ~5x less memory per worker (#168)
+- Performance: files opened and globbed once per variable, workers balanced by load (#155)
+- Workers split per variable and shared GM/PI helpers; derived-variable formulas parsed with `ast` (#151, #157)
+- `resolution` and config file are read more robustly, with clear errors (#156)
+- Documentation: API docs, derived variables, Python usage
+- Development: ruff pinned to 0.17.1, Dependabot for GitHub Actions, `pip`/`certifi` minimum versions
+
+Fixed
+- Vertical weights for 3D PIs with descending pressure levels (#150)
+- A failing variable no longer drops the other variables of its worker (#151)
+- `--addnan` forwarded to GM plots; `--line` works with missing variables (#152, #153)
+- `heatmap_plot()` loads `data`/`base` from YAML paths (#154)
+- Grid detection, empty/missing file patterns and AMIP/OMIP without ocean mask (#156)
+- `xr_preproc` no longer fails on conflicting coordinate names and renames `air_pressure` `lev` axes to `plev` (#139)
 
 ## [v0.2.2]
 - Remove a wrong dependency with esmpy

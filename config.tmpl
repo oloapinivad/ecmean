@@ -3,6 +3,10 @@ interface: EC-Earth4
 # Choice of model name. It is printed in the output table
 model:
   name: EC-Earth4
+  # optional CMOR identifiers, used by the CMIP6 interfaces (overridden by the command line)
+  # ensemble: r1i1p1f1 # default r1i1p1f1
+  # consortium: EC-Earth-Consortium # default '*'
+  # mip: CMIP # default CMIP
 
 dirs:
   exp: 'EXPERIMENT FOLDER'

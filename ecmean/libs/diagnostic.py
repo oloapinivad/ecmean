@@ -19,6 +19,7 @@ from ecmean.libs.climatology import (
     SUPPORTED_RESOLUTION,
 )
 from ecmean.libs.files import load_yaml
+from ecmean.libs.masks import LANDSEA_MASK_TYPES
 
 ####################
 # DIAGNOSTIC CLASS #
@@ -40,7 +41,7 @@ class Diagnostic:
         line=False,
         trend=False,
         resolution=None,
-        ensemble="r1i1p1f1",
+        ensemble=None,
         addnan=False,
         interface=None,
         modelname=None,
@@ -49,6 +50,8 @@ class Diagnostic:
         numproc=1,
         climatology=None,
         reference=None,
+        consortium=None,
+        mip=None,
     ):
         """
         Initialize the Diagnostic instance.
@@ -62,7 +65,7 @@ class Diagnostic:
             line (bool): Write the single-line tuning table (global mean only).
             trend (bool): Compute trends (global mean only).
             resolution (str): Target grid for the interpolation. Default is 'r360x180'.
-            ensemble (str): Ensemble identifier. Default is 'r1i1p1f1'.
+            ensemble (str): Ensemble identifier, overriding the configuration. Default is 'r1i1p1f1'.
             addnan (bool): Plot also variables without reference (global mean only).
             interface (str): Interface name or file, overriding the configuration.
             modelname (str): Model name, overriding the configuration.
@@ -71,6 +74,8 @@ class Diagnostic:
             numproc (int): Number of processes.
             climatology (str): Performance indices climatology, overriding the configuration.
             reference (str): Global mean reference, overriding the configuration.
+            consortium (str): Consortium name (CMOR institution_id), overriding the configuration. Default is '*'.
+            mip (str): MIP name (CMOR activity_id), overriding the configuration. Default is 'CMIP'.
         """
 
         # arguments from command line/function
@@ -84,7 +89,6 @@ class Diagnostic:
         self.climatology = climatology
         self.resolution = resolution  # for performance indices only: set in cfg_performance_indices
         self.reference = reference
-        self.ensemble = ensemble
         self.interface = interface
         self.funcname = funcname
         self.ecmean_version = version
@@ -152,8 +156,11 @@ class Diagnostic:
         # setting up interface file
         self.interface = interface or cfg["interface"]
 
-        # setting up model name
+        # setting up model name and CMOR identifiers: arguments override the model section of the config
         self.modelname = modelname or cfg["model"]["name"]
+        self.ensemble = ensemble or cfg["model"].get("ensemble") or "r1i1p1f1"
+        self.consortium = consortium or cfg["model"].get("consortium") or "*"
+        self.mip = mip or cfg["model"].get("mip") or "CMIP"
 
         # allow for both interface name or interface file
         if not os.path.exists(self.interface):
@@ -288,15 +295,46 @@ class Diagnostic:
         """Helper function to remove variables from a list while preserving order."""
         return [var for var in var_list if var not in set(vars_to_remove)]
 
-    def configure_amip_omip_cpld(self, support_dictionary):
+    def _remove_masked_variables(self, var_list, atm_vars, reference):
+        """
+        Remove from a list the atmospheric variables that need the land-sea mask, when it is not available.
+
+        Args:
+            var_list (list): Variables to be filtered.
+            atm_vars (list): Variables of the atmospheric domain.
+            reference (dict): Reference or climatology dictionary, providing the mask type of each variable.
+
+        Returns:
+            list: The variables that can be processed without the land-sea mask.
+        """
+        masked_vars = [var for var in var_list if var in atm_vars and reference[var].get("mask") in LANDSEA_MASK_TYPES]
+        for var in masked_vars:
+            loggy.warning(
+                "Variable %s requires a land-sea mask (mask: %s), but no maskfile is available for the atmospheric "
+                "component: %s will be skipped. Set the atmospheric 'maskfile' in the interface file to compute it.",
+                var,
+                reference[var]["mask"],
+                var,
+            )
+        return self._remove_variables(var_list, masked_vars)
+
+    def configure_amip_omip_cpld(self, support_dictionary, reference=None):
         """
         Configure the experiment for AMIP, OMIP, or coupled simulations.
         Updates the variables/fields on which to run as a function of the
-        experiment type, which is deduced from the availabe grids
+        experiment type, which is deduced from the availabe grids. If the atmospheric
+        grid is available but its land-sea mask is not, the atmospheric variables
+        requiring land or sea masking are removed as well.
 
         Args:
-            util_dictionary: Dictionary containing output from Supporter()
+            support_dictionary: Supporter() object, with the available files, areas and masks
+            reference (dict, optional): Reference (global mean) or climatology (performance indices)
+                dictionary, used to find which variables need the land-sea mask. If None, no variable
+                is removed for a missing mask.
         """
+
+        # the atmospheric grid is there, but the land-sea mask is missing
+        missing_atm_mask = reference is not None and support_dictionary.atmareafile and support_dictionary.atmmask is None
 
         # check if we can run the performance indices
         if self.funcname == "PerformanceIndices":
@@ -308,6 +346,8 @@ class Diagnostic:
                 loggy.warning("No atmospheric file found, assuming this is an OMIP run without atmospheric variables.")
                 atmospheric_vars = self.field_atm2d + self.field_atm3d
                 self.field_all = self._remove_variables(self.field_all, atmospheric_vars)
+            if missing_atm_mask:
+                self.field_all = self._remove_masked_variables(self.field_all, self.field_atm2d, reference)
             if self.field_all == []:
                 raise ValueError("No variables to process due to missing area/mask files, check your configuration file!")
 
@@ -319,5 +359,7 @@ class Diagnostic:
             if not support_dictionary.atmareafile and not support_dictionary.atmmaskfile:
                 loggy.warning("No atmospheric file found, assuming this is an OMIP run without atmospheric variables.")
                 self.var_all = self._remove_variables(self.var_all, self.var_atm)
+            if missing_atm_mask:
+                self.var_all = self._remove_masked_variables(self.var_all, self.var_atm, reference)
             if self.var_all == []:
                 raise ValueError("No variables to process due to missing area/mask files, check your configuration file!")

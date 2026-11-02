@@ -29,6 +29,7 @@ from ecmean.libs.general import (
     check_workers,
     get_domain,
     init_mydict,
+    season_means,
     set_multiprocessing_start_method,
     weight_split,
     write_tuning_table,
@@ -57,7 +58,9 @@ class GlobalMean:
         numproc (int): Number of processes to use. Default is 1.
         interface (str): Path to the interface file. Default is None.
         model (str): Model name. Default is None.
-        ensemble (str): Ensemble identifier. Default is 'r1i1p1f1'.
+        ensemble (str): Ensemble identifier. Default is None (from configuration, then 'r1i1p1f1').
+        consortium (str): Consortium name (cmor institution_id). Default is None (from configuration, then '*').
+        mip (str): MIP name (cmor activity_id). Default is None (from configuration, then 'CMIP').
         addnan (bool): Whether to add NaNs. Default is False.
         trend (bool): Whether to compute trends. Default is None.
         line (str): Line identifier. Default is None.
@@ -87,7 +90,9 @@ class GlobalMean:
         numproc=1,
         interface=None,
         model=None,
-        ensemble="r1i1p1f1",
+        ensemble=None,
+        consortium=None,
+        mip=None,
         addnan=False,
         trend=None,
         line=None,
@@ -107,6 +112,8 @@ class GlobalMean:
             funcname=self.__class__.__name__,
             numproc=numproc,
             ensemble=ensemble,
+            consortium=consortium,
+            mip=mip,
             interface=interface,
             modelname=model,
             addnan=addnan,
@@ -151,7 +158,7 @@ class GlobalMean:
         self.util_dictionary = Supporter(comp, inifiles["atm"], inifiles["oce"], areas=True, remap=False)
 
         # verify if we can run amip, omip or coupled run
-        self.diag.configure_amip_omip_cpld(self.util_dictionary)
+        self.diag.configure_amip_omip_cpld(self.util_dictionary, self.ref)
 
         self.toc("Preparation")
 
@@ -384,15 +391,28 @@ def _gm_variable(var, util, ref, face, diag):
     domain = get_domain(var, face)
     offset, factor = UnitsHandler(var, org_units=varunit, clim=ref, face=face).units_converter()
 
-    # compute here since the operation are built on this
-    cfield = field.compute()
+    # time means of all the seasons in a single pass on the data, so memory does not scale with the record.
+    # With trends, each year is reduced to its regional averages before moving to the next one, so that
+    # only one year of maps is in memory; as for groupby("time.year"), a year without data for a season is skipped
+    if diag.ftrend:
+        yearly = {(season, region): [] for season in diag.seasons for region in diag.regions}
+        for _, yfield in field.groupby("time.year"):
+            ymeans = season_means(yfield, diag.seasons)
+            for season in diag.seasons:
+                tfield = ymeans.sel(season=season, drop=True)
+                if tfield.count() == 0:
+                    continue
+                for region in diag.regions:
+                    yearly[season, region].append(_gm_region_mean(tfield, util, ref[var], domain, region))
+    else:
+        tmeans = season_means(field, diag.seasons)
 
     for season in diag.seasons:
-        tfield = cfield if season == "ALL" else cfield.sel(time=cfield.time.dt.season.isin(season))
-        tfield = tfield.groupby("time.year").mean("time") if diag.ftrend else tfield.mean(dim="time")
-
         for region in diag.regions:
-            avg = _gm_region_mean(tfield, util, ref[var], domain, region)
+            if diag.ftrend:
+                avg = np.array(yearly[season, region])
+            else:
+                avg = _gm_region_mean(tmeans.sel(season=season, drop=True), util, ref[var], domain, region)
             result[season][region] = float(apply_units_conversion(np.nanmean(avg), offset, factor))
 
             if diag.ftrend and len(avg) == len(diag.years_joined):
@@ -450,6 +470,8 @@ def gm_entry_point():
         config=args.config,
         model=args.model,
         ensemble=args.ensemble,
+        consortium=args.consortium,
+        mip=args.mip,
         addnan=args.addnan,
         outputdir=args.outputdir,
         reference=args.reference,
@@ -466,7 +488,9 @@ def global_mean(
     numproc=1,
     interface=None,
     model=None,
-    ensemble="r1i1p1f1",
+    ensemble=None,
+    consortium=None,
+    mip=None,
     addnan=False,
     trend=None,
     line=None,
@@ -489,7 +513,9 @@ def global_mean(
         numproc (int): Number of processes to use. Default is 1.
         interface (str): Interface name or path to the interface file. Default is None (from configuration).
         model (str): Model name. Default is None (from configuration).
-        ensemble (str): Ensemble identifier. Default is 'r1i1p1f1'.
+        ensemble (str): Ensemble identifier. Default is None (from configuration, then 'r1i1p1f1').
+        consortium (str): Consortium name (cmor institution_id). Default is None (from configuration, then '*').
+        mip (str): MIP name (cmor activity_id). Default is None (from configuration, then 'CMIP').
         addnan (bool): Whether to plot also variables without reference. Default is False.
         trend (bool): Whether to compute trends. Default is None.
         line (bool): Whether to write the single-line tuning table. Default is None.
@@ -509,6 +535,8 @@ def global_mean(
         interface=interface,
         model=model,
         ensemble=ensemble,
+        consortium=consortium,
+        mip=mip,
         addnan=addnan,
         trend=trend,
         line=line,

@@ -71,8 +71,12 @@ class Supporter:
                 )
                 self.atminterpolator.create_weights(self.atmfield)
 
-            # init the land-sea mask for atm (mandatory)
-            self.atmmask = self.make_atm_masks()
+            # init the land-sea mask for atm: if missing, the variables that need it
+            # are dropped later by Diagnostic.configure_amip_omip_cpld()
+            if self.atmmaskfile:
+                self.atmmask = self.make_atm_masks()
+            else:
+                loggy.warning("No atmospheric land-sea mask available: land/ocean masked variables will be skipped.")
 
         # do the same if oceanic file is found
         if self.oceareafile:
@@ -173,12 +177,16 @@ class Supporter:
         return mask
 
     def load_area_field(self, areafile, comp):
-        """Loading files for area and interpolation"""
+        """Loading files for area and interpolation.
+        A data file can be used as gridfile: only its first time step is loaded, since the grid is all we need."""
 
         if areafile:
             loggy.info("%smareafile is %s", comp, areafile)
         areafile = check_file_exist(areafile)
-        return xr.open_mfdataset(areafile, preprocess=xr_preproc).load()
+        xfield = xr.open_mfdataset(areafile, preprocess=xr_preproc)
+        if "time" in xfield.dims:
+            xfield = xfield.isel(time=0)
+        return xfield.load()
 
     def make_areas(self, gridtype, xfield):
         """Create weights for area operations.

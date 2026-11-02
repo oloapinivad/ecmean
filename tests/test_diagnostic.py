@@ -1,6 +1,7 @@
 """Unit tests for the configuration checks of ecmean.libs.diagnostic."""
 
 import copy
+from types import SimpleNamespace
 
 import pytest
 import yaml
@@ -86,3 +87,93 @@ def test_default_config_in_current_directory(tmp_path, monkeypatch):
     (tmp_path / "config.yml").write_text(yaml.safe_dump(BASE_CONFIG))
     monkeypatch.chdir(tmp_path)
     assert _diagnostic("GlobalMean", config="").modelname == "EC-Earth4"
+
+
+MASK_REFERENCE = {
+    "tas": {"mask": "global"},
+    "tas_land": {"mask": "land"},
+    "net_sfc": {"mask": "ocean"},
+    "tos": {"mask": "ocean"},
+}
+
+
+@pytest.mark.parametrize(
+    "funcname, section, attribute",
+    [("GlobalMean", "global_mean", "var_all"), ("PerformanceIndices", "performance_indices", "field_all")],
+)
+def test_missing_atm_mask_drops_masked_variables(funcname, section, attribute, caplog):
+    """Without atmospheric land-sea mask, only atmospheric variables requiring land/sea masking are dropped."""
+    config = copy.deepcopy(BASE_CONFIG)
+    atm = "atm" if funcname == "GlobalMean" else "atm2d"
+    config[section]["variables"] = {atm: ["tas", "tas_land", "net_sfc"], "oce": ["tos"]}
+    diag = _diagnostic(funcname, config)
+    support = SimpleNamespace(atmareafile="grid.nc", atmmaskfile="", atmmask=None, oceareafile="area.nc", ocemaskfile="")
+
+    diag.configure_amip_omip_cpld(support, MASK_REFERENCE)
+
+    assert getattr(diag, attribute) == ["tas", "tos"]
+    assert "tas_land requires a land-sea mask (mask: land)" in caplog.text
+    assert "net_sfc requires a land-sea mask (mask: ocean)" in caplog.text
+
+
+def test_missing_atm_mask_without_reference_keeps_variables():
+    """Without reference, configure_amip_omip_cpld does not drop variables for a missing mask."""
+    config = copy.deepcopy(BASE_CONFIG)
+    config["global_mean"]["variables"] = {"atm": ["tas", "tas_land"]}
+    diag = _diagnostic("GlobalMean", config)
+    support = SimpleNamespace(atmareafile="grid.nc", atmmaskfile="", atmmask=None, oceareafile="", ocemaskfile="")
+
+    diag.configure_amip_omip_cpld(support)
+
+    assert diag.var_all == ["tas", "tas_land"]
+
+
+def test_missing_atm_mask_only_masked_variables_raises():
+    """If all variables need the missing mask, nothing is left to process."""
+    config = copy.deepcopy(BASE_CONFIG)
+    config["global_mean"]["variables"] = {"atm": ["tas_land"]}
+    diag = _diagnostic("GlobalMean", config)
+    support = SimpleNamespace(atmareafile="grid.nc", atmmaskfile="", atmmask=None, oceareafile="", ocemaskfile="")
+
+    with pytest.raises(ValueError, match="No variables to process"):
+        diag.configure_amip_omip_cpld(support, MASK_REFERENCE)
+
+
+def test_cmor_identifiers_default():
+    diag = _diagnostic("GlobalMean")
+    assert (diag.ensemble, diag.consortium, diag.mip) == ("r1i1p1f1", "*", "CMIP")
+
+
+def test_cmor_identifiers_from_config():
+    config = copy.deepcopy(BASE_CONFIG)
+    config["model"].update({"ensemble": "r1i1p2f1", "consortium": "EC-Earth-Consortium", "mip": "HighResMIP"})
+    diag = _diagnostic("GlobalMean", config)
+    assert (diag.ensemble, diag.consortium, diag.mip) == ("r1i1p2f1", "EC-Earth-Consortium", "HighResMIP")
+
+
+def test_cmor_identifiers_arguments_override_config():
+    config = copy.deepcopy(BASE_CONFIG)
+    config["model"].update({"ensemble": "r1i1p2f1", "consortium": "EC-Earth-Consortium", "mip": "HighResMIP"})
+    diag = _diagnostic("PerformanceIndices", config, ensemble="r2i1p1f1", consortium="CNRM-CERFACS", mip="CMIP")
+    assert (diag.ensemble, diag.consortium, diag.mip) == ("r2i1p1f1", "CNRM-CERFACS", "CMIP")
+
+
+def test_climatology_highres_shares_files_with_cmip():
+    """EC26-CMIP-HR has its own PI file but uses the observational files of EC26-CMIP through a link."""
+    config = copy.deepcopy(BASE_CONFIG)
+    config["performance_indices"]["climatology"] = "EC26-CMIP-HR"
+    diag = _diagnostic("PerformanceIndices", config)
+    cmip = _diagnostic("PerformanceIndices")
+
+    assert diag.climfile.name == "pi_climatology_EC26-CMIP-HR.yml"
+    assert diag.resclmdir.resolve() == cmip.resclmdir.resolve()
+
+    piclim = yaml.safe_load(diag.climfile.read_text())
+    piclim_cmip = yaml.safe_load(cmip.climfile.read_text())
+    assert set(piclim) == set(piclim_cmip)
+    for var, info in piclim.items():
+        assert info["cmip6"]["models"]
+        assert info["cmip6"]["nmodels"] == len(info["cmip6"]["models"])
+        assert not set(info["cmip6"].get("excluded", {})) & set(info["cmip6"]["models"])
+        assert info["dataset"] == piclim_cmip[var]["dataset"]
+        assert list(diag.resclmdir.glob(f"climate_average_{var}_*.nc"))

@@ -12,12 +12,10 @@ import xesmf as xe
 
 from ecmean.libs.areas import AreaCalculator
 from ecmean.libs.files import inifiles_priority
+from ecmean.libs.interpolators import InterpolatorFactory
 from ecmean.libs.ncfixers import xr_preproc
 
 loggy = logging.getLogger(__name__)
-
-# cells sharing their coordinates with more than this number of cells are placeholders (see mask_coincident_cells)
-MAX_COINCIDENT_CELLS = 10
 
 # mask to be searched
 atm_mask_names = ["lsm", "sftlf"]
@@ -30,7 +28,7 @@ class Supporter:
     in global mean and performance indices
     """
 
-    def __init__(self, component, atmdict, ocedict, areas=True, remap=False, targetgrid=None):
+    def __init__(self, component, atmdict, ocedict, tool="ESMF", areas=True, remap=False, targetgrid=None):
         """Class for masks, areas and interpolation (xESMF-based)
         for both atmospheric and oceanic component"""
 
@@ -44,10 +42,11 @@ class Supporter:
         self.atmcomponent = component["atm"]
         self.ocecomponent = component["oce"]
         self.targetgrid = targetgrid
+        self.tool = tool.upper()
 
         # remapping default
-        self.ocefix, self.oceremap = None, None
-        self.atmfix, self.atmremap = None, None
+        self.atminterpolator = None
+        self.oceinterpolator = None
 
         # areas and masks, left undefined when the component is missing (amip/omip cases)
         self.atmmask = None
@@ -67,7 +66,10 @@ class Supporter:
 
             # initialize the interpolation for atmosphere
             if self.targetgrid and remap:
-                self.atmfix, self.atmremap = self.make_atm_interp_weights(self.atmfield)
+                self.atminterpolator = InterpolatorFactory.create_interpolator(
+                    "atmospheric", self.atmcomponent, self.atmgridtype, self.targetgrid, self.tool
+                )
+                self.atminterpolator.create_weights(self.atmfield)
 
             # init the land-sea mask for atm: if missing, the variables that need it
             # are dropped later by Diagnostic.configure_amip_omip_cpld()
@@ -88,7 +90,10 @@ class Supporter:
 
             # init the ocean interpolation
             if self.targetgrid and remap:
-                self.ocefix, self.oceremap = self.make_oce_interp_weights(self.ocefield)
+                self.oceinterpolator = InterpolatorFactory.create_interpolator(
+                    "oceanic", self.ocecomponent, self.ocegridtype, self.targetgrid, self.tool
+                )
+                self.oceinterpolator.create_weights(self.ocefield)
 
             # ocean mask
             if self.ocemaskfile:
@@ -133,10 +138,8 @@ class Supporter:
         mask = mask.load()
 
         # interp the mask if required
-        if self.atmremap is not None:
-            if self.atmfix:
-                mask = self.atmfix(mask, keep_attrs=True)
-            mask = self.atmremap(mask, keep_attrs=True)
+        if self.atminterpolator is not None:
+            mask = self.atminterpolator.interpolate(mask, keep_attrs=True)
 
         return mask
 
@@ -168,10 +171,8 @@ class Supporter:
         mask = mask.load()
 
         # interp the mask if required
-        if self.oceremap is not None:
-            # if self.ocefix is not None:
-            #    mask = self.ocefix(mask, keep_attrs=True)
-            mask = self.oceremap(mask, keep_attrs=True)
+        if self.oceinterpolator is not None:
+            mask = self.oceinterpolator.interpolate(mask, keep_attrs=True)
 
         return mask
 
@@ -200,118 +201,6 @@ class Supporter:
             return xfield["e1t"] * xfield["e2t"]
         else:  # automatic solution, wish you luck!
             return AreaCalculator().calculate_area(xfield, gridtype)
-
-    def make_atm_interp_weights(self, xfield):
-        """Create atmospheric interpolator weights"""
-
-        if self.atmcomponent == "oifs":
-            # this is to get lon and lat from the Equator
-            xname = list(xfield.data_vars)[-1]
-            m = xfield[xname].load()
-            # use numpy since it is faster
-            g = np.unique(m.lat.data)
-            f = np.unique(m.sel(cell=m.lat == g[int(len(g) / 2)]).lon.data)
-
-            # this creates a a gaussian non reduced grid
-            gaussian_regular = xr.Dataset({"lon": (["lon"], f), "lat": (["lat"], g)})
-
-            # use nearest neighbour to remap to gaussian regular
-            fix = xe.Regridder(xfield[xname], gaussian_regular, method="nearest_s2d", locstream_in=True, periodic=True)
-
-            # create bilinear interpolator
-            remap = xe.Regridder(fix(xfield[xname]), self.targetgrid, periodic=True, method="bilinear")
-
-        elif self.atmcomponent in ["cmoratm", "globo"]:
-            fix = None
-            # nearest neighbour for unstructured grids (e.g. CESM spectral element), as for the ocean
-            if self.atmgridtype == "unstructured":
-                remap = xe.Regridder(xfield, self.targetgrid, method="nearest_s2d", locstream_in=True, periodic=True)
-            else:
-                remap = xe.Regridder(xfield, self.targetgrid, periodic=True, method="bilinear")
-
-        else:
-            raise KeyError("ERROR: Atm weights not defined for this component, this cannot be handled!")
-
-        return fix, remap
-
-    def make_oce_interp_weights(self, xfield):
-        """Create oceanic interpolator weights.
-
-        Args:
-            xfield (xarray.DataArray): The field to interpolate.
-
-        Returns:
-            tuple: The fix and remap objects.
-
-        """
-
-        if self.ocecomponent in ["nemo", "cmoroce"]:
-            if "areacello" in xfield.data_vars:  # CMOR case
-                xname = "areacello"
-            elif "cell_area" in xfield.data_vars:  # ECE4 NEMO case for nemo-initial-state.nc
-                xname = "cell_area"
-            else:
-                # tentative extraction
-                xname = list(xfield.data_vars)[-1]
-        else:
-            raise KeyError("ERROR: Oce weights not defined for this component, this cannot be handled!")
-
-        # placeholder cells are masked, target cells without valid source are NaN instead of zero
-        grid = mask_coincident_cells(xfield[[xname]])
-
-        # Use the nearest neighbor method for unstructured grids and for grids with placeholder cells,
-        # for which ESMF bilinear weights still take hours (tested on the 0.1 degree POP grid of CESM)
-        if self.ocegridtype in ["unstructured"] or "mask" in grid:
-            remap = xe.Regridder(
-                grid,
-                self.targetgrid,
-                method="nearest_s2d",
-                locstream_in=self.ocegridtype in ["unstructured"],
-                periodic=True,
-                unmapped_to_nan=True,
-            )
-        else:
-            # Use the bilinear method for regular or curvilinear grids
-            remap = xe.Regridder(
-                grid,
-                self.targetgrid,
-                method="bilinear",
-                periodic=True,
-                ignore_degenerate=True,
-                unmapped_to_nan=True,
-            )
-
-        return None, remap
-
-
-def mask_coincident_cells(grid):
-    """Mask the cells of a grid that share their coordinates with many other cells, for xESMF.
-
-    Some models fill the cells outside the model domain with a constant longitude and latitude (e.g. the POP
-    grid of CESM1-CAM5-SE-HR, where a third of the cells sit at lon = lat = -1 with valid-looking data). Millions
-    of coincident points make the ESMF weights generation pathologically slow (hours instead of seconds) and
-    would be used as data at that location. The folds and halos of tripolar grids duplicate a location a few
-    times only (less than MAX_COINCIDENT_CELLS) and are left untouched. Regular grids are returned unchanged.
-
-    Args:
-        grid (xarray.Dataset): Grid with lon and lat coordinates.
-
-    Returns:
-        xarray.Dataset: The grid with a mask variable (1 valid, 0 placeholder), honoured by xESMF, if needed.
-    """
-    lon, lat = grid["lon"], grid["lat"]
-    if lon.dims != lat.dims:
-        return grid
-    _, inverse, counts = np.unique(lon.values.ravel() + 1j * lat.values.ravel(), return_inverse=True, return_counts=True)
-    coincident = (counts[inverse.ravel()] > MAX_COINCIDENT_CELLS).reshape(lon.shape)
-    if coincident.any():
-        loggy.warning(
-            "%d cells share their coordinates with more than %d other cells: masked as placeholders",
-            coincident.sum(),
-            MAX_COINCIDENT_CELLS,
-        )
-        grid = grid.assign(mask=(lon.dims, ~coincident))
-    return grid
 
 
 def check_file_exist(file):

@@ -31,6 +31,7 @@ dependencies = [
     "tabulate",
     "cfgrib",
     "seaborn",
+    "smmregrid>=0.2.0",
     "pip >= 26.2.2", # for pip certificate vulnerability 
     "certifi >= 2026.10.19" # for pip certificate vulnerability 
 ]
@@ -94,7 +95,7 @@ python_files = "test_*.py"
 [tool.ruff]
 # --- Global Settings ---
 line-length = 127
-target-version = "py314"
+target-version = "py310"
 exclude = ["**/__init__.py", "ecmean/utils/**"]
 
 [tool.ruff.lint.isort]

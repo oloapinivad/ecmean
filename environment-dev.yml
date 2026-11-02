@@ -10,7 +10,7 @@ dependencies:
   - python>=3.10,<3.16
   - libnetcdf
   - xesmf
-  - cdo
+  - cdo>=2.6.2
   - ncview
   - ipykernel
   - pip

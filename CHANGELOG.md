@@ -5,7 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
-Unreleased is the current development version (target v0.3.0), which is currently lying in `main` branch.
+Unreleased is the current development version, which is currently lying in `main` branch.
+
+## [v0.3.0]
 
 *IMPORTANT*: 
 1. 3D performance indices (ta, ua, va, hus) change values
@@ -24,7 +26,7 @@ Unreleased is the current development version (target v0.3.0), which is currentl
 - Workers split into per-variable functions, with variable loading shared between GM and PI in `load_variable()` (#151)
 - Formulas of derived variables are parsed with Python's `ast` module instead of a hand-written tokenizer, with the same supported syntax (#157)
 - Performance: input files are opened once per variable, globbed once per variable instead of once per year, and variables are split across workers by total load (#155)
-- `consortium` and `mip` can be used in the interface files (`--consortium`/`--mip` command line flags, `consortium`/`mip` arguments, `model` section of the config); `ensemble`, `consortium` and `mip` are read from the config when not given, the CMIP6 interfaces use them in `basedir`, the esgpull interface accepts any month in the filenames, and filenames whose years cannot be parsed are skipped with a warning (#XXX)
+- `consortium` and `mip` can be used in the interface files (`--consortium`/`--mip` command line flags, `consortium`/`mip` arguments, `model` section of the config); `ensemble`, `consortium` and `mip` are read from the config when not given, the CMIP6 interfaces use them in `basedir`, the esgpull interface accepts any month in the filenames, and filenames whose years cannot be parsed are skipped with a warning (#139)
 - Development: ruff pinned to 0.17.1 (pyproject, pre-commit and AGENTS.md)
 - Robustness fixes in `libs/support.py` (#156): `identify_grid` checks `lat.ndim` for curvilinear grids and compares latitude spacings with `np.isclose`; `check_file_exist` raises a clear error for empty strings and for patterns matching no file instead of `IndexError`
 - The atmospheric land-sea mask is no longer mandatory: without `maskfile`, `Supporter` sets `atmmask` to `None` and `Diagnostic.configure_amip_omip_cpld()` skips, with a warning, the atmospheric variables that require land/ocean masking (#132)
@@ -38,7 +40,10 @@ Unreleased is the current development version (target v0.3.0), which is currentl
 - Without `-c`/`--config`, `config.yml` is now searched in the current directory instead of next to the source tree (`libs/../../config.yml`), with a clear `FileNotFoundError` if it is missing (#156)
 - `ECPlotter.heatmap_plot()` loads `data` and `base` from YAML files when given as paths (`str` or `Path`), as documented, instead of parsing the path string itself (#154)
 - Units in the global mean heatmap are shown in LaTeX notation (e.g. `W/m2` -> W m$^{-2}$) through `ecplotter.unit_to_latex()`, consistently with AQUA; text and YAML tables are unchanged (#129)
-- Python 3.9 is no longer supported: the minimum version is now 3.10
+- Python 3.9 is no longer supported: the minimum version is now 3.10; Python 3.15 is now supported (#164)
+- `pip` and `certifi` minimum versions are required to avoid known certificate vulnerabilities
+- Dependabot keeps the GitHub Actions up to date (`actions/checkout` 7, `actions/setup-python` 7)
+- Added `AGENTS.md` with guidance for contributors and coding agents (#163)
 
 ## [v0.2.2]
 - Remove a wrong dependency with esmpy

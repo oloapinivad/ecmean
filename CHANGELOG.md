@@ -36,6 +36,7 @@ Unreleased is the current development version (target v0.3.0), which is currentl
 - `xr_preproc` renames a `lev` axis to `plev` when it is declared as `air_pressure` (e.g. MPI-ESM1-2-XR 3D fields, previously NaN PIs); other `lev` axes are untouched (#139)
 - `cmip6-clim-evaluate.py`: `EXCLUDE` table to leave a biased variable of a single model out of the climatology (CESM1-CAM5-SE-HR `sos`, CNRM-CM6-1-HR and INM-CM5-H `ta` and `hus`), replacing the non-working `drop` hook, and `--models` option to compute the PIs of selected models only (#139)
 - New `EC26-CMIP-HR` PI climatology (same observations as EC26-CMIP), whose reference PIs are computed on HighResMIP `hist-1950` models by `utils/cmip6-clim-evaluate.py -c EC26 -t CMIP --highresmip`; the script now averages each variable over all the models providing it, instead of only the variables of the first model (#139)
+- Documentation of the `EC26-CMIP-HR` climatology (description, table of the variables, models left out) and test that it shares the observational files of `EC26-CMIP` through a link (#139)
 - `Supporter` initialises `atmmask`/`atmarea` to `None`, so an OMIP run with remapping and no ocean mask no longer fails with `AttributeError` (#156)
 - `Diagnostic` raises a clear `ValueError` if the global mean regions do not include `Global` or the seasons do not include `ALL`, which its tables and plots require (#156)
 - The ecmean version printed in the welcome message is now stored in `Diagnostic.ecmean_version`, so `Diagnostic.version` only holds the `*` CMOR filename wildcard (#156)

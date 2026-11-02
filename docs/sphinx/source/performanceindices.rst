@@ -94,7 +94,7 @@ Optional Arguments
 
 .. option:: --climatology CLIMATOLOGY
 
-   Specify the climatology you want to use. The default is EC26-CMIP. Alternatives are EC26-HIST and the deprecated EC24 and EC23.
+   Specify the climatology you want to use. The default is EC26-CMIP. Alternatives are EC26-HIST, EC26-CMIP-HR (for high-resolution simulations) and the deprecated EC24 and EC23.
 
 Examples
 ^^^^^^^^
@@ -127,7 +127,7 @@ An example of the output for a single year of the EC-Earth3 historical simulatio
 Climatologies available
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Currently, EC26 (EC26-CMIP and EC26-HIST) is the supported climatology. The older EC24 and EC23 are still available but deprecated, and they cover different observation periods and are based on different datasets.
+Currently, EC26 (EC26-CMIP, EC26-HIST and EC26-CMIP-HR) is the supported climatology. The older EC24 and EC23 are still available but deprecated, and they cover different observation periods and are based on different datasets.
 
 .. warning::
    EC24 and EC23 are deprecated and will be removed in a future release.
@@ -158,6 +158,26 @@ It is aligned with the CMIP6 historical period (1985–2014), ensuring temporal 
 
 
 Properties of the climatology - such as which interpolation method and which CMIP6 models have been used - can be inspected by looking at the ``ecmean/climatology/EC26/pi_climatology_EC26-CMIP.yml`` file.
+
+EC26-CMIP-HR (1985–2014)
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+This climatology is designed for the evaluation of high-resolution simulations, such as those of HighResMIP.
+It uses exactly the same observational datasets, grid and period as EC26-CMIP: the files of the observational climatology are not duplicated
+and are shared with EC26-CMIP (the ``r360x180`` folder of EC26-CMIP-HR is a link to the one of EC26-CMIP).
+What differs are the reference PIs, which are computed on the HighResMIP ``hist-1950`` simulations instead of the CMIP6 ``historical`` ones,
+so that the relative PIs of a high-resolution model are normalised by the skill of the other high-resolution models.
+The reference PIs are the average over the models providing each variable, built with ``ecmean/utils/cmip6-clim-evaluate.py -c EC26 -t CMIP --highresmip``.
+The number of models is therefore smaller than for EC26-CMIP and differs from variable to variable (see the table below).
+
+.. include:: tables/climatology_EC26-CMIP-HR.rst
+
+.. note::
+   Not all the models provide all the variables, and some model-variable pairs have been left out because their output is biased:
+   the 3D variables ``ta`` and ``hus`` of CNRM-CM6-1-HR and INM-CM5-H have PIs several times larger than the other models,
+   and ``sos`` of CESM1-CAM5-SE-HR has unphysical values over a few thousand ocean cells.
+   The list of models actually used for each variable can be inspected in the ``ecmean/climatology/EC26-CMIP-HR/pi_climatology_EC26-CMIP-HR.yml`` file.
+   Since the average is done on a small number of models, the reference PIs are less robust than the ones of EC26-CMIP.
 
 EC24 (deprecated)
 -----------------

@@ -13,6 +13,7 @@ Unreleased is the current development version (target v0.3.0), which is currentl
 
 - ruff `target-version` set to `py310`, matching the minimum supported Python: with `py314` the formatter rewrote `except (A, B):` in the PEP 758 form that does not compile on older interpreters (#124)
 - New `--tool CDO` option (`tool="CDO"` in the API) for the performance indices: horizontal interpolation with CDO weights through `smmregrid` (`skipna=True`), as an alternative to the default xESMF. The CDO interpolator uses the same preprocessed grid field, variable selection and method choice as the ESMF one (bilinear, nearest neighbour on unstructured and gaussian reduced grids); results with the default ESMF tool are unchanged. Requires CDO >= 2.6.2 and `smmregrid >= 0.2.0` (#124)
+- CDO interpolator: `select_grid_variable` now skips bounds variables (`*_bnds`, `*_bounds`, `*_vertices`) when picking the grid variable, which made `smmregrid` fail on CESM2 (`lon_bnds` was selected from the `sftof` file) (#124)
 - Fix vertical weights for 3D performance indices with descending pressure levels (#150)
 - `utils/benchmarking.py` samples the peak memory of ecmean and its workers (with `psutil`), labels each run (`--label`, by default the git branch), plots several runs side by side (`--compare`), accepts the config/loglevel options passed by the job file and has a `--quick` smoke test (#169)
 - CMIP6 reference PIs for 3D fields regenerated for EC26-CMIP and EC26-HIST; 2D references unchanged (#150)

@@ -79,6 +79,8 @@ def select_grid_variable(xfield):
         if name in xfield.data_vars:
             return xfield[name]
     for name in reversed(list(xfield.data_vars)):
+        if name.endswith(("_bnds", "_bounds", "_vertices")):
+            continue
         if all(coord in xfield[name].coords for coord in ("lon", "lat")):
             return xfield[name]
     raise KeyError(f"No variable with lon/lat coordinates to describe the grid among {list(xfield.data_vars)}")

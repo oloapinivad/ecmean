@@ -54,6 +54,20 @@ def xr_preproc(ds):
                     to_rename[name] = target
                     break
 
+    # a vertical axis named 'lev' is renamed only when it is a pressure axis (e.g. MPI-ESM1-2-XR 3D fields on
+    # pressure levels): hybrid sigma levels and ocean depths have other standard names and are left alone
+    if "lev" in ds.variables and ds["lev"].attrs.get("standard_name") == "air_pressure":
+        to_rename["lev"] = "plev"
+
+    # skip renames whose target already exists, keeping the existing one: e.g. CMOR files
+    # with both a 1D 'lat' dimension and a 2D 'latitude' auxiliary coordinate (BCC-CSM2-HR ocean)
+    taken = set(ds.dims) | set(ds.variables)
+    for name, target in list(to_rename.items()):
+        if target in taken:
+            del to_rename[name]
+        else:
+            taken.add(target)
+
     if to_rename:
         ds = ds.rename(to_rename)
 

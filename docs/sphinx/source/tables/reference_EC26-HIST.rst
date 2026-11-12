@@ -92,13 +92,13 @@
      - global
      - 2000-2010
    * - Surface Net SW
-     - Wild 2020
+     - CERES EBAF (v4.2.1)
      - global
-     -
+     - 2000-2010
    * - Surface Net LW
-     - Wild 2020
+     - CERES EBAF (v4.2.1)
      - global
-     -
+     - 2000-2010
    * - Surface Sensible Heat Flux
      - Wild 2020
      - global

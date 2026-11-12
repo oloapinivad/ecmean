@@ -3151,20 +3151,304 @@ lwcf:
         std: 0.825
 rsns:
   longname: Surface Net SW
-  dataset: Wild 2020
+  dataset: CERES EBAF
   domain: atm
   units: W/m2
-  year1: ''
-  year2: ''
-  obs: 160
+  year1: 2000
+  year2: 2014
+  obs:
+    ALL:
+      Global:
+        mean: 163.631
+        std: 0.353
+      Tropical:
+        mean: 211.633
+        std: 0.502
+      North Midlat:
+        mean: 116.598
+        std: 2.952
+      South Midlat:
+        mean: 114.657
+        std: 3.334
+      NH:
+        mean: 135.963
+        std: 2.787
+      SH:
+        mean: 137.165
+        std: 3.195
+      Equatorial:
+        mean: 215.702
+        std: 0.517
+      North Pole:
+        mean: 58.836
+        std: 2.227
+      South Pole:
+        mean: 44.268
+        std: 2.815
+    DJF:
+      Global:
+        mean: 167.611
+        std: 0.367
+      Tropical:
+        mean: 215.295
+        std: 0.491
+      North Midlat:
+        mean: 46.833
+        std: 0.603
+      South Midlat:
+        mean: 193.021
+        std: 1.175
+      NH:
+        mean: 70.974
+        std: 0.535
+      SH:
+        mean: 211.122
+        std: 1.055
+      Equatorial:
+        mean: 218.714
+        std: 0.563
+      North Pole:
+        mean: 3.779
+        std: 0.112
+      South Pole:
+        mean: 108.067
+        std: 1.284
+    MAM:
+      Global:
+        mean: 163.554
+        std: 0.395
+      Tropical:
+        mean: 216.826
+        std: 0.731
+      North Midlat:
+        mean: 139.73
+        std: 1.43
+      South Midlat:
+        mean: 80.831
+        std: 0.742
+      NH:
+        mean: 159.998
+        std: 1.199
+      SH:
+        mean: 105.777
+        std: 0.878
+      Equatorial:
+        mean: 222.548
+        std: 0.822
+      North Pole:
+        mean: 66.195
+        std: 1.679
+      South Pole:
+        mean: 18.334
+        std: 1.007
+    JJA:
+      Global:
+        mean: 158.451
+        std: 0.471
+      Tropical:
+        mean: 198.471
+        std: 0.819
+      North Midlat:
+        mean: 189.549
+        std: 0.887
+      South Midlat:
+        mean: 47.311
+        std: 0.444
+      NH:
+        mean: 200.515
+        std: 0.678
+      SH:
+        mean: 71.006
+        std: 0.486
+      Equatorial:
+        mean: 202.102
+        std: 0.915
+      North Pole:
+        mean: 138.182
+        std: 2.374
+      South Pole:
+        mean: 2.681
+        std: 0.28
+    SON:
+      Global:
+        mean: 165.127
+        std: 0.408
+      Tropical:
+        mean: 216.285
+        std: 0.664
+      North Midlat:
+        mean: 86.956
+        std: 0.899
+      South Midlat:
+        mean: 140.98
+        std: 0.831
+      NH:
+        mean: 109.269
+        std: 0.669
+      SH:
+        mean: 164.13
+        std: 0.975
+      Equatorial:
+        mean: 219.816
+        std: 0.775
+      North Pole:
+        mean: 24.463
+        std: 0.707
+      South Pole:
+        mean: 50.972
+        std: 0.875
+  description: Edition 4.2.1; Revised data Release Date March 14, 2025
+  version: 4.2.1
 rlns:
   longname: Surface Net LW
-  dataset: Wild 2020
+  dataset: CERES EBAF
   domain: atm
   units: W/m2
-  year1: ''
-  year2: ''
-  obs: -56
+  year1: 2000
+  year2: 2014
+  obs:
+    ALL:
+      Global:
+        mean: -52.245
+        std: 0.356
+      Tropical:
+        mean: -56.809
+        std: 0.276
+      North Midlat:
+        mean: -51.668
+        std: 0.563
+      South Midlat:
+        mean: -43.696
+        std: 0.674
+      NH:
+        mean: -56.085
+        std: 0.474
+      SH:
+        mean: -48.775
+        std: 0.667
+      Equatorial:
+        mean: -51.891
+        std: 0.297
+      North Pole:
+        mean: -38.203
+        std: 1.563
+      South Pole:
+        mean: -33.375
+        std: 1.987
+    DJF:
+      Global:
+        mean: -51.884
+        std: 0.378
+      Tropical:
+        mean: -57.524
+        std: 0.264
+      North Midlat:
+        mean: -48.358
+        std: 1.008
+      South Midlat:
+        mean: -44.132
+        std: 0.554
+      NH:
+        mean: -54.154
+        std: 0.881
+      SH:
+        mean: -48.384
+        std: 0.631
+      Equatorial:
+        mean: -53.068
+        std: 0.485
+      North Pole:
+        mean: -36.577
+        std: 2.109
+      South Pole:
+        mean: -41.077
+        std: 0.717
+    MAM:
+      Global:
+        mean: -52.933
+        std: 0.63
+      Tropical:
+        mean: -57.874
+        std: 0.718
+      North Midlat:
+        mean: -53.639
+        std: 0.968
+      South Midlat:
+        mean: -42.344
+        std: 0.912
+      NH:
+        mean: -58.604
+        std: 0.791
+      SH:
+        mean: -47.391
+        std: 0.966
+      Equatorial:
+        mean: -52.809
+        std: 0.703
+      North Pole:
+        mean: -43.02
+        std: 2.011
+      South Pole:
+        mean: -28.47
+        std: 2.303
+    JJA:
+      Global:
+        mean: -52.038
+        std: 0.344
+      Tropical:
+        mean: -55.232
+        std: 0.433
+      North Midlat:
+        mean: -52.897
+        std: 0.646
+      South Midlat:
+        mean: -44.79
+        std: 0.951
+      NH:
+        mean: -55.66
+        std: 0.578
+      SH:
+        mean: -50.142
+        std: 0.855
+      Equatorial:
+        mean: -50.377
+        std: 0.454
+      North Pole:
+        mean: -40.384
+        std: 0.82
+      South Pole:
+        mean: -28.235
+        std: 2.651
+    SON:
+      Global:
+        mean: -52.166
+        std: 0.433
+      Tropical:
+        mean: -56.666
+        std: 0.331
+      North Midlat:
+        mean: -51.815
+        std: 0.819
+      South Midlat:
+        mean: -43.519
+        std: 0.851
+      NH:
+        mean: -55.944
+        std: 0.68
+      SH:
+        mean: -49.188
+        std: 0.926
+      Equatorial:
+        mean: -51.397
+        std: 0.263
+      North Pole:
+        mean: -33.243
+        std: 2.047
+      South Pole:
+        mean: -36.032
+        std: 2.099
+  description: Edition 4.2.1; Revised data Release Date March 14, 2025
+  version: 4.2.1
 hfss:
   longname: Surface Sensible Heat Flux
   dataset: Wild 2020

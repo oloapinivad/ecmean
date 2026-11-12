@@ -20,8 +20,8 @@
 |    rlntcs    |      TOA LW Net (clear sky)       |  W/m2   | -264.138     | -268.361±0.289 |   CERES EBAF   | 2000-2024 |
 |     swcf     |         SW Cloud Forcing          |  W/m2   |  -46.7269    |  -45.599±0.41  |   CERES EBAF   | 2000-2024 |
 |     lwcf     |         LW Cloud Forcing          |  W/m2   |   24.8738    |  27.822±0.314  |   CERES EBAF   | 2000-2024 |
-|     rsns     |          Surface Net SW           |  W/m2   |  159.83      |      160       |   Wild 2020    |     -     |
-|     rlns     |          Surface Net LW           |  W/m2   |  -58.0639    |      -56       |   Wild 2020    |     -     |
+|     rsns     |          Surface Net SW           |  W/m2   |  159.83      | 163.879±0.449  |   CERES EBAF   | 2000-2024 |
+|     rlns     |          Surface Net LW           |  W/m2   |  -58.0639    |  -52.28±0.381  |   CERES EBAF   | 2000-2024 |
 |     hfss     |    Surface Sensible Heat Flux     |  W/m2   |  -17.0166    |      -21       |   Wild 2020    |     -     |
 |     hfls     |     Surface Latent Heat Flux      |  W/m2   |  -83.5407    |      -82       |   Wild 2020    |     -     |
 | net_sfc_nosn |     Net Surface (no snowfall)     |  W/m2   |    1.20877   |      0.6       |   Wild 2020    |     -     |

@@ -244,6 +244,24 @@ lwcf:
   dir: "{datadir}/EBAF_v4.2.1/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
   description: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
   version: '4.2.1'
+rlns:
+  dataset: CERES EBAF
+  longname: 'Surface Net LW'
+  varname: sfc_net_lw_all_mon
+  org_units: W/m2
+  tgt_units: W/m2
+  dir: "{datadir}/EBAF_v4.2.1/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  description: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
+  version: '4.2.1'
+rsns:
+  dataset: CERES EBAF
+  longname: 'Surface Net SW'
+  varname: sfc_net_sw_all_mon
+  org_units: W/m2
+  tgt_units: W/m2
+  dir: "{datadir}/EBAF_v4.2.1/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  description: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
+  version: '4.2.1'
 
 # from here on dataset which are hard coded and does not require NetCDF files
 toamsfc:
@@ -256,16 +274,6 @@ toamsfc_nosn:
   longname: 'TOA - Sfc Net Radiation (no snow)'
   tgt_units: W/m2
   outvalue: 0
-rlns:
-  tgt_units: W/m2
-  longname: 'Surface Net LW'
-  outvalue: -56
-  dataset: 'Wild 2020'
-rsns:
-  tgt_units: W/m2
-  longname: 'Surface Net SW'
-  outvalue: 160
-  dataset: 'Wild 2020'
 hfss:
   tgt_units: W/m2
   longname: 'Surface Sensible Heat Flux'

@@ -184,3 +184,4 @@ Of course, in the remote case you would like to develop a new climatology, you c
 Examples are the `create-reference-wilma-EC26.yml` and `create-reference-wilma-EC23.yml` files, which are used to produce the EC26 and EC23 reference climatology, respectively.
 The results are produced into a YML file for in ``ecmean/reference/gm_reference_EC**.yml`` which includes the global and regional mean
 over different seasons as well the interannual standard deviation. Full details on the datasets used are found there.
+The ``--variables`` option recomputes only the listed variables, leaving the others in the existing file untouched.

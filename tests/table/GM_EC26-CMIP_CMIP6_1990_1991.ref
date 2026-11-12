@@ -3,5 +3,5 @@
 |     pr     |      Precipitation      | mm/day  |     2.89989 |   1.78857e-07 | 2.842±0.039  |   MSWEP    | 1985-2014 |
 |  pr_land   |  Precipitation (land)   |   Sv    |     3.58764 |   3.97631e+07 |  3.451±0.07  |   MSWEP    | 1985-2014 |
 |   pr_oce   |  Precipitation (ocean)  |   Sv    |    13.5319  |   5.14653e+07 | 13.342±0.241 |   MSWEP    | 1985-2014 |
-|    tos     | Sea Surface Temperature | celsius |    18.9898  |  -0.0408859   | 18.698±0.117 | ESA-CCI-L4 | 1985-2014 |
+|    tos     | Sea Surface Temperature | celsius |    18.9898  |  -0.0408783   | 18.698±0.117 | ESA-CCI-L4 | 1985-2014 |
 |   siconc   |      Sea Ice Area       |  Mm^2   |    17.6268  | nan           | 19.601±0.425 | ESA-CCI-L4 | 1985-2014 |

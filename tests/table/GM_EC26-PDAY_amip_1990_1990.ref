@@ -4,8 +4,8 @@
 |     psl      |      Mean Sea Level Pressure      |   hPa   | 1011.15      | 1011.459±0.044 |      ERA5      | 2000-2024 |
 |      pr      |           Precipitation           | mm/day  |    2.86608   |   2.87±0.025   |     MSWEP      | 2000-2024 |
 |   evspsbl    |            Evaporation            | mm/day  |   -2.88457   |  -2.94±0.022   |      ERA5      | 2000-2024 |
-|     pme      |        Precip. minus Evap.        | mm/day  |   -0.0184938 |  0.009±0.032   |      ERA5      | 2000-2024 |
-|     clt      |         Total Cloud Cover         |  frac   |    0.658197  |  0.674±0.002   |  EBAF_v4.2.1   | 2000-2024 |
+|     pme      |        Precip. minus Evap.        | mm/day  |   -0.0184935 |  0.009±0.032   |      ERA5      | 2000-2024 |
+|     clt      |         Total Cloud Cover         |  frac   |    0.658197  |  0.674±0.002   |  EBAF_v4.2.1   | 2001-2024 |
 |     cll      |          Low Cloud Cover          |  frac   |    0.378427  |   0.38±0.005   |      ERA5      | 2000-2024 |
 |     clm      |        Medium Cloud Cover         |  frac   |    0.25471   |  0.249±0.002   |      ERA5      | 2000-2024 |
 |     clh      |         High Cloud Cover          |  frac   |    0.396169  |  0.342±0.003   |      ERA5      | 2000-2024 |
@@ -13,18 +13,18 @@
 |   pme_oce    |    Precip. minus Evap. (ocean)    |   Sv    |   -1.129     |  -1.319±0.166  |      ERA5      | 2000-2024 |
 |   pr_land    |       Precipitation (land)        |   Sv    |    3.32839   |  3.444±0.069   |     MSWEP      | 2000-2024 |
 |   pme_land   |    Precip. minus Evap. (land)     |   Sv    |    1.01983   |  1.372±0.076   |      ERA5      | 2000-2024 |
-|   net_toa    |              TOA Net              |  W/m2   |    0.774862  |  1.016±0.595   |   CERES EBAF   | 2000-2024 |
-|     rsnt     |            TOA SW Net             |  W/m2   |  240.04      | 241.556±0.762  |   CERES EBAF   | 2000-2024 |
-|     rlnt     |            TOA LW Net             |  W/m2   | -239.265     | -240.54±0.407  |   CERES EBAF   | 2000-2024 |
-|    rsntcs    |      TOA SW Net (clear sky)       |  W/m2   |  286.766     | 287.154±0.543  |   CERES EBAF   | 2000-2024 |
-|    rlntcs    |      TOA LW Net (clear sky)       |  W/m2   | -264.138     | -268.361±0.289 |   CERES EBAF   | 2000-2024 |
-|     swcf     |         SW Cloud Forcing          |  W/m2   |  -46.7269    |  -45.599±0.41  |   CERES EBAF   | 2000-2024 |
-|     lwcf     |         LW Cloud Forcing          |  W/m2   |   24.8738    |  27.822±0.314  |   CERES EBAF   | 2000-2024 |
-|     rsns     |          Surface Net SW           |  W/m2   |  159.83      | 163.879±0.449  |   CERES EBAF   | 2000-2024 |
-|     rlns     |          Surface Net LW           |  W/m2   |  -58.0639    |  -52.28±0.381  |   CERES EBAF   | 2000-2024 |
+|   net_toa    |              TOA Net              |  W/m2   |    0.774853  |  1.096±0.456   |   CERES EBAF   | 2001-2024 |
+|     rsnt     |            TOA SW Net             |  W/m2   |  240.04      |  241.64±0.653  |   CERES EBAF   | 2001-2024 |
+|     rlnt     |            TOA LW Net             |  W/m2   | -239.265     | -240.544±0.415 |   CERES EBAF   | 2001-2024 |
+|    rsntcs    |      TOA SW Net (clear sky)       |  W/m2   |  286.766     | 287.246±0.312  |   CERES EBAF   | 2001-2024 |
+|    rlntcs    |      TOA LW Net (clear sky)       |  W/m2   | -264.138     | -268.34±0.276  |   CERES EBAF   | 2001-2024 |
+|     swcf     |         SW Cloud Forcing          |  W/m2   |  -46.7269    | -45.606±0.417  |   CERES EBAF   | 2001-2024 |
+|     lwcf     |         LW Cloud Forcing          |  W/m2   |   24.8738    |  27.797±0.295  |   CERES EBAF   | 2001-2024 |
+|     rsns     |          Surface Net SW           |  W/m2   |  159.83      | 163.928±0.388  |   CERES EBAF   | 2001-2024 |
+|     rlns     |          Surface Net LW           |  W/m2   |  -58.0639    | -52.306±0.368  |   CERES EBAF   | 2001-2024 |
 |     hfss     |    Surface Sensible Heat Flux     |  W/m2   |  -17.0166    |      -21       |   Wild 2020    |     -     |
 |     hfls     |     Surface Latent Heat Flux      |  W/m2   |  -83.5407    |      -82       |   Wild 2020    |     -     |
 | net_sfc_nosn |     Net Surface (no snowfall)     |  W/m2   |    1.20877   |      0.6       |   Wild 2020    |     -     |
-|   net_sfc    |            Net Surface            |  W/m2   |    0.472922  |      0.6       |   Wild 2020    |     -     |
-| toamsfc_nosn | TOA - Sfc Net Radiation (no snow) |  W/m2   |   -0.433919  |       0        |      None      |     -     |
-|   toamsfc    |      TOA - Sfc Net Radiation      |  W/m2   |    0.301943  |       0        |      None      |     -     |
+|   net_sfc    |            Net Surface            |  W/m2   |    0.472919  |      0.6       |   Wild 2020    |     -     |
+| toamsfc_nosn | TOA - Sfc Net Radiation (no snow) |  W/m2   |   -0.433921  |       0        |      None      |     -     |
+|   toamsfc    |      TOA - Sfc Net Radiation      |  W/m2   |    0.301934  |       0        |      None      |     -     |

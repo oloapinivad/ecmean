@@ -12,6 +12,7 @@ Unreleased is the current development version, which is currently lying in `main
 2. The offline reference/climatology tools (`utils/reference-create.py`, `utils/clim-create.py`) now use complete years only: datasets starting or ending mid-year (e.g. CERES-EBAF, from March 2000) no longer average a partial year as if it were complete. The CERES-derived EC26 global-mean references change (regional annual means and std of shortwave fluxes, `year1` becomes 2001) (#175)
 
 Fixed
+- `utils/reference-create.py` gets a `--variables` option to recompute only some variables, keeping the others in the existing reference file (#175)
 - `utils/reference-create.py` no longer fails on variables whose name is not a valid formula token (e.g. `2t` for `tas`): a name already present in the input file is used directly (#172)
 - Importing ecmean no longer switches matplotlib to the `Agg` backend (figures were not shown in notebooks); only the `global_mean` and `performance_indices` CLIs set it (#174)
 

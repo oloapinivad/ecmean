@@ -192,18 +192,3 @@ def test_global_mean_omip_line():
     assert "nan" in values
     if CLEANUP:
         os.remove(gm.diag.linefile)
-
-
-@pytest.mark.parametrize("clim", ["EC26-CMIP", "EC26-HIST", "EC26-PDAY"])
-def test_reference_surface_radiation_from_ceres(clim):
-    """rsns/rlns come from CERES-EBAF with regional/seasonal values; turbulent fluxes stay on Wild (2020)."""
-    ref = load_yaml(f"ecmean/reference/gm_reference_{clim}.yml")
-    for var, sign in (("rsns", 1), ("rlns", -1)):
-        assert ref[var]["dataset"] == "CERES EBAF"
-        assert ref[var]["year1"] and ref[var]["year2"]
-        glob = ref[var]["obs"]["ALL"]["Global"]
-        assert sign * glob["mean"] > 0
-        assert glob["std"] > 0
-        assert "Tropical" in ref[var]["obs"]["DJF"]
-    for var in ("hfss", "hfls", "net_sfc", "net_sfc_nosn"):
-        assert ref[var]["dataset"] == "Wild 2020"

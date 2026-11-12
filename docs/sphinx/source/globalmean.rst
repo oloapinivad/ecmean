@@ -139,6 +139,14 @@ The variables are derived from a combination of observational and reanalysis pro
 All configurations share the same variable definitions and masking strategy (global, land, ocean), but differ in their temporal averaging window to ensure consistency with the intended model experiments.
 All metadata (datasets, masks, periods and other properties) are defined in the corresponding YAML configuration file.
 
+.. note::
+   Surface net shortwave (``rsns``) and longwave (``rlns``) radiation come from CERES-EBAF v4.2.1. Unlike the TOA fluxes, surface fluxes
+   are not directly observed: they are computed with a radiative transfer model constrained by satellite retrievals, and their
+   uncertainty is of the order of several W/m2 in the global mean (Kato et al., 2018). The ``std`` stored in the reference file is only the interannual variability, so the normalised biases shown in the
+   global mean heatmap overstate how significant a surface radiation bias is.
+   The turbulent fluxes (``hfss``, ``hfls``) and the surface energy budget (``net_sfc``, ``net_sfc_nosn``) still come from Wild (2020),
+   so ``net_sfc`` does not exactly balance the sum of the CERES radiative terms and the Wild (2020) turbulent fluxes.
+
 EC26-CMIP (1985–2014)
 ~~~~~~~~~~~~~~~~~~~~~
 This reference dataset is designed for the evaluation of CMIP6 historical simulations against a consistent observational baseline.

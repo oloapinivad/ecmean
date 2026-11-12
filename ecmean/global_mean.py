@@ -15,6 +15,7 @@ import sys
 from multiprocessing import Manager, Process
 
 import dask
+import matplotlib
 import numpy as np
 import xarray as xr
 import yaml
@@ -457,6 +458,8 @@ def gm_entry_point():
     """ "
     Entry point for the global mean computation.
     """
+    # non-interactive backend (faster), set only here so importing ecmean leaves the backend alone
+    matplotlib.use("Agg")
     args = parse_arguments(sys.argv[1:], script="gm")
     global_mean(
         exp=args.exp,

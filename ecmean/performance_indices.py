@@ -15,6 +15,7 @@ import sys
 from multiprocessing import Manager, Process
 
 import dask
+import matplotlib
 import numpy as np
 import xarray as xr
 import yaml
@@ -495,6 +496,8 @@ def pi_entry_point():
     """
     Command line interface to run the performance indices calculation.
     """
+    # non-interactive backend (faster), set only here so importing ecmean leaves the backend alone
+    matplotlib.use("Agg")
     # read arguments from command line
     args = parse_arguments(sys.argv[1:], script="pi")
 

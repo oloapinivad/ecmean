@@ -167,7 +167,8 @@ def main(climdata="EC26", timeframe="HIST", machine="wilma"):
 
             # if derived, use the formula skill (or just rename)
             cmd = info[var]["varname"]
-            xfield = _eval_formula(cmd, xfield).to_dataset(name=var)
+            # a name already present in the file is used as is: it may not be a valid formula token (e.g. ERA5-like '2t')
+            xfield = (xfield[cmd] if cmd in xfield else _eval_formula(cmd, xfield)).to_dataset(name=var)
 
             # select time based on data availability
             cfield, real_year1, real_year2 = select_time_period(xfield, var, year1, year2)

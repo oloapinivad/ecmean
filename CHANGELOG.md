@@ -9,6 +9,9 @@ Unreleased is the current development version, which is currently lying in `main
 
 *IMPORTANT*: GM reference values for `rsns` and `rlns` change in EC26-CMIP/HIST/PDAY: global means move from the Wild (2020) scalars (160 / -56 W/m2) to CERES-EBAF 4.2.1 (about +3.6 / +3.8 W/m2), see the Changed section (#172)
 
+Fixed
+- `utils/reference-create.py` no longer fails on variables whose name is not a valid formula token (e.g. `2t` for `tas`): a name already present in the input file is used directly (#172)
+
 Changed
 - GM references EC26-CMIP/HIST/PDAY: `rsns` and `rlns` now come from CERES-EBAF 4.2.1 (`sfc_net_sw_all_mon`, `sfc_net_lw_all_mon`) instead of Wild (2020), adding regional/seasonal values, `std` and the reference period. `hfss`, `hfls`, `net_sfc`, `net_sfc_nosn` stay on Wild (2020); `gm_reference_EC23.yml` is unchanged (#172)
 

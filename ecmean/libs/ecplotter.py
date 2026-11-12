@@ -5,7 +5,6 @@ import re
 import textwrap
 from pathlib import Path
 
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
@@ -14,9 +13,6 @@ from matplotlib.colors import ListedColormap, TwoSlopeNorm  # , LogNorm
 from ecmean.libs.climatology import DEFAULT_CLIMATOLOGY, DEFAULT_REFERENCE, SUPPORTED_CLIMATOLOGY, SUPPORTED_REFERENCE
 from ecmean.libs.files import load_yaml
 from ecmean.libs.general import dict_to_dataframe, init_mydict
-
-# OPTIMIZATION: Use non-interactive backend (much faster)
-matplotlib.use("Agg")
 
 loggy = logging.getLogger(__name__)
 

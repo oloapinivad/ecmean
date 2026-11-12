@@ -1,5 +1,7 @@
 """Tests for ECPlotter class"""
 
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -139,3 +141,23 @@ def test_heatmap_plot_yaml_paths():
 def test_unit_to_latex(unit, expected):
     """Units are converted to LaTeX notation for plot labels, existing LaTeX is preserved (#129)"""
     assert unit_to_latex(unit) == expected
+
+
+def test_import_keeps_matplotlib_backend():
+    """Importing ecmean does not change the matplotlib backend (e.g. inline in notebooks); only the CLIs set Agg"""
+    code = """
+import sys, matplotlib
+matplotlib.use("svg")
+from ecmean.global_mean import gm_entry_point
+from ecmean.performance_indices import pi_entry_point
+assert matplotlib.get_backend() == "svg", matplotlib.get_backend()
+sys.argv = ["cli", "--help"]  # the entry point sets the backend, then argparse exits
+for entry in [gm_entry_point, pi_entry_point]:
+    matplotlib.use("svg")
+    try:
+        entry()
+    except SystemExit:
+        pass
+    assert matplotlib.get_backend().lower() == "agg", matplotlib.get_backend()
+"""
+    subprocess.run([sys.executable, "-c", code], check=True, capture_output=True)

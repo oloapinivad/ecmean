@@ -32,7 +32,7 @@
      - global
      - 1981-2010
    * - Total Cloud Cover
-     - EBAF_v4.2.1 (v4.2.1)
+     - CERES EBAF (v4.2.1)
      - global
      - 2001-2010
    * - Low Cloud Cover

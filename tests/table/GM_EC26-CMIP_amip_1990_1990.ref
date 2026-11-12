@@ -5,7 +5,7 @@
 |      pr      |           Precipitation           | mm/day  |    2.86608   |  2.842±0.039   |     MSWEP      | 1985-2014 |
 |   evspsbl    |            Evaporation            | mm/day  |   -2.88457   |  -2.877±0.072  |      ERA5      | 1985-2014 |
 |     pme      |        Precip. minus Evap.        | mm/day  |   -0.0184935 |  0.031±0.034   |      ERA5      | 1985-2014 |
-|     clt      |         Total Cloud Cover         |  frac   |    0.658197  |  0.675±0.002   |  EBAF_v4.2.1   | 2001-2014 |
+|     clt      |         Total Cloud Cover         |  frac   |    0.658197  |  0.675±0.002   |   CERES EBAF   | 2001-2014 |
 |     cll      |          Low Cloud Cover          |  frac   |    0.378427  |  0.383±0.002   |      ERA5      | 1985-2014 |
 |     clm      |        Medium Cloud Cover         |  frac   |    0.25471   |  0.247±0.003   |      ERA5      | 1985-2014 |
 |     clh      |         High Cloud Cover          |  frac   |    0.396169  |   0.34±0.003   |      ERA5      | 1985-2014 |

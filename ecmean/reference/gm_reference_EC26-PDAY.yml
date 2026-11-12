@@ -898,7 +898,7 @@ pme:
         std: 0.075
 clt:
   longname: Total Cloud Cover
-  dataset: EBAF_v4.2.1
+  dataset: CERES EBAF
   domain: atm
   units: frac
   year1: 2001

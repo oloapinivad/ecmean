@@ -5,7 +5,7 @@
 |      pr      |           Precipitation           | mm/day  |    2.86608   |   2.87±0.025   |     MSWEP      | 2000-2024 |
 |   evspsbl    |            Evaporation            | mm/day  |   -2.88457   |  -2.94±0.022   |      ERA5      | 2000-2024 |
 |     pme      |        Precip. minus Evap.        | mm/day  |   -0.0184935 |  0.009±0.032   |      ERA5      | 2000-2024 |
-|     clt      |         Total Cloud Cover         |  frac   |    0.658197  |  0.674±0.002   |  EBAF_v4.2.1   | 2001-2024 |
+|     clt      |         Total Cloud Cover         |  frac   |    0.658197  |  0.674±0.002   |   CERES EBAF   | 2001-2024 |
 |     cll      |          Low Cloud Cover          |  frac   |    0.378427  |   0.38±0.005   |      ERA5      | 2000-2024 |
 |     clm      |        Medium Cloud Cover         |  frac   |    0.25471   |  0.249±0.002   |      ERA5      | 2000-2024 |
 |     clh      |         High Cloud Cover          |  frac   |    0.396169  |  0.342±0.003   |      ERA5      | 2000-2024 |

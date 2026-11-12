@@ -72,12 +72,12 @@ pme:
   dir: ['{eradir}/total_precipitation/mon/ERA5_total_precipitation_mon_full_sfc_1940-2024.nc', '{eradir}/evaporation/mon/*.nc']
   description: 'ECMWF ERA5 reanalysis'
 clt:
-  dataset: EBAF_v4.2.1
+  dataset: CERES EBAF
   longname: 'Total Cloud Cover'
   varname: cldarea_total_daynight_mon
   org_units: '%'
   tgt_units: frac
-  dir: "{datadir}/{dataset}/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
+  dir: "{datadir}/EBAF_v4.2.1/CERES_EBAF_Edition4.2.1_MONTHLY_200003-202506.nc"
   description: 'Edition 4.2.1; Revised data Release Date March 14, 2025'
   version: '4.2.1'
 cll:

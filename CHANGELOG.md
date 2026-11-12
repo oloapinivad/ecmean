@@ -15,6 +15,7 @@ Fixed
 - `utils/reference-create.py` gets a `--variables` option to recompute only some variables, keeping the others in the existing reference file (#175)
 - `utils/reference-create.py` no longer fails on variables whose name is not a valid formula token (e.g. `2t` for `tas`): a name already present in the input file is used directly (#172)
 - Importing ecmean no longer switches matplotlib to the `Agg` backend (figures were not shown in notebooks); only the `global_mean` and `performance_indices` CLIs set it (#174)
+- GM references EC26-CMIP/HIST/PDAY: `clt` dataset label is now `CERES EBAF` (was `EBAF_v4.2.1`), as for the other CERES variables; values unchanged (#176)
 
 Changed
 - GM references EC26-CMIP/HIST/PDAY: `rsns` and `rlns` now come from CERES-EBAF 4.2.1 (`sfc_net_sw_all_mon`, `sfc_net_lw_all_mon`) instead of Wild (2020), adding regional/seasonal values, `std` and the reference period. `hfss`, `hfls`, `net_sfc`, `net_sfc_nosn` stay on Wild (2020); `gm_reference_EC23.yml` is unchanged (#172)

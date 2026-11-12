@@ -32,7 +32,7 @@
      - global
      - 2000-2024
    * - Total Cloud Cover
-     - EBAF_v4.2.1 (v4.2.1)
+     - CERES EBAF (v4.2.1)
      - global
      - 2000-2024
    * - Low Cloud Cover

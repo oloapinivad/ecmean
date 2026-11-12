@@ -9,6 +9,7 @@ Unreleased is the current development version, which is currently lying in `main
 
 Fixed
 - Importing ecmean no longer switches matplotlib to the `Agg` backend (figures were not shown in notebooks); only the `global_mean` and `performance_indices` CLIs set it (#174)
+- GM references EC26-CMIP/HIST/PDAY: `clt` dataset label is now `CERES EBAF` (was `EBAF_v4.2.1`), as for the other CERES variables; values unchanged (#176)
 
 ## [v0.3.0]
 

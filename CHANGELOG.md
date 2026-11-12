@@ -14,7 +14,7 @@ Fixed
 - `utils/reference-create.py` no longer fails on variables whose name is not a valid formula token (e.g. `2t` for `tas`): a name already present in the input file is used directly (#172)
 
 Changed
-- GM references EC26-CMIP/HIST/PDAY: `rsns` and `rlns` now come from CERES-EBAF 4.2.1 (`sfc_net_sw_all_mon`, `sfc_net_lw_all_mon`) instead of Wild (2020), adding regional/seasonal values, `std` and the reference period, so they are now shown for all regions and seasons in the GM heatmap. `hfss`, `hfls`, `net_sfc`, `net_sfc_nosn` stay on Wild (2020); `gm_reference_EC23.yml` is unchanged. The observational uncertainty of the CERES surface fluxes is documented in the GM docs (#172)
+- GM references EC26-CMIP/HIST/PDAY: `rsns` and `rlns` now come from CERES-EBAF 4.2.1 (`sfc_net_sw_all_mon`, `sfc_net_lw_all_mon`) instead of Wild (2020), adding regional/seasonal values, `std` and the reference period, so they are now shown for all regions and seasons in the GM heatmap. `hfss`, `hfls`, `net_sfc`, `net_sfc_nosn` stay on Wild (2020); `gm_reference_EC23.yml` is unchanged (#172)
 
 ## [v0.3.0]
 

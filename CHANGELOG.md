@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 Unreleased is the current development version, which is currently lying in `main` branch.
 
+*IMPORTANT*:
+1. The offline reference/climatology tools (`utils/reference-create.py`, `utils/clim-create.py`) now use complete years only: datasets starting or ending mid-year (e.g. CERES-EBAF, from March 2000) no longer average a partial year as if it were complete. The CERES-derived EC26 global-mean references change once regenerated (regional annual means and std of shortwave fluxes, `year1` becomes 2001)
+
 Fixed
 - Importing ecmean no longer switches matplotlib to the `Agg` backend (figures were not shown in notebooks); only the `global_mean` and `performance_indices` CLIs set it (#174)
 

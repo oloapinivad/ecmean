@@ -7,9 +7,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 Unreleased is the current development version, which is currently lying in `main` branch.
 
+*IMPORTANT*:
+1. GM reference values for `rsns` and `rlns` change in EC26-CMIP/HIST/PDAY: global means move from the Wild (2020) scalars (160 / -56 W/m2) to CERES-EBAF 4.2.1 (about +3.6 / +3.8 W/m2), see the Changed section (#172)
+2. The offline reference/climatology tools (`utils/reference-create.py`, `utils/clim-create.py`) now use complete years only: datasets starting or ending mid-year (e.g. CERES-EBAF, from March 2000) no longer average a partial year as if it were complete. The CERES-derived EC26 global-mean references change (regional annual means and std of shortwave fluxes, `year1` becomes 2001) (#175)
+
 Fixed
+- `utils/reference-create.py` gets a `--variables` option to recompute only some variables, keeping the others in the existing reference file (#175)
+- `utils/reference-create.py` no longer fails on variables whose name is not a valid formula token (e.g. `2t` for `tas`): a name already present in the input file is used directly (#172)
+- The CI coverage job installs the `tests` extra (`statsmodels`), so `tests/test_utils_reference.py` is no longer skipped there (#175)
 - Importing ecmean no longer switches matplotlib to the `Agg` backend (figures were not shown in notebooks); only the `global_mean` and `performance_indices` CLIs set it (#174)
 - GM references EC26-CMIP/HIST/PDAY: `clt` dataset label is now `CERES EBAF` (was `EBAF_v4.2.1`), as for the other CERES variables; values unchanged (#176)
+
+Changed
+- GM references EC26-CMIP/HIST/PDAY: `rsns` and `rlns` now come from CERES-EBAF 4.2.1 (`sfc_net_sw_all_mon`, `sfc_net_lw_all_mon`) instead of Wild (2020), adding regional/seasonal values, `std` and the reference period. `hfss`, `hfls`, `net_sfc`, `net_sfc_nosn` stay on Wild (2020); `gm_reference_EC23.yml` is unchanged (#172)
 
 ## [v0.3.0]
 

@@ -90,7 +90,7 @@ NANSKIP = False
 units_extra_definition()
 
 
-def main(climdata="EC26", timeframe="HIST", machine="wilma"):
+def main(climdata="EC26", timeframe="HIST", machine="wilma", varlist=None):
     """Main function to create the reference climatology.
 
     Parameters
@@ -101,6 +101,9 @@ def main(climdata="EC26", timeframe="HIST", machine="wilma"):
         Time period - HIST, PDAY, or CMIP (default: 'HIST')
     machine : str
         Machine name for data paths (default: 'wilma')
+    varlist : list of str, optional
+        Variables to (re)compute (default: all). The other variables already present
+        in the reference file are left untouched, since each variable is updated on its own.
     """
     # define the years of the reference period
     year1, year2 = timeframe_years(timeframe)
@@ -118,7 +121,7 @@ def main(climdata="EC26", timeframe="HIST", machine="wilma"):
     maskfile = info["mask"]
 
     # loop on variables to be processed
-    for var in variables:
+    for var in varlist or variables:
         logging.warning("Processing variable %s", var)
         tic = time()
 
@@ -167,7 +170,8 @@ def main(climdata="EC26", timeframe="HIST", machine="wilma"):
 
             # if derived, use the formula skill (or just rename)
             cmd = info[var]["varname"]
-            xfield = _eval_formula(cmd, xfield).to_dataset(name=var)
+            # a name already present in the file is used as is: it may not be a valid formula token (e.g. ERA5-like '2t')
+            xfield = (xfield[cmd] if cmd in xfield else _eval_formula(cmd, xfield)).to_dataset(name=var)
 
             # select time based on data availability
             cfield, real_year1, real_year2 = select_time_period(xfield, var, year1, year2)
@@ -302,7 +306,14 @@ def main(climdata="EC26", timeframe="HIST", machine="wilma"):
 
 # setting up dask
 if __name__ == "__main__":
-    args = parse_create_args().parse_args()
+    parser = parse_create_args()
+    parser.add_argument(
+        "--variables",
+        nargs="+",
+        choices=variables,
+        help="Compute only these variables, keeping the others in the existing reference file (default: all)",
+    )
+    args = parser.parse_args()
 
     logging.getLogger().setLevel(args.loglevel.upper())
 
@@ -313,7 +324,7 @@ if __name__ == "__main__":
         client = Client(cluster)
         logging.warning(client)
 
-    main(args.climdata, args.timeframe, args.machine)
+    main(args.climdata, args.timeframe, args.machine, args.variables)
 
     if args.cores > 1:
         client.close()

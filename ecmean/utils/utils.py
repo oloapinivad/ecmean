@@ -39,14 +39,25 @@ def timeframe_years(timeframe):
 
 
 def select_time_data(yearly, seasonly, season):
-    """Select time data based on season."""
+    """Select time data based on season.
+
+    Args:
+        yearly (xarray.DataArray): yearly means (resample "YS").
+        seasonly (xarray.DataArray): seasonal means (resample "QE-NOV").
+        season (str): "ALL", "DJF", "MAM", "JJA" or "SON".
+
+    Returns:
+        xarray.DataArray: the yearly means for "ALL", otherwise the means of the season.
+    """
 
     if season == "ALL":
         return yearly
 
     gfield = seasonly.sel(time=seasonly.time.dt.season.isin(season))
     # for winter, we drop first and last to have only complete season.
-    # this reduces the sample by one but it is safer for variance
+    # this reduces the sample by one but it is safer for variance.
+    # It assumes data from January of the first year to December of the last year,
+    # as guaranteed by select_time_period(): first DJF is Jan-Feb only, last DJF is Dec only.
     if season == "DJF":
         gfield = gfield.drop_isel(time=[0, gfield.sizes["time"] - 1])
 
@@ -67,22 +78,47 @@ def expand_filedata(directory, var, info):
 
 def select_time_period(xfield, var, year1, year2):
     """
-    Select time period based on data availability.
+    Select time period based on data availability, using complete years only.
+
+    A year is complete when it has valid data in all 12 months. Incomplete years at the
+    start or end of the record (e.g. CERES-EBAF starting in March 2000) are excluded, so
+    that the yearly means are not computed on a partial year and the first/last DJF
+    seasons dropped by select_time_data() are exactly the incomplete ones.
+    Incomplete years inside the period are kept, with a warning.
+
+    Args:
+        xfield (xarray.Dataset): dataset containing the variable.
+        var (str): variable name.
+        year1 (int): first requested year.
+        year2 (int): last requested year.
+
+    Returns:
+        tuple: selected DataArray, effective first year and effective last year.
     """
-    # Check available years
+    # Check available complete years (12 months with valid data)
     valid_time = xfield[var].dropna("time", how="all").time
-    avail_years = np.unique(valid_time.dt.year.values)
+    years = valid_time.dt.year.values
+    months = valid_time.dt.month.values
+    avail_years = np.unique(years)
+    complete_years = np.array([y for y in avail_years if np.unique(months[years == y]).size == 12])
+    if complete_years.size == 0:
+        raise ValueError(f"{var}: no complete year available in the data ({avail_years.min()}-{avail_years.max()})")
 
     # Calculate intersection between requested and available
-    real_year1 = max(year1, int(avail_years.min()))
-    real_year2 = min(year2, int(avail_years.max()))
+    real_year1 = max(year1, int(complete_years.min()))
+    real_year2 = min(year2, int(complete_years.max()))
+
+    # Warn about incomplete years inside the selected period
+    incomplete = [int(y) for y in avail_years if real_year1 <= y <= real_year2 and y not in complete_years]
+    if incomplete:
+        logging.warning("%s: incomplete years kept inside the period: %s", var, incomplete)
 
     # Raise error if incompatible
     if real_year1 > real_year2:
         raise ValueError(
             f"{var}: requested period {year1}-{year2} "
-            f"not compatible with data availability "
-            f"{avail_years.min()}-{avail_years.max()}"
+            f"not compatible with complete years available "
+            f"{complete_years.min()}-{complete_years.max()}"
         )
 
     # Warn if years differ from requested

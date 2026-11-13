@@ -34,7 +34,7 @@
    * - Total Cloud Cover
      - CERES EBAF (v4.2.1)
      - global
-     - 2000-2024
+     - 2001-2024
    * - Low Cloud Cover
      - ERA5
      - global
@@ -66,63 +66,63 @@
    * - TOA Net
      - CERES EBAF (v4.2.1)
      - global
-     - 2000-2024
+     - 2001-2024
    * - TOA SW Net
      - CERES EBAF (v4.2.1)
      - global
-     - 2000-2024
+     - 2001-2024
    * - TOA LW Net
      - CERES EBAF (v4.2.1)
      - global
-     - 2000-2024
+     - 2001-2024
    * - TOA SW Net (clear sky)
      - CERES EBAF (v4.2.1)
      - global
-     - 2000-2024
+     - 2001-2024
    * - TOA LW Net (clear sky)
      - CERES EBAF (v4.2.1)
      - global
-     - 2000-2024
+     - 2001-2024
    * - SW Cloud Forcing
      - CERES EBAF (v4.2.1)
      - global
-     - 2000-2024
+     - 2001-2024
    * - LW Cloud Forcing
      - CERES EBAF (v4.2.1)
      - global
-     - 2000-2024
+     - 2001-2024
    * - Surface Net SW
-     - Wild 2020
+     - CERES EBAF (v4.2.1)
      - global
-     -
+     - 2001-2024
    * - Surface Net LW
-     - Wild 2020
+     - CERES EBAF (v4.2.1)
      - global
-     -
+     - 2001-2024
    * - Surface Sensible Heat Flux
      - Wild 2020
      - global
-     -
+     - 
    * - Surface Latent Heat Flux
      - Wild 2020
      - global
-     -
+     - 
    * - Net Surface (no snowfall)
      - Wild 2020
      - global
-     -
+     - 
    * - Net Surface
      - Wild 2020
      - global
-     -
+     - 
    * - TOA - Sfc Net Radiation (no snow)
      - None
      - global
-     -
+     - 
    * - TOA - Sfc Net Radiation
      - None
      - global
-     -
+     - 
    * - Sea Surface Temperature
      - ESA-CCI-L4 (v3.0.1)
      - ocean
@@ -134,11 +134,11 @@
    * - SSH
      - None
      - global
-     -
+     - 
    * - Net Water Flux into ocean
      - None
      - global
-     -
+     - 
    * - Sea Ice Area
      - ESA-CCI-L4 (v3.0.1)
      - ocean

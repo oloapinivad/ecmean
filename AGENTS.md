@@ -113,9 +113,9 @@ check the other and `libs/`:
   `units_extra_definition()`) must happen inside the worker (required from Python 3.14).
 - **Units:** conversions return `(offset, factor)`; never both are non-trivial. Flux direction (`up`/`down`)
   is handled through the sign of the factor. Do not hand-roll conversions in a diagnostic.
-- **Derived variables:** the `derived:` strings in interface files support names, numbers (decimals,
-  scientific notation), `+ - * /`, unary minus, parentheses and spaces. Unsupported syntax raises
-  `ValueError`. Formulas are parsed with Python's `ast` module restricted to these node types (nothing is
+- **Derived variables:** the `derived:` strings in interface files support names (also starting with a digit,
+  e.g. `2t`, parsed through placeholders), numbers (decimals, scientific notation), `+ - * /`, unary minus,
+  parentheses and spaces. Unsupported syntax raises `ValueError`. Formulas are parsed with Python's `ast` module restricted to these node types (nothing is
   executed); extend that whitelist in `formula.py` rather than adding another parser.
 - **Opening data:** use `open_input_files()` so both diagnostics share `combine`/`join` behaviour and react
   identically to xarray default changes.

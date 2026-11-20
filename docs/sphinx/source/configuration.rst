@@ -132,7 +132,7 @@ For example, from ``ecmean/interfaces/interface_CMIP6.yml``::
      direction: down
      derived: 'rsds-rsus+rlds-rlus-hfls-hfss-prsn*334000'
 
-The supported syntax is: variable names, numbers (decimals and scientific notation, e.g. ``334000`` or ``3.34e5``),
+The supported syntax is: variable names (also starting with a digit, e.g. ``2t``), numbers (decimals and scientific notation, e.g. ``334000`` or ``3.34e5``),
 the four operations ``+ - * /``, unary minus, parentheses and spaces. Anything else (e.g. functions) raises a ``ValueError``.
 The formulas are evaluated with the ``_eval_formula()`` function of ``ecmean/libs/formula.py``.
 

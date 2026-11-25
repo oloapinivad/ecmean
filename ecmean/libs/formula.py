@@ -9,6 +9,7 @@ Shared functions for ecmean. Set of formula based tools
 import ast
 import logging
 import operator
+import re
 
 loggy = logging.getLogger(__name__)
 
@@ -29,9 +30,13 @@ def formula_wrapper(var, face, xfield):
 # Formulas are parsed with the Python parser, which provides precedence, parentheses,
 # numbers (decimals, scientific notation) and whitespace. Only variable names, numbers,
 # the four basic operations, unary minus and parentheses are accepted: nothing is executed.
+# Variable names may start with a digit (e.g. ecCodes '2t', '10u'): they are not Python identifiers, so they are
+# replaced by placeholders before parsing and restored in the syntax tree. Numbers in scientific notation
+# ('1e5', '1e-5') are not names and are left untouched.
 
 _OPERATIONS = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul, ast.Div: operator.truediv}
 _ALLOWED = (ast.Expression, ast.BinOp, ast.UnaryOp, ast.USub, ast.Name, ast.Load, ast.Constant, *_OPERATIONS)
+_DIGIT_NAME = re.compile(r"(?<![\w.])(?!\d+[eE][+-]?\d+\b)\d+[A-Za-z_]\w*")
 
 
 def _allowed(node):
@@ -43,14 +48,33 @@ def _allowed(node):
 
 
 def _parse_formula(mystring):
-    """Parse a formula into a syntax tree, raising ValueError for unsupported syntax."""
+    """Parse a formula into a syntax tree, raising ValueError for unsupported syntax.
+
+    Variable names starting with a digit (e.g. '2t') are parsed through placeholders and restored
+    in the returned tree, so its Name nodes always hold the original variable names.
+
+    Args:
+        mystring: the formula, e.g. '2t-273.15' or 'rsdt-rsut-rlut'.
+
+    Returns:
+        The root node of the expression syntax tree.
+    """
+
+    aliases = {}
+
+    def alias(match):
+        return aliases.setdefault(match.group(), f"__ecmean_var{len(aliases)}__")
 
     try:
-        tree = ast.parse(mystring.strip(), mode="eval")
+        tree = ast.parse(_DIGIT_NAME.sub(alias, mystring.strip()), mode="eval")
     except SyntaxError as err:
         raise ValueError(f"Unsupported syntax in formula '{mystring}'") from err
     if not all(_allowed(node) for node in ast.walk(tree)):
         raise ValueError(f"Unsupported syntax in formula '{mystring}'")
+    original = {placeholder: name for name, placeholder in aliases.items()}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name):
+            node.id = original.get(node.id, node.id)
     return tree.body
 
 

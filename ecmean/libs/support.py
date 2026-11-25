@@ -201,8 +201,41 @@ class Supporter:
         else:  # automatic solution, wish you luck!
             return AreaCalculator().calculate_area(xfield, gridtype)
 
+    def get_interp(self, xfield, domain):
+        """Return the interpolators (fix, remap) for the horizontal grid of a field.
+
+        The default interpolators are built from the inifiles (areafile/gridfile/maskfile) and are used
+        whenever the field lies on that grid. Some variables do not: staggered winds and stresses
+        (e.g. UKESM ua/va on 145 latitudes, tauu on longitudes shifted by half a cell) or a sea-ice grid
+        without the halo of the ocean one (e.g. CICE siconc on NorESM2). For those, new weights are computed
+        from the field coordinates: slower, but always consistent with the data.
+        Fields needing a fixer (OIFS reduced gaussian grid) always use the default interpolators.
+
+        Args:
+            xfield (xarray.DataArray): Field to be interpolated, with lon and lat coordinates.
+            domain (str): Domain of the field, "atm" or "oce".
+
+        Returns:
+            tuple: The fix (None if not needed) and remap objects.
+        """
+        fix = getattr(self, f"{domain}fix")
+        remap = getattr(self, f"{domain}remap")
+        if remap is None or fix is not None or same_grid(xfield, getattr(self, f"{domain}field")):
+            return fix, remap
+
+        loggy.warning("%s is not on the %s inifiles grid: computing new interpolation weights", xfield.name, domain)
+        grid = xfield.to_dataset(name="grid")
+        return getattr(self, f"make_{domain}_interp_weights")(grid)
+
     def make_atm_interp_weights(self, xfield):
-        """Create atmospheric interpolator weights"""
+        """Create atmospheric interpolator weights.
+
+        Args:
+            xfield (xarray.Dataset): The field providing the source grid.
+
+        Returns:
+            tuple: The fix and remap objects.
+        """
 
         if self.atmcomponent == "oifs":
             # this is to get lon and lat from the Equator
@@ -224,7 +257,7 @@ class Supporter:
         elif self.atmcomponent in ["cmoratm", "globo"]:
             fix = None
             # nearest neighbour for unstructured grids (e.g. CESM spectral element), as for the ocean
-            if self.atmgridtype == "unstructured":
+            if identify_grid(xfield) == "unstructured":
                 remap = xe.Regridder(xfield, self.targetgrid, method="nearest_s2d", locstream_in=True, periodic=True)
             else:
                 remap = xe.Regridder(xfield, self.targetgrid, periodic=True, method="bilinear")
@@ -238,7 +271,7 @@ class Supporter:
         """Create oceanic interpolator weights.
 
         Args:
-            xfield (xarray.DataArray): The field to interpolate.
+            xfield (xarray.Dataset): The field providing the source grid.
 
         Returns:
             tuple: The fix and remap objects.
@@ -256,17 +289,19 @@ class Supporter:
         else:
             raise KeyError("ERROR: Oce weights not defined for this component, this cannot be handled!")
 
+        gridtype = identify_grid(xfield)
+
         # placeholder cells are masked, target cells without valid source are NaN instead of zero
         grid = mask_coincident_cells(xfield[[xname]])
 
         # Use the nearest neighbor method for unstructured grids and for grids with placeholder cells,
         # for which ESMF bilinear weights still take hours (tested on the 0.1 degree POP grid of CESM)
-        if self.ocegridtype in ["unstructured"] or "mask" in grid:
+        if gridtype in ["unstructured"] or "mask" in grid:
             remap = xe.Regridder(
                 grid,
                 self.targetgrid,
                 method="nearest_s2d",
-                locstream_in=self.ocegridtype in ["unstructured"],
+                locstream_in=gridtype in ["unstructured"],
                 periodic=True,
                 unmapped_to_nan=True,
             )
@@ -282,6 +317,22 @@ class Supporter:
             )
 
         return None, remap
+
+
+def same_grid(xfield, grid):
+    """Check whether a field lies on a given horizontal grid, comparing lon and lat coordinates.
+
+    Args:
+        xfield (xarray.DataArray or xarray.Dataset): Field with lon and lat coordinates.
+        grid (xarray.DataArray or xarray.Dataset): Reference grid with lon and lat coordinates.
+
+    Returns:
+        bool: True if lon and lat have the same shape and (nearly) the same values.
+    """
+    return all(
+        xfield[coord].shape == grid[coord].shape and np.allclose(xfield[coord], grid[coord], equal_nan=True)
+        for coord in ["lon", "lat"]
+    )
 
 
 def mask_coincident_cells(grid):

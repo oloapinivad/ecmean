@@ -117,6 +117,32 @@ def drop_bounds(ds):
     return ds.drop_vars(bounds_names(ds))
 
 
+def rounded_duplicates(ds, rtol=1e-6, atol=1e-6):
+    """Find the dimension coordinates (all but time) with neighbouring values equal up to
+    rounding: the symptom of an outer join of files whose coordinates differ by rounding,
+    which duplicates the grid points (to be fixed with align_coords).
+
+    Args:
+        ds (xarray.Dataset): the dataset to check.
+        rtol (float): relative tolerance.
+        atol (float): absolute tolerance.
+
+    Returns:
+        dict: dimension name -> number of values close to their neighbour, for the affected dimensions.
+    """
+
+    found = {}
+    for dim in ds.dims:
+        # rounding only affects floating-point coordinates (integer ones are indices)
+        if dim == "time" or dim not in ds.coords or not np.issubdtype(ds[dim].dtype, np.floating):
+            continue
+        values = np.sort(ds[dim].values)
+        close = int(np.isclose(values[1:], values[:-1], rtol=rtol, atol=atol).sum())
+        if close:
+            found[dim] = close
+    return found
+
+
 def align_coords(reference):
     """Build a preprocessing fixer that replaces the dimension coordinates of a dataset with
     the reference ones when they have the same size and differ only by rounding

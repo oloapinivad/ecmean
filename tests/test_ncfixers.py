@@ -3,7 +3,7 @@
 import numpy as np
 import xarray as xr
 
-from ecmean.libs.ncfixers import align_coords, drop_bounds, xr_preproc
+from ecmean.libs.ncfixers import align_coords, drop_bounds, rounded_duplicates, xr_preproc
 
 
 def test_xr_preproc_renames_coordinates():
@@ -72,3 +72,11 @@ def test_align_coords_rounding_only():
     np.testing.assert_array_equal(fix(rounded)["lat"].values, lat)
     other = xr.Dataset(coords={"lat": [-60.0, 30.0]})
     np.testing.assert_array_equal(fix(other)["lat"].values, [-60.0, 30.0])
+
+
+def test_rounded_duplicates():
+    """Latitudes duplicated by rounding are found, regular grids and integer indices are not"""
+    lat = np.array([-89.05759162, 45.0])
+    joined = np.union1d(lat, lat.astype("float32").astype("float64"))
+    assert rounded_duplicates(xr.Dataset(coords={"lat": joined, "lon": [0.0, 1.25]})) == {"lat": 1}
+    assert rounded_duplicates(xr.Dataset(coords={"lat": lat, "cell": np.arange(5)})) == {}

@@ -14,7 +14,7 @@ import yaml
 from ecmean.libs.climatology import SUPPORTED_CLIMATOLOGY
 from ecmean.libs.formula import formula_variables, formula_wrapper
 from ecmean.libs.general import check_time_axis, check_var_interface
-from ecmean.libs.ncfixers import align_coords, bounds_names, drop_bounds, is_bounds_name, xr_preproc
+from ecmean.libs.ncfixers import align_coords, bounds_names, drop_bounds, is_bounds_name, rounded_duplicates, xr_preproc
 
 loggy = logging.getLogger(__name__)
 
@@ -46,14 +46,14 @@ def inifiles_priority(inidict):
 def _reference_file(flist, preprocess=None):
     """Spatial dimension coordinates (all but time) and bounds variable names of the first
     file of a list or glob pattern, after ``preprocess``: the reference for the fixers of
-    open_input_files."""
+    open_input_files, read only once one of them is needed."""
 
     first = min(glob(flist)) if isinstance(flist, str) else flist[0]
     with xr.open_dataset(first) as xfield:
         if preprocess is not None:
             xfield = preprocess(xfield)
         coords = {dim: xfield[dim].load() for dim in xfield.dims if dim in xfield.coords and dim != "time"}
-        return coords, bounds_names(xfield)
+        return {"coords": coords, "bounds": bounds_names(xfield)}
 
 
 def _chain(*functions):
@@ -81,12 +81,15 @@ def open_input_files(flist, **kwargs):
       variables of the same model may carry bounds differing by rounding
       (CESM2 ``prsn`` has a first ``time_bnds`` of 1849-12-31 23:29:59.999997).
       The diagnostics never use the bounds of the input data;
-    - a spatial dimension larger than in the first file, i.e. the outer join
-      duplicated grid points -> ``align_coords``: coordinates equal to those of
-      the first file up to rounding are replaced with them (CESM2 ``prsn`` has
-      float32-rounded latitudes).
+    - a spatial coordinate of the opened dataset with neighbouring values equal
+      up to rounding, i.e. the outer join duplicated grid points
+      (``rounded_duplicates``) -> ``align_coords``: coordinates equal to those
+      of the first file up to rounding are replaced with them (CESM2 ``prsn``
+      has float32-rounded latitudes).
 
-    Files opening cleanly are not touched, and other conflicts still raise.
+    The symptoms are checked on the opened dataset, and the first file is read
+    as a reference only when a fixer needs it: files opening cleanly cost a
+    single open and are not touched. Other conflicts still raise.
 
     Args:
         flist (list or str): files (or glob pattern) to open.
@@ -102,27 +105,29 @@ def open_input_files(flist, **kwargs):
     xr.set_options(file_cache_maxsize=FILE_CACHE_MAXSIZE)
     options = {"combine": "by_coords", "data_vars": "all", "join": "outer", "compat": "no_conflicts"}
     preprocess = kwargs.pop("preprocess", None)
-    refcoords, refbounds = _reference_file(flist, preprocess)
-    fixers, aligned = [], False
+    fixers, reference, aligned = [], {}, False
 
     while True:
         try:
             xfield = xr.open_mfdataset(flist, **options, preprocess=_chain(preprocess, *fixers), **kwargs)
         except xr.MergeError as err:
+            if drop_bounds in fixers:
+                raise
             conflict = re.search(r"variable '([^']+)'", str(err))
             name = conflict.group(1) if conflict else ""
-            if drop_bounds in fixers or not (name in refbounds or is_bounds_name(name)):
-                raise
+            if not is_bounds_name(name):
+                reference = reference or _reference_file(flist, preprocess)
+                if name not in reference["bounds"]:
+                    raise
             loggy.warning("Conflicting bounds variable %s in the input files: dropping the bounds", name)
             fixers.append(drop_bounds)
             continue
 
-        grown = {
-            dim: (coord.size, xfield.sizes[dim]) for dim, coord in refcoords.items() if xfield.sizes.get(dim, 0) > coord.size
-        }
-        if grown and not aligned:
-            loggy.warning("Grid points duplicated in the input files (%s): aligning coordinates to the first file", grown)
-            fixers.append(align_coords(refcoords))
+        duplicated = rounded_duplicates(xfield)
+        if duplicated and not aligned:
+            loggy.warning("Grid points duplicated in the input files (%s): aligning coordinates to the first file", duplicated)
+            reference = reference or _reference_file(flist, preprocess)
+            fixers.append(align_coords(reference["coords"]))
             aligned = True
             continue
         return xfield

@@ -44,9 +44,16 @@ def inifiles_priority(inidict):
 
 
 def _reference_file(flist, preprocess=None):
-    """Spatial dimension coordinates (all but time) and bounds variable names of the first
-    file of a list or glob pattern, after ``preprocess``: the reference for the fixers of
-    open_input_files, read only once one of them is needed."""
+    """Read the first file of a list (or glob pattern), the reference for the fixers of open_input_files.
+
+    Args:
+        flist (list or str): files (or glob pattern).
+        preprocess (function, optional): applied to the file before reading it.
+
+    Returns:
+        dict: ``coords``, the dimension coordinates but time (name -> DataArray), and
+            ``bounds``, the names of the bounds variables (see ncfixers.bounds_names).
+    """
 
     first = min(glob(flist)) if isinstance(flist, str) else flist[0]
     with xr.open_dataset(first) as xfield:
@@ -56,8 +63,20 @@ def _reference_file(flist, preprocess=None):
         return {"coords": coords, "bounds": bounds_names(xfield)}
 
 
+def _conflicting_variable(err):
+    """Name of the variable in an xarray MergeError ("conflicting values for variable 'X' ..").
+
+    The message format belongs to xarray: if it changes, an empty name is returned, which
+    is not a bounds name, so open_input_files raises the error instead of fixing it.
+    """
+
+    match = re.search(r"variable '([^']+)'", str(err))
+    return match.group(1) if match else ""
+
+
 def _chain(*functions):
-    """Preprocess function applying the given functions (None skipped) in order."""
+    """Combine preprocess functions into one applying them in order, skipping None.
+    Returns None when there is nothing to apply (xarray's default)."""
 
     functions = [f for f in functions if f is not None]
 
@@ -73,23 +92,19 @@ def open_input_files(flist, **kwargs):
     """Open a list of files as a single dataset, with the same combine/join
     options for all the diagnostics.
 
-    The files are first opened as they are. If this fails or gives a broken
-    grid, fixers from ncfixers are added to the preprocessing, each one only
-    when its symptom shows up, and the files are opened again:
+    Files of different variables of the same model may differ by rounding
+    (CESM2 ``prsn`` has float32 latitudes and a first ``time_bnds`` of
+    1849-12-31 23:29:59.999997). The files are first opened as they are; a
+    fixer from ncfixers is added, and the files opened again, only when its
+    symptom shows up:
 
-    - a MergeError on a bounds variable (e.g. ``time_bnds``) -> ``drop_bounds``:
-      variables of the same model may carry bounds differing by rounding
-      (CESM2 ``prsn`` has a first ``time_bnds`` of 1849-12-31 23:29:59.999997).
-      The diagnostics never use the bounds of the input data;
-    - a spatial coordinate of the opened dataset with neighbouring values equal
-      up to rounding, i.e. the outer join duplicated grid points
-      (``rounded_duplicates``) -> ``align_coords``: coordinates equal to those
-      of the first file up to rounding are replaced with them (CESM2 ``prsn``
-      has float32-rounded latitudes).
+    1. MergeError on a bounds variable (e.g. ``time_bnds``) -> ``drop_bounds``
+       (the diagnostics never use the bounds of the input data);
+    2. grid points duplicated by the outer join (``rounded_duplicates``) ->
+       ``align_coords``, onto the coordinates of the first file.
 
-    The symptoms are checked on the opened dataset, and the first file is read
-    as a reference only when a fixer needs it: files opening cleanly cost a
-    single open and are not touched. Other conflicts still raise.
+    Files opening cleanly are opened once and not touched; any other
+    conflict raises.
 
     Args:
         flist (list or str): files (or glob pattern) to open.
@@ -117,8 +132,7 @@ def open_input_files(flist, **kwargs):
     try:
         xfield = _open()
     except xr.MergeError as err:
-        conflict = re.search(r"variable '([^']+)'", str(err))
-        name = conflict.group(1) if conflict else ""
+        name = _conflicting_variable(err)
         if not is_bounds_name(name):
             reference = _reference_file(flist, preprocess)
             if name not in reference["bounds"]:

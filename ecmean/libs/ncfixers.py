@@ -4,6 +4,10 @@ Shared functions for Xarray
 
 import numpy as np
 
+# tolerance (relative and absolute) for coordinates "equal up to rounding": float32 keeps about 7 digits
+# (relative precision 1.2e-7), while grid spacings are many orders of magnitude larger than 1e-6
+ROUNDING_TOL = 1e-6
+
 #########################
 # FILE FORMAT FUNCTIONS #
 #########################
@@ -117,15 +121,13 @@ def drop_bounds(ds):
     return ds.drop_vars(bounds_names(ds))
 
 
-def rounded_duplicates(ds, rtol=1e-6, atol=1e-6):
+def rounded_duplicates(ds):
     """Find the dimension coordinates (all but time) with neighbouring values equal up to
-    rounding: the symptom of an outer join of files whose coordinates differ by rounding,
-    which duplicates the grid points (to be fixed with align_coords).
+    rounding (ROUNDING_TOL). This is the symptom of an outer join of files whose coordinates
+    differ by rounding: each grid point appears twice. It is fixed with align_coords.
 
     Args:
         ds (xarray.Dataset): the dataset to check.
-        rtol (float): relative tolerance.
-        atol (float): absolute tolerance.
 
     Returns:
         dict: dimension name -> number of values close to their neighbour, for the affected dimensions.
@@ -137,7 +139,7 @@ def rounded_duplicates(ds, rtol=1e-6, atol=1e-6):
         if dim == "time" or dim not in ds.coords or not np.issubdtype(ds[dim].dtype, np.floating):
             continue
         values = np.sort(ds[dim].values)
-        close = int(np.isclose(values[1:], values[:-1], rtol=rtol, atol=atol).sum())
+        close = int(np.isclose(values[1:], values[:-1], rtol=ROUNDING_TOL, atol=ROUNDING_TOL).sum())
         if close:
             found[dim] = close
     return found
@@ -145,8 +147,8 @@ def rounded_duplicates(ds, rtol=1e-6, atol=1e-6):
 
 def align_coords(reference):
     """Build a preprocessing fixer that replaces the dimension coordinates of a dataset with
-    the reference ones when they have the same size and differ only by rounding
-    (e.g. float32-rounded latitudes), so that an outer join does not duplicate grid points.
+    the reference ones when they have the same size and differ only by rounding (ROUNDING_TOL,
+    e.g. float32-rounded latitudes), so that an outer join does not duplicate grid points.
 
     Args:
         reference (dict): dimension name -> xarray.DataArray with the reference coordinate.
@@ -160,8 +162,8 @@ def align_coords(reference):
             if (
                 dim in ds.coords
                 and ds.sizes[dim] == coord.size
-                and np.issubdtype(ds[dim].dtype, np.number)
-                and np.allclose(ds[dim].values, coord.values, rtol=1e-6, atol=1e-6)
+                and np.issubdtype(ds[dim].dtype, np.floating)
+                and np.allclose(ds[dim].values, coord.values, rtol=ROUNDING_TOL, atol=ROUNDING_TOL)
             ):
                 ds = ds.assign_coords({dim: coord})
         return ds

@@ -4,17 +4,17 @@ Shared functions for XArray ecmean
 
 import logging
 import os
+import re
 from glob import glob
 from pathlib import Path
 
-import numpy as np
 import xarray as xr
 import yaml
 
 from ecmean.libs.climatology import SUPPORTED_CLIMATOLOGY
 from ecmean.libs.formula import formula_variables, formula_wrapper
 from ecmean.libs.general import check_time_axis, check_var_interface
-from ecmean.libs.ncfixers import xr_preproc
+from ecmean.libs.ncfixers import align_coords, bounds_names, drop_bounds, is_bounds_name, xr_preproc
 
 loggy = logging.getLogger(__name__)
 
@@ -43,64 +43,50 @@ def inifiles_priority(inidict):
     return None
 
 
-def _bounds_names(xfield):
-    """Names of the cell-bounds variables of a dataset: those referenced by the
-    ``bounds`` attribute (or encoding, where xarray moves it when decoding times)
-    of a variable, plus the usual ``*_bnds``/``*_bounds``/``bounds_*`` names."""
-
-    names = set()
-    for var in xfield.variables.values():
-        for meta in (var.attrs, var.encoding):
-            if isinstance(meta.get("bounds"), str):
-                names.add(meta["bounds"])
-    names.update(n for n in xfield.variables if n.endswith(("_bnds", "_bounds")) or n.startswith("bounds_"))
-    return names & set(xfield.variables)
-
-
-def _harmonize_files(flist, preprocess=None):
-    """Return a preprocess function that applies ``preprocess`` (if any), drops the
-    cell-bounds variables of each file (see _bounds_names) and replaces its spatial
-    dimension coordinates (all but time) with those of the first file when they
-    differ only by rounding (e.g. float32-rounded latitudes)."""
-
-    def base(xfield):
-        if preprocess is not None:
-            xfield = preprocess(xfield)
-        return xfield.drop_vars(_bounds_names(xfield))
+def _reference_file(flist, preprocess=None):
+    """Spatial dimension coordinates (all but time) and bounds variable names of the first
+    file of a list or glob pattern, after ``preprocess``: the reference for the fixers of
+    open_input_files."""
 
     first = min(glob(flist)) if isinstance(flist, str) else flist[0]
-    with xr.open_dataset(first) as reference:
-        reference = base(reference)
-        refcoords = {dim: reference[dim].load() for dim in reference.dims if dim in reference.coords and dim != "time"}
+    with xr.open_dataset(first) as xfield:
+        if preprocess is not None:
+            xfield = preprocess(xfield)
+        coords = {dim: xfield[dim].load() for dim in xfield.dims if dim in xfield.coords and dim != "time"}
+        return coords, bounds_names(xfield)
 
-    def wrapper(xfield):
-        xfield = base(xfield)
-        for dim, coord in refcoords.items():
-            if (
-                dim in xfield.coords
-                and xfield.sizes[dim] == coord.size
-                and np.issubdtype(coord.dtype, np.number)
-                and np.allclose(xfield[dim].values, coord.values, rtol=1e-6, atol=1e-6)
-            ):
-                xfield = xfield.assign_coords({dim: coord})
+
+def _chain(*functions):
+    """Preprocess function applying the given functions (None skipped) in order."""
+
+    functions = [f for f in functions if f is not None]
+
+    def chained(xfield):
+        for function in functions:
+            xfield = function(xfield)
         return xfield
 
-    return wrapper
+    return chained if functions else None
 
 
 def open_input_files(flist, **kwargs):
     """Open a list of files as a single dataset, with the same combine/join
     options for all the diagnostics.
 
-    If the files cannot be merged because of conflicting values, they are
-    opened again without their cell-bounds variables (e.g. ``time_bnds``,
-    ``lat_bnds``) and with the spatial coordinates of the first file wherever
-    a file has the same ones up to rounding: different variables of the same
-    model may be written with different precision (CESM2 ``prsn`` has float32-
-    rounded latitudes and a first ``time_bnds`` of 1849-12-31 23:29:59.999997
-    instead of 1850-01-01), and an outer join would otherwise duplicate the
-    grid points. The diagnostics never use the bounds of the input data, so
-    results are unchanged; conflicts in any other variable still raise.
+    The files are first opened as they are. If this fails or gives a broken
+    grid, fixers from ncfixers are added to the preprocessing, each one only
+    when its symptom shows up, and the files are opened again:
+
+    - a MergeError on a bounds variable (e.g. ``time_bnds``) -> ``drop_bounds``:
+      variables of the same model may carry bounds differing by rounding
+      (CESM2 ``prsn`` has a first ``time_bnds`` of 1849-12-31 23:29:59.999997).
+      The diagnostics never use the bounds of the input data;
+    - a spatial dimension larger than in the first file, i.e. the outer join
+      duplicated grid points -> ``align_coords``: coordinates equal to those of
+      the first file up to rounding are replaced with them (CESM2 ``prsn`` has
+      float32-rounded latitudes).
+
+    Files opening cleanly are not touched, and other conflicts still raise.
 
     Args:
         flist (list or str): files (or glob pattern) to open.
@@ -115,14 +101,31 @@ def open_input_files(flist, **kwargs):
     # CMCC-CM2-VHR4 fields), so the open files are limited to about one block of time chunks (season_means)
     xr.set_options(file_cache_maxsize=FILE_CACHE_MAXSIZE)
     options = {"combine": "by_coords", "data_vars": "all", "join": "outer", "compat": "no_conflicts"}
-    try:
-        return xr.open_mfdataset(flist, **options, **kwargs)
-    except xr.MergeError as err:
-        loggy.warning(
-            "Cannot merge input files (%s): opening them again without bounds variables and with harmonized coordinates", err
-        )
-        kwargs["preprocess"] = _harmonize_files(flist, kwargs.get("preprocess"))
-        return xr.open_mfdataset(flist, **options, **kwargs)
+    preprocess = kwargs.pop("preprocess", None)
+    refcoords, refbounds = _reference_file(flist, preprocess)
+    fixers, aligned = [], False
+
+    while True:
+        try:
+            xfield = xr.open_mfdataset(flist, **options, preprocess=_chain(preprocess, *fixers), **kwargs)
+        except xr.MergeError as err:
+            conflict = re.search(r"variable '([^']+)'", str(err))
+            name = conflict.group(1) if conflict else ""
+            if drop_bounds in fixers or not (name in refbounds or is_bounds_name(name)):
+                raise
+            loggy.warning("Conflicting bounds variable %s in the input files: dropping the bounds", name)
+            fixers.append(drop_bounds)
+            continue
+
+        grown = {
+            dim: (coord.size, xfield.sizes[dim]) for dim, coord in refcoords.items() if xfield.sizes.get(dim, 0) > coord.size
+        }
+        if grown and not aligned:
+            loggy.warning("Grid points duplicated in the input files (%s): aligning coordinates to the first file", grown)
+            fixers.append(align_coords(refcoords))
+            aligned = True
+            continue
+        return xfield
 
 
 def files_exist(flist, var):

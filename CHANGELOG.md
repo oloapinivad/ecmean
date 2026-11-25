@@ -12,7 +12,7 @@ Unreleased is the current development version, which is currently lying in `main
 2. The offline reference/climatology tools (`utils/reference-create.py`, `utils/clim-create.py`) now use complete years only: datasets starting or ending mid-year (e.g. CERES-EBAF, from March 2000) no longer average a partial year as if it were complete. The CERES-derived EC26 global-mean references change (regional annual means and std of shortwave fluxes, `year1` becomes 2001) (#175)
 
 Fixed
-- `open_input_files()` no longer fails with `MergeError` when the files of a derived variable carry bounds (`time_bnds`, `lat_bnds`, ...) or spatial coordinates that differ only by rounding (CESM2-family `prsn`, so `net_sfc` was missing for CESM2, CESM2-FV2, CESM2-WACCM-FV2): such files are reopened without bounds and on the coordinates of the first file. Datasets that merged before are opened as before (#181)
+- `open_input_files()` adds fixers from `ncfixers` (`drop_bounds`, `align_coords`) only when their symptom shows up: a `MergeError` on a bounds variable (`time_bnds`, ...) or grid points duplicated by the outer join because coordinates differ by rounding. CESM2-family `prsn` had both, so `net_sfc` was missing for CESM2, CESM2-FV2, CESM2-WACCM-FV2; datasets that opened cleanly are unchanged (#181)
 - `utils/reference-create.py` gets a `--variables` option to recompute only some variables, keeping the others in the existing reference file (#175)
 - `utils/reference-create.py` no longer fails on variables whose name is not a valid formula token (e.g. `2t` for `tas`): a name already present in the input file is used directly (#172)
 - The CI coverage job installs the `tests` extra (`statsmodels`), so `tests/test_utils_reference.py` is no longer skipped there (#175)

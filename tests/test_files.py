@@ -98,3 +98,18 @@ def test_open_input_files_conflicting_data_raises(tmp_path):
     xfield.to_netcdf(tmp_path / "both.nc")
     with pytest.raises(xr.MergeError):
         open_input_files([rsds, str(tmp_path / "both.nc")])
+
+
+def test_open_input_files_rounded_coords_without_bounds(tmp_path):
+    """Latitudes differing by rounding are aligned even if no merge error is raised"""
+    rsds = _monthly_file(tmp_path / "rsds.nc", "rsds", np.datetime64("1850-01-01"))
+    prsn = _monthly_file(
+        tmp_path / "prsn.nc", "prsn", np.datetime64("1850-01-01"), lat=LATS.astype("float32").astype("float64")
+    )
+    for path in (rsds, prsn):
+        with xr.open_dataset(path) as xfield:
+            xfield = xfield.load()
+        xfield.drop_vars("time_bnds").to_netcdf(path)
+    xfield = open_input_files([rsds, prsn])
+    assert xfield.sizes["lat"] == 2
+    np.testing.assert_array_equal(xfield["lat"].values, LATS)

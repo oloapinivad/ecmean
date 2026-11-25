@@ -105,32 +105,38 @@ def open_input_files(flist, **kwargs):
     xr.set_options(file_cache_maxsize=FILE_CACHE_MAXSIZE)
     options = {"combine": "by_coords", "data_vars": "all", "join": "outer", "compat": "no_conflicts"}
     preprocess = kwargs.pop("preprocess", None)
-    fixers, reference, aligned = [], {}, False
 
-    while True:
-        try:
-            xfield = xr.open_mfdataset(flist, **options, preprocess=_chain(preprocess, *fixers), **kwargs)
-        except xr.MergeError as err:
-            if drop_bounds in fixers:
+    def _open(*fixers):
+        return xr.open_mfdataset(flist, **options, preprocess=_chain(preprocess, *fixers), **kwargs)
+
+    # the fixers are decided here only, in this fixed order, each at most once: at most three opens,
+    # and a failure after a fixer is applied propagates
+    fixers, reference = [], None
+
+    # step 1: conflicting bounds variables -> drop_bounds
+    try:
+        xfield = _open()
+    except xr.MergeError as err:
+        conflict = re.search(r"variable '([^']+)'", str(err))
+        name = conflict.group(1) if conflict else ""
+        if not is_bounds_name(name):
+            reference = _reference_file(flist, preprocess)
+            if name not in reference["bounds"]:
                 raise
-            conflict = re.search(r"variable '([^']+)'", str(err))
-            name = conflict.group(1) if conflict else ""
-            if not is_bounds_name(name):
-                reference = reference or _reference_file(flist, preprocess)
-                if name not in reference["bounds"]:
-                    raise
-            loggy.warning("Conflicting bounds variable %s in the input files: dropping the bounds", name)
-            fixers.append(drop_bounds)
-            continue
+        loggy.warning("Conflicting bounds variable %s in the input files: dropping the bounds", name)
+        fixers.append(drop_bounds)
+        xfield = _open(*fixers)
 
-        duplicated = rounded_duplicates(xfield)
-        if duplicated and not aligned:
-            loggy.warning("Grid points duplicated in the input files (%s): aligning coordinates to the first file", duplicated)
-            reference = reference or _reference_file(flist, preprocess)
-            fixers.append(align_coords(reference["coords"]))
-            aligned = True
-            continue
-        return xfield
+    # step 2: grid points duplicated by the outer join -> align_coords
+    duplicated = rounded_duplicates(xfield)
+    if duplicated:
+        loggy.warning("Grid points duplicated in the input files (%s): aligning coordinates to the first file", duplicated)
+        xfield.close()
+        reference = reference or _reference_file(flist, preprocess)
+        fixers.append(align_coords(reference["coords"]))
+        xfield = _open(*fixers)
+
+    return xfield
 
 
 def files_exist(flist, var):

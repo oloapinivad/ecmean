@@ -120,20 +120,24 @@ def cf_lonlat(xfield):
     )
 
 
-def cdo_method(gridtype):
+def cdo_method(gridtype, placeholders=False):
     """CDO remapping method consistent with the ESMF one for a given grid type.
 
     ESMF uses bilinear interpolation, falling back to nearest neighbour on unstructured grids;
     CDO cannot do bilinear interpolation on these grids either, so nearest neighbour is used.
+    ESMF also uses nearest neighbour on oceanic grids with placeholder cells (see `mask_coincident_cells`),
+    e.g. the CICE sea-ice grids of CESM2/NorESM2, whose land cells have fill values as lon/lat: CDO follows,
+    otherwise the two tools would compare bilinear against nearest neighbour values at the ice edge.
     The gaussian reduced grid is handled in two steps by both tools (see `gaussian_regular_grid`).
 
     Args:
         gridtype (str): grid type as returned by `support.identify_grid`.
+        placeholders (bool): whether the grid has placeholder cells masked by `mask_coincident_cells`.
 
     Returns:
-        str: `nn` for unstructured grids, `bil` otherwise.
+        str: `nn` for unstructured grids and grids with placeholder cells, `bil` otherwise.
     """
-    return "nn" if gridtype == "unstructured" else "bil"
+    return "nn" if gridtype == "unstructured" or placeholders else "bil"
 
 
 class BaseInterpolator:
@@ -246,7 +250,7 @@ class CDOInterpolator(BaseInterpolator):
         The variable describing the grid is selected as for ESMF, reduced to a single horizontal slice,
         and its lon/lat coordinates (as those of the target grid) are given the CF attributes CDO
         needs to recognise the grid (missing e.g. in the NEMO `domain_cfg.nc`). The remapping method follows the grid type
-        (see `cdo_method`), and the gaussian reduced grid goes through the regular gaussian grid
+        and, for the ocean, the placeholder cells as in ESMF (see `cdo_method`), and the gaussian reduced grid goes through the regular gaussian grid
         as in ESMF; `skipna=True` lets smmregrid skip missing source points and renormalise the
         weights, as ESMF does with its masked grids.
 
@@ -270,7 +274,10 @@ class CDOInterpolator(BaseInterpolator):
             weights = CdoGenerate(grid, gaussian_regular, skipna=True).weights(method="nn")
             self.fix = Regridder(weights=weights, skipna=True).regrid
             grid = self.fix(grid)
-        method = cdo_method(self.gridtype)
+        placeholders = self.domain in ["oce", "oceanic", "ocean"] and "mask" in mask_coincident_cells(
+            grid.to_dataset(name="grid")
+        )
+        method = cdo_method(self.gridtype, placeholders)
         weights = CdoGenerate(grid, cf_lonlat(self.targetgrid), skipna=True).weights(method=method)
         self.remap = Regridder(weights=weights, skipna=True).regrid
 

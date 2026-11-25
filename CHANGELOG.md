@@ -14,6 +14,7 @@ Unreleased is the current development version, which is currently lying in `main
 
 Added
 - New `--tool CDO` option (`tool="CDO"` in the API) for the performance indices: horizontal interpolation with CDO weights through `smmregrid` (`skipna=True`), as an alternative to the default xESMF. The CDO interpolator uses the same preprocessed grid field, variable selection and method choice as the ESMF one (bilinear, nearest neighbour on unstructured and gaussian reduced grids), including the per-field weights of fields not on the inifiles grid (#182); results with the default ESMF tool are unchanged. Requires CDO >= 2.6.2 and `smmregrid >= 0.2.0` (#124)
+- CDO interpolator: nearest neighbour also on oceanic grids with placeholder cells, as ESMF. The CICE `siconc` files of CESM2, NorESM2 and SAM0-UNICON have fill values (9.97e36) as lon/lat on land cells, so ESMF used nearest neighbour and CDO bilinear, giving >10% PI differences at the ice edge (#124)
 
 Fixed
 - `open_input_files()` no longer fails on files whose bounds (`time_bnds`, ...) or coordinates differ by rounding: the new fixers `ncfixers.drop_bounds` and `ncfixers.align_coords` are applied only when their symptom shows up (a `MergeError` on a bounds variable; grid points duplicated by the outer join). This restores `net_sfc` for CESM2, CESM2-FV2 and CESM2-WACCM-FV2 (`prsn` differs by rounding); files that opened cleanly are unchanged (#181)

@@ -65,6 +65,12 @@ def test_cdo_method(gridtype, method):
     assert cdo_method(gridtype) == method
 
 
+@pytest.mark.parametrize("gridtype", ["lonlat", "curvilinear", "unstructured"])
+def test_cdo_method_placeholders(gridtype):
+    """Nearest neighbour on grids with placeholder cells, as ESMF."""
+    assert cdo_method(gridtype, placeholders=True) == "nn"
+
+
 @pytest.mark.parametrize("tool", TOOLS)
 def test_supporter_omip_without_masks(tool):
     """OMIP: ocean grid only, no atmospheric files and no ocean mask, with remapping."""

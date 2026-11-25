@@ -7,6 +7,7 @@ import os
 from glob import glob
 from pathlib import Path
 
+import numpy as np
 import xarray as xr
 import yaml
 
@@ -42,16 +43,86 @@ def inifiles_priority(inidict):
     return None
 
 
+def _bounds_names(xfield):
+    """Names of the cell-bounds variables of a dataset: those referenced by the
+    ``bounds`` attribute (or encoding, where xarray moves it when decoding times)
+    of a variable, plus the usual ``*_bnds``/``*_bounds``/``bounds_*`` names."""
+
+    names = set()
+    for var in xfield.variables.values():
+        for meta in (var.attrs, var.encoding):
+            if isinstance(meta.get("bounds"), str):
+                names.add(meta["bounds"])
+    names.update(n for n in xfield.variables if n.endswith(("_bnds", "_bounds")) or n.startswith("bounds_"))
+    return names & set(xfield.variables)
+
+
+def _harmonize_files(flist, preprocess=None):
+    """Return a preprocess function that applies ``preprocess`` (if any), drops the
+    cell-bounds variables of each file (see _bounds_names) and replaces its spatial
+    dimension coordinates (all but time) with those of the first file when they
+    differ only by rounding (e.g. float32-rounded latitudes)."""
+
+    def base(xfield):
+        if preprocess is not None:
+            xfield = preprocess(xfield)
+        return xfield.drop_vars(_bounds_names(xfield))
+
+    first = min(glob(flist)) if isinstance(flist, str) else flist[0]
+    with xr.open_dataset(first) as reference:
+        reference = base(reference)
+        refcoords = {dim: reference[dim].load() for dim in reference.dims if dim in reference.coords and dim != "time"}
+
+    def wrapper(xfield):
+        xfield = base(xfield)
+        for dim, coord in refcoords.items():
+            if (
+                dim in xfield.coords
+                and xfield.sizes[dim] == coord.size
+                and np.issubdtype(coord.dtype, np.number)
+                and np.allclose(xfield[dim].values, coord.values, rtol=1e-6, atol=1e-6)
+            ):
+                xfield = xfield.assign_coords({dim: coord})
+        return xfield
+
+    return wrapper
+
+
 def open_input_files(flist, **kwargs):
     """Open a list of files as a single dataset, with the same combine/join
-    options for all the diagnostics. Extra keyword arguments (e.g. preprocess,
-    chunks) are passed to xarray.open_mfdataset."""
+    options for all the diagnostics.
+
+    If the files cannot be merged because of conflicting values, they are
+    opened again without their cell-bounds variables (e.g. ``time_bnds``,
+    ``lat_bnds``) and with the spatial coordinates of the first file wherever
+    a file has the same ones up to rounding: different variables of the same
+    model may be written with different precision (CESM2 ``prsn`` has float32-
+    rounded latitudes and a first ``time_bnds`` of 1849-12-31 23:29:59.999997
+    instead of 1850-01-01), and an outer join would otherwise duplicate the
+    grid points. The diagnostics never use the bounds of the input data, so
+    results are unchanged; conflicts in any other variable still raise.
+
+    Args:
+        flist (list or str): files (or glob pattern) to open.
+        **kwargs: passed to xarray.open_mfdataset (e.g. preprocess, chunks).
+
+    Returns:
+        xarray.Dataset: the combined dataset.
+    """
 
     # xarray keeps up to 128 files open, each holding the 64 MiB chunk cache of netCDF-C: streaming monthly
     # files, a worker would accumulate gigabytes of useless cache (12 GB instead of 5 GB on 10 years of 3D
     # CMCC-CM2-VHR4 fields), so the open files are limited to about one block of time chunks (season_means)
     xr.set_options(file_cache_maxsize=FILE_CACHE_MAXSIZE)
-    return xr.open_mfdataset(flist, combine="by_coords", data_vars="all", join="outer", compat="no_conflicts", **kwargs)
+    options = {"combine": "by_coords", "data_vars": "all", "join": "outer", "compat": "no_conflicts"}
+    try:
+        return xr.open_mfdataset(flist, **options, **kwargs)
+    except xr.MergeError as err:
+        loggy.warning(
+            "Cannot merge input files (%s): opening them again without bounds variables and with harmonized coordinates", err
+        )
+        kwargs["preprocess"] = _harmonize_files(flist, kwargs.get("preprocess"))
+        return xr.open_mfdataset(flist, **options, **kwargs)
 
 
 def files_exist(flist, var):

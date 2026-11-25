@@ -122,3 +122,40 @@ def test_supporter_gridfile_from_data_file(tmp_path):
 
     assert "time" not in support.atmfield.dims
     assert support.atmarea.dims == ("lat", "lon")
+
+
+def test_supporter_interp_staggered_grid(tmp_path):
+    """A field on a grid other than the inifiles one (e.g. UKESM v-points, 145 lats) gets its own cached weights."""
+    gridfile = tmp_path / "grid.nc"
+    lat = np.linspace(-89.5, 89.5, 180)
+    lon = np.arange(0.5, 360.0, 1.0)
+    xr.Dataset({"tas": (("lat", "lon"), np.zeros((len(lat), len(lon))))}, coords={"lon": lon, "lat": lat}).to_netcdf(gridfile)
+    atmdict = {"maskfile": "", "gridfile": str(gridfile), "areafile": ""}
+    ocedict = {"maskfile": "", "gridfile": "", "areafile": ""}
+    tlat, tlon = np.arange(-89.0, 90.0, 2.0), np.arange(1.0, 360.0, 2.0)
+    targetgrid = xr.Dataset({"tas": (("lat", "lon"), np.zeros((len(tlat), len(tlon))))}, coords={"lon": tlon, "lat": tlat})
+
+    support = Supporter({"atm": "cmoratm", "oce": "cmoroce"}, atmdict, ocedict, areas=False, remap=True, targetgrid=targetgrid)
+
+    # field on the inifiles grid: default weights
+    tas = xr.DataArray(np.ones((len(lat), len(lon))), coords={"lat": lat, "lon": lon}, dims=["lat", "lon"], name="tas")
+    assert support.get_interp(tas, "atm") == (None, support.atmremap)
+
+    # staggered 3D field, poles included: new weights, valid interpolation, reused for a second field
+    vlat = np.linspace(-90.0, 90.0, 181)
+    plev = [85000.0, 50000.0]
+    va = xr.DataArray(
+        np.ones((len(plev), len(vlat), len(lon))), coords={"plev": plev, "lat": vlat, "lon": lon}, dims=["plev", "lat", "lon"]
+    ).rename("va")
+    fix, remap = support.get_interp(va, "atm")
+    assert fix is None and remap is not support.atmremap
+    final = remap(va)
+    assert final.shape == (len(plev), targetgrid.sizes["lat"], targetgrid.sizes["lon"])
+    assert np.allclose(final, 1.0)
+    assert support.get_interp(va.isel(plev=0).rename("tauv"), "atm")[1] is remap
+    assert len(support.extra_remaps["atm"]) == 1
+
+    # same shape but shifted longitudes (e.g. u-points): different grid, new weights
+    ua = tas.assign_coords(lon=lon - 0.5).rename("ua")
+    assert support.get_interp(ua, "atm")[1] not in (support.atmremap, remap)
+    assert len(support.extra_remaps["atm"]) == 2

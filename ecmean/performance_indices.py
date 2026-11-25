@@ -360,9 +360,6 @@ def _pi_variable(var, util, piclim, face, diag, field_3d):
     domain = get_domain(var, face)
     offset, factor = UnitsHandler(var, org_units=varunit, clim=piclim, face=face).units_converter()
 
-    fix = getattr(util, f"{domain}fix")
-    remap = getattr(util, f"{domain}remap")
-
     # time means of all the seasons in a single pass on the data, so memory does not scale with the record
     tmeans = season_means(field, diag.seasons)
 
@@ -377,6 +374,8 @@ def _pi_variable(var, util, piclim, face, diag, field_3d):
         cfield, vfield = clims[season]
 
         # apply interpolation, if fixer is available and with different grids
+        # weights are rebuilt (and cached) for fields not on the grid of the inifiles, e.g. staggered ones
+        fix, remap = util.get_interp(tmean, domain)
         if fix:
             tmean = fix(tmean, keep_attrs=True)
         try:

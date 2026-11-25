@@ -125,7 +125,7 @@ def test_supporter_gridfile_from_data_file(tmp_path):
 
 
 def test_supporter_interp_staggered_grid(tmp_path):
-    """A field on a grid other than the inifiles one (e.g. UKESM v-points, 145 lats) gets its own cached weights."""
+    """A field on a grid other than the inifiles one (e.g. UKESM v-points) gets its own interpolation weights."""
     gridfile = tmp_path / "grid.nc"
     lat = np.linspace(-89.5, 89.5, 180)
     lon = np.arange(0.5, 360.0, 1.0)
@@ -141,7 +141,7 @@ def test_supporter_interp_staggered_grid(tmp_path):
     tas = xr.DataArray(np.ones((len(lat), len(lon))), coords={"lat": lat, "lon": lon}, dims=["lat", "lon"], name="tas")
     assert support.get_interp(tas, "atm") == (None, support.atmremap)
 
-    # staggered 3D field, poles included: new weights, valid interpolation, reused for a second field
+    # staggered 3D field, poles included: new weights giving a valid interpolation
     vlat = np.linspace(-90.0, 90.0, 181)
     plev = [85000.0, 50000.0]
     va = xr.DataArray(
@@ -150,12 +150,9 @@ def test_supporter_interp_staggered_grid(tmp_path):
     fix, remap = support.get_interp(va, "atm")
     assert fix is None and remap is not support.atmremap
     final = remap(va)
-    assert final.shape == (len(plev), targetgrid.sizes["lat"], targetgrid.sizes["lon"])
+    assert final.shape == (len(plev), len(tlat), len(tlon))
     assert np.allclose(final, 1.0)
-    assert support.get_interp(va.isel(plev=0).rename("tauv"), "atm")[1] is remap
-    assert len(support.extra_remaps["atm"]) == 1
 
-    # same shape but shifted longitudes (e.g. u-points): different grid, new weights
+    # same shape but longitudes shifted by half a cell (e.g. u-points): new weights as well
     ua = tas.assign_coords(lon=lon - 0.5).rename("ua")
-    assert support.get_interp(ua, "atm")[1] not in (support.atmremap, remap)
-    assert len(support.extra_remaps["atm"]) == 2
+    assert support.get_interp(ua, "atm")[1] is not support.atmremap

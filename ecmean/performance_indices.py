@@ -363,6 +363,9 @@ def _pi_variable(var, util, piclim, face, diag, field_3d):
     # time means of all the seasons in a single pass on the data, so memory does not scale with the record
     tmeans = season_means(field, diag.seasons)
 
+    # default interpolation weights, or new ones if the field is not on the inifiles grid (e.g. staggered)
+    fix, remap = util.get_interp(tmeans, domain)
+
     # climatology average and variance of all the seasons (small files), computed together
     (clims,) = dask.compute(
         {season: tuple(c.mean(dim="time") for c in _load_clim(piclim, var, diag, season)) for season in diag.seasons}
@@ -374,8 +377,6 @@ def _pi_variable(var, util, piclim, face, diag, field_3d):
         cfield, vfield = clims[season]
 
         # apply interpolation, if fixer is available and with different grids
-        # weights are rebuilt (and cached) for fields not on the grid of the inifiles, e.g. staggered ones
-        fix, remap = util.get_interp(tmean, domain)
         if fix:
             tmean = fix(tmean, keep_attrs=True)
         try:

@@ -12,6 +12,9 @@ Unreleased is the current development version, which is currently lying in `main
 2. The offline reference/climatology tools (`utils/reference-create.py`, `utils/clim-create.py`) now use complete years only: datasets starting or ending mid-year (e.g. CERES-EBAF, from March 2000) no longer average a partial year as if it were complete. The CERES-derived EC26 global-mean references change (regional annual means and std of shortwave fluxes, `year1` becomes 2001) (#175)
 3. Performance indices of fields on a grid other than the inifiles one get their own interpolation weights: PIs that were NaN become finite (e.g. UKESM1-0-LL `tauv`, `ua`, `va`; NorESM2 `siconc`), and fields on a shifted grid of the same shape change value (e.g. UKESM1-0-LL `tauu` on u-points, global PI 5.38 -> 4.73) (#182)
 
+Added
+- New `--tool CDO` option (`tool="CDO"` in the API) for the performance indices: horizontal interpolation with CDO weights through `smmregrid` (`skipna=True`), as an alternative to the default xESMF. The CDO interpolator uses the same preprocessed grid field, variable selection and method choice as the ESMF one (bilinear, nearest neighbour on unstructured and gaussian reduced grids), including the per-field weights of fields not on the inifiles grid (#182); results with the default ESMF tool are unchanged. Requires CDO >= 2.6.2 and `smmregrid >= 0.2.0` (#124)
+
 Fixed
 - `open_input_files()` no longer fails on files whose bounds (`time_bnds`, ...) or coordinates differ by rounding: the new fixers `ncfixers.drop_bounds` and `ncfixers.align_coords` are applied only when their symptom shows up (a `MergeError` on a bounds variable; grid points duplicated by the outer join). This restores `net_sfc` for CESM2, CESM2-FV2 and CESM2-WACCM-FV2 (`prsn` differs by rounding); files that opened cleanly are unchanged (#181)
 - `LICENSE`: the copyright placeholder is filled in with Paolo Davini (CNR-ISAC) and Jost von Hardenberg (Politecnico di Torino), 2025
@@ -24,6 +27,8 @@ Fixed
 - GM references EC26-CMIP/HIST/PDAY: `clt` dataset label is now `CERES EBAF` (was `EBAF_v4.2.1`), as for the other CERES variables; values unchanged (#176)
 
 Changed
+- Interpolation moved to `libs/interpolators.py` (`ESMFInterpolator`, `CDOInterpolator`, `InterpolatorFactory`, together with `mask_coincident_cells`): `Supporter` exposes `atminterpolator`/`oceinterpolator` instead of `atmfix`/`atmremap`/`ocefix`/`oceremap`, and `Supporter.get_interp()` returns an interpolator instead of a `(fix, remap)` tuple (breaking for code using these `Supporter` attributes) (#124)
+- ruff `target-version` set to `py310`, matching the minimum supported Python: with `py314` the formatter rewrote `except (A, B):` in the PEP 758 form that does not compile on older interpreters (#124)
 - GM references EC26-CMIP/HIST/PDAY: `rsns` and `rlns` now come from CERES-EBAF 4.2.1 (`sfc_net_sw_all_mon`, `sfc_net_lw_all_mon`) instead of Wild (2020), adding regional/seasonal values, `std` and the reference period. `hfss`, `hfls`, `net_sfc`, `net_sfc_nosn` stay on Wild (2020); `gm_reference_EC23.yml` is unchanged (#172)
 
 ## [v0.3.0]

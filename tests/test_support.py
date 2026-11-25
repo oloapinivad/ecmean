@@ -4,7 +4,11 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from ecmean.libs.support import Supporter, check_file_exist, identify_grid, mask_coincident_cells
+from ecmean.libs.interpolators import cdo_available, cdo_method, mask_coincident_cells
+from ecmean.libs.support import Supporter, check_file_exist, identify_grid
+
+# interpolation tools to test, CDO only when a recent enough executable is available
+TOOLS = ["ESMF", pytest.param("CDO", marks=pytest.mark.skipif(not cdo_available(), reason="CDO >= 2.6.2 not available"))]
 
 
 def _regular_field(lat):
@@ -53,7 +57,16 @@ def test_check_file_exist_found(tmp_path):
     assert check_file_exist(str(tmp_path / "ma*.nc")) == str(target)
 
 
-def test_supporter_omip_without_masks():
+@pytest.mark.parametrize(
+    "gridtype,method", [("lonlat", "bil"), ("gaussian", "bil"), ("curvilinear", "bil"), ("unstructured", "nn")]
+)
+def test_cdo_method(gridtype, method):
+    """Bilinear everywhere but on unstructured grids, as ESMF."""
+    assert cdo_method(gridtype) == method
+
+
+@pytest.mark.parametrize("tool", TOOLS)
+def test_supporter_omip_without_masks(tool):
     """OMIP: ocean grid only, no atmospheric files and no ocean mask, with remapping."""
     lon, lat = np.arange(0.5, 360, 10.0), np.arange(-85, 90, 10.0)
     targetgrid = xr.Dataset(
@@ -63,13 +76,14 @@ def test_supporter_omip_without_masks():
     atmdict = {"maskfile": "", "gridfile": "", "areafile": ""}
     ocedict = {"maskfile": "", "gridfile": "", "areafile": "tests/data/omip/domain_cfg.nc"}
 
-    support = Supporter({"atm": "oifs", "oce": "nemo"}, atmdict, ocedict, areas=False, remap=True, targetgrid=targetgrid)
+    support = Supporter(
+        {"atm": "oifs", "oce": "nemo"}, atmdict, ocedict, areas=False, remap=True, targetgrid=targetgrid, tool=tool
+    )
 
     assert support.atmmask is None
     assert support.atmarea is None
     assert support.ocemask is None
-    assert support.oceremap is not None
-    assert support.oceremap.method == "bilinear"
+    assert support.oceinterpolator is not None
 
 
 def test_mask_coincident_cells():
@@ -124,7 +138,8 @@ def test_supporter_gridfile_from_data_file(tmp_path):
     assert support.atmarea.dims == ("lat", "lon")
 
 
-def test_supporter_interp_staggered_grid(tmp_path):
+@pytest.mark.parametrize("tool", TOOLS)
+def test_supporter_interp_staggered_grid(tmp_path, tool):
     """A field on a grid other than the inifiles one (e.g. UKESM v-points) gets its own interpolation weights."""
     gridfile = tmp_path / "grid.nc"
     lat = np.linspace(-89.5, 89.5, 180)
@@ -135,11 +150,13 @@ def test_supporter_interp_staggered_grid(tmp_path):
     tlat, tlon = np.arange(-89.0, 90.0, 2.0), np.arange(1.0, 360.0, 2.0)
     targetgrid = xr.Dataset({"tas": (("lat", "lon"), np.zeros((len(tlat), len(tlon))))}, coords={"lon": tlon, "lat": tlat})
 
-    support = Supporter({"atm": "cmoratm", "oce": "cmoroce"}, atmdict, ocedict, areas=False, remap=True, targetgrid=targetgrid)
+    support = Supporter(
+        {"atm": "cmoratm", "oce": "cmoroce"}, atmdict, ocedict, areas=False, remap=True, targetgrid=targetgrid, tool=tool
+    )
 
     # field on the inifiles grid: default weights
     tas = xr.DataArray(np.ones((len(lat), len(lon))), coords={"lat": lat, "lon": lon}, dims=["lat", "lon"], name="tas")
-    assert support.get_interp(tas, "atm") == (None, support.atmremap)
+    assert support.get_interp(tas, "atm") is support.atminterpolator
 
     # staggered 3D field, poles included: new weights giving a valid interpolation
     vlat = np.linspace(-90.0, 90.0, 181)
@@ -147,12 +164,12 @@ def test_supporter_interp_staggered_grid(tmp_path):
     va = xr.DataArray(
         np.ones((len(plev), len(vlat), len(lon))), coords={"plev": plev, "lat": vlat, "lon": lon}, dims=["plev", "lat", "lon"]
     ).rename("va")
-    fix, remap = support.get_interp(va, "atm")
-    assert fix is None and remap is not support.atmremap
-    final = remap(va)
+    interpolator = support.get_interp(va, "atm")
+    assert interpolator.fix is None and interpolator is not support.atminterpolator
+    final = interpolator.interpolate(va)
     assert final.shape == (len(plev), len(tlat), len(tlon))
     assert np.allclose(final, 1.0)
 
     # same shape but longitudes shifted by half a cell (e.g. u-points): new weights as well
     ua = tas.assign_coords(lon=lon - 0.5).rename("ua")
-    assert support.get_interp(ua, "atm")[1] is not support.atmremap
+    assert support.get_interp(ua, "atm") is not support.atminterpolator

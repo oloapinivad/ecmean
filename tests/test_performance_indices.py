@@ -16,6 +16,7 @@ import yaml
 from ecmean import PerformanceIndices, performance_indices
 from ecmean.libs.climatology import DEPRECATED_CLIMATOLOGY
 from ecmean.libs.general import are_dicts_equal
+from ecmean.libs.interpolators import cdo_available
 from ecmean.libs.ncfixers import xr_preproc
 
 # from ecmean.libs.plotting import heatmap_comparison_pi, prepare_clim_dictionaries_pi
@@ -25,6 +26,8 @@ TOLERANCE = 1e-1
 # set CLEANUP flag to control removal of generated YML files after tests
 CLEANUP = True
 OUTPUTDIR = "tests/pluto"
+# interpolation tools to test, CDO only when a recent enough executable is available
+TOOLS = ["ESMF", pytest.param("CDO", marks=pytest.mark.skipif(not cdo_available(), reason="CDO >= 2.6.2 not available"))]
 
 # set up coverage env var
 env = {**os.environ, "COVERAGE_PROCESS_START": ".coveragerc"}
@@ -55,9 +58,12 @@ def test_performance_indices_cpld(clim):
 
 # test on amip
 @pytest.mark.parametrize("clim", ["EC26-CMIP"])
-def test_performance_indices_amip(clim):
-    """Test performance indices on AMIP EC-Earth4 data with custom output directory."""
-    performance_indices("amip", 1990, 1990, numproc=1, climatology=clim, config="tests/config.yml", outputdir=OUTPUTDIR)
+@pytest.mark.parametrize("tool", TOOLS)
+def test_performance_indices_amip(clim, tool):
+    """Test performance indices on AMIP EC-Earth4 data with custom output directory, with both interpolation tools."""
+    performance_indices(
+        "amip", 1990, 1990, numproc=1, climatology=clim, config="tests/config.yml", outputdir=OUTPUTDIR, tool=tool
+    )
     file1 = "tests/pluto/YAML/PI_" + clim + "_amip_EC-Earth4_r1i1p1f1_1990_1990.yml"
     file2 = "tests/table/PI_" + clim + "_amip_1990_1990.ref"
     with open(file1, "r", encoding="utf8") as f1, open(file2, "r", encoding="utf8") as f2:
@@ -70,9 +76,12 @@ def test_performance_indices_amip(clim):
 
 
 @pytest.mark.parametrize("clim", ["EC26-HIST"])
-def test_performance_indices_omip(clim):
-    """Test performance indices on OMIP EC-Earth4 data."""
-    performance_indices("omip", 1990, 1990, numproc=1, climatology=clim, config="tests/config.yml", outputdir=OUTPUTDIR)
+@pytest.mark.parametrize("tool", TOOLS)
+def test_performance_indices_omip(clim, tool):
+    """Test performance indices on OMIP EC-Earth4 data, with both interpolation tools."""
+    performance_indices(
+        "omip", 1990, 1990, numproc=1, climatology=clim, config="tests/config.yml", outputdir=OUTPUTDIR, tool=tool
+    )
     file1 = "tests/pluto/YAML/PI_" + clim + "_omip_EC-Earth4_r1i1p1f1_1990_1990.yml"
     file2 = "tests/table/PI_" + clim + "_omip_1990_1990.ref"
     with open(file1, "r", encoding="utf8") as f1, open(file2, "r", encoding="utf8") as f2:

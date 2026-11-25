@@ -2,6 +2,12 @@
 Shared functions for Xarray
 """
 
+import numpy as np
+
+# tolerance (relative and absolute) for coordinates "equal up to rounding": float32 keeps about 7 digits
+# (relative precision 1.2e-7), while grid spacings are many orders of magnitude larger than 1e-6
+ROUNDING_TOL = 1e-6
+
 #########################
 # FILE FORMAT FUNCTIONS #
 #########################
@@ -72,6 +78,97 @@ def xr_preproc(ds):
         ds = ds.rename(to_rename)
 
     return ds
+
+
+def is_bounds_name(name):
+    """Whether a variable name is a usual cell-bounds name (``*_bnds``, ``*_bounds``, ``bounds_*``)."""
+
+    return name.endswith(("_bnds", "_bounds")) or name.startswith("bounds_")
+
+
+def bounds_names(ds):
+    """Names of the cell-bounds variables of a dataset.
+
+    Args:
+        ds (xarray.Dataset): the dataset to inspect.
+
+    Returns:
+        set: the variables referenced by a ``bounds`` attribute (or encoding, where xarray
+            moves it when decoding times), plus those named ``*_bnds``, ``*_bounds`` or ``bounds_*``.
+    """
+
+    names = set()
+    for var in ds.variables.values():
+        for meta in (var.attrs, var.encoding):
+            if isinstance(meta.get("bounds"), str):
+                names.add(meta["bounds"])
+    names.update(n for n in ds.variables if is_bounds_name(n))
+    return names & set(ds.variables)
+
+
+def drop_bounds(ds):
+    """Preprocessing fixer that drops the cell-bounds variables (see bounds_names).
+
+    Meant for input data only: the area files need their ``lat_bnds``/``lon_bnds``.
+
+    Args:
+        ds (xarray.Dataset): the dataset to fix.
+
+    Returns:
+        xarray.Dataset: the dataset without its bounds variables.
+    """
+
+    return ds.drop_vars(bounds_names(ds))
+
+
+def rounded_duplicates(ds):
+    """Find the dimension coordinates (all but time) with neighbouring values equal up to
+    rounding (ROUNDING_TOL). This is the symptom of an outer join of files whose coordinates
+    differ by rounding: each grid point appears twice. It is fixed with align_coords.
+
+    Args:
+        ds (xarray.Dataset): the dataset to check.
+
+    Returns:
+        dict: dimension name -> number of values close to their neighbour, for the affected dimensions.
+    """
+
+    found = {}
+    for dim in ds.dims:
+        # rounding only affects floating-point coordinates (integer ones are indices)
+        if dim == "time" or dim not in ds.coords or not np.issubdtype(ds[dim].dtype, np.floating):
+            continue
+        values = np.sort(ds[dim].values)
+        close = int(np.isclose(values[1:], values[:-1], rtol=ROUNDING_TOL, atol=ROUNDING_TOL).sum())
+        if close:
+            found[dim] = close
+    return found
+
+
+def align_coords(reference):
+    """Build a preprocessing fixer that replaces the dimension coordinates of a dataset with
+    the reference ones when they have the same size and differ only by rounding (ROUNDING_TOL,
+    e.g. float32-rounded latitudes), so that an outer join does not duplicate grid points.
+
+    Args:
+        reference (dict): dimension name -> xarray.DataArray with the reference coordinate.
+
+    Returns:
+        function: the fixer, taking and returning an xarray.Dataset.
+    """
+
+    def fixer(ds):
+        for dim, coord in reference.items():
+            if (
+                dim in ds.coords
+                and ds.sizes[dim] == coord.size
+                and np.issubdtype(ds[dim].dtype, np.floating)
+                and np.allclose(ds[dim].values, coord.values, rtol=ROUNDING_TOL, atol=ROUNDING_TOL)
+            ):
+                ds = ds.assign_coords({dim: coord})
+        return ds
+
+    return fixer
 
 
 def adjust_clim_file(cfield, remove_zero=False):

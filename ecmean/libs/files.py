@@ -4,6 +4,7 @@ Shared functions for XArray ecmean
 
 import logging
 import os
+import re
 from glob import glob
 from pathlib import Path
 
@@ -13,7 +14,7 @@ import yaml
 from ecmean.libs.climatology import SUPPORTED_CLIMATOLOGY
 from ecmean.libs.formula import formula_variables, formula_wrapper
 from ecmean.libs.general import check_time_axis, check_var_interface
-from ecmean.libs.ncfixers import xr_preproc
+from ecmean.libs.ncfixers import align_coords, bounds_names, drop_bounds, is_bounds_name, rounded_duplicates, xr_preproc
 
 loggy = logging.getLogger(__name__)
 
@@ -42,16 +43,114 @@ def inifiles_priority(inidict):
     return None
 
 
+def _reference_file(flist, preprocess=None):
+    """Read the first file of a list (or glob pattern), the reference for the fixers of open_input_files.
+
+    Args:
+        flist (list or str): files (or glob pattern).
+        preprocess (function, optional): applied to the file before reading it.
+
+    Returns:
+        dict: ``coords``, the dimension coordinates but time (name -> DataArray), and
+            ``bounds``, the names of the bounds variables (see ncfixers.bounds_names).
+    """
+
+    first = min(glob(flist)) if isinstance(flist, str) else flist[0]
+    with xr.open_dataset(first) as xfield:
+        if preprocess is not None:
+            xfield = preprocess(xfield)
+        coords = {dim: xfield[dim].load() for dim in xfield.dims if dim in xfield.coords and dim != "time"}
+        return {"coords": coords, "bounds": bounds_names(xfield)}
+
+
+def _conflicting_variable(err):
+    """Name of the variable in an xarray MergeError ("conflicting values for variable 'X' ..").
+
+    The message format belongs to xarray: if it changes, an empty name is returned, which
+    is not a bounds name, so open_input_files raises the error instead of fixing it.
+    """
+
+    match = re.search(r"variable '([^']+)'", str(err))
+    return match.group(1) if match else ""
+
+
+def _chain(*functions):
+    """Combine preprocess functions into one applying them in order, skipping None.
+    Returns None when there is nothing to apply (xarray's default)."""
+
+    functions = [f for f in functions if f is not None]
+
+    def chained(xfield):
+        for function in functions:
+            xfield = function(xfield)
+        return xfield
+
+    return chained if functions else None
+
+
 def open_input_files(flist, **kwargs):
     """Open a list of files as a single dataset, with the same combine/join
-    options for all the diagnostics. Extra keyword arguments (e.g. preprocess,
-    chunks) are passed to xarray.open_mfdataset."""
+    options for all the diagnostics.
+
+    Files of different variables of the same model may differ by rounding
+    (CESM2 ``prsn`` has float32 latitudes and a first ``time_bnds`` of
+    1849-12-31 23:29:59.999997). The files are first opened as they are; a
+    fixer from ncfixers is added, and the files opened again, only when its
+    symptom shows up:
+
+    1. MergeError on a bounds variable (e.g. ``time_bnds``) -> ``drop_bounds``
+       (the diagnostics never use the bounds of the input data);
+    2. grid points duplicated by the outer join (``rounded_duplicates``) ->
+       ``align_coords``, onto the coordinates of the first file.
+
+    Files opening cleanly are opened once and not touched; any other
+    conflict raises.
+
+    Args:
+        flist (list or str): files (or glob pattern) to open.
+        **kwargs: passed to xarray.open_mfdataset (e.g. preprocess, chunks).
+
+    Returns:
+        xarray.Dataset: the combined dataset.
+    """
 
     # xarray keeps up to 128 files open, each holding the 64 MiB chunk cache of netCDF-C: streaming monthly
     # files, a worker would accumulate gigabytes of useless cache (12 GB instead of 5 GB on 10 years of 3D
     # CMCC-CM2-VHR4 fields), so the open files are limited to about one block of time chunks (season_means)
     xr.set_options(file_cache_maxsize=FILE_CACHE_MAXSIZE)
-    return xr.open_mfdataset(flist, combine="by_coords", data_vars="all", join="outer", compat="no_conflicts", **kwargs)
+    options = {"combine": "by_coords", "data_vars": "all", "join": "outer", "compat": "no_conflicts"}
+    preprocess = kwargs.pop("preprocess", None)
+
+    def _open(*fixers):
+        return xr.open_mfdataset(flist, **options, preprocess=_chain(preprocess, *fixers), **kwargs)
+
+    # the fixers are decided here only, in this fixed order, each at most once: at most three opens,
+    # and a failure after a fixer is applied propagates
+    fixers, reference = [], None
+
+    # step 1: conflicting bounds variables -> drop_bounds
+    try:
+        xfield = _open()
+    except xr.MergeError as err:
+        name = _conflicting_variable(err)
+        if not is_bounds_name(name):
+            reference = _reference_file(flist, preprocess)
+            if name not in reference["bounds"]:
+                raise
+        loggy.warning("Conflicting bounds variable %s in the input files: dropping the bounds", name)
+        fixers.append(drop_bounds)
+        xfield = _open(*fixers)
+
+    # step 2: grid points duplicated by the outer join -> align_coords
+    duplicated = rounded_duplicates(xfield)
+    if duplicated:
+        loggy.warning("Grid points duplicated in the input files (%s): aligning coordinates to the first file", duplicated)
+        xfield.close()
+        reference = reference or _reference_file(flist, preprocess)
+        fixers.append(align_coords(reference["coords"]))
+        xfield = _open(*fixers)
+
+    return xfield
 
 
 def files_exist(flist, var):

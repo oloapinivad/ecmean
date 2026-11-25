@@ -3,7 +3,7 @@
 import numpy as np
 import xarray as xr
 
-from ecmean.libs.ncfixers import xr_preproc
+from ecmean.libs.ncfixers import align_coords, drop_bounds, rounded_duplicates, xr_preproc
 
 
 def test_xr_preproc_renames_coordinates():
@@ -47,3 +47,36 @@ def test_xr_preproc_other_lev_untouched():
     """Hybrid sigma levels and ocean depths named 'lev' are not renamed."""
     for standard_name in ["atmosphere_hybrid_sigma_pressure_coordinate", "depth", ""]:
         assert xr_preproc(_lev_dataset(standard_name))["ta"].dims == ("lev", "lat")
+
+
+def test_drop_bounds():
+    """Bounds named by attribute or by the usual names are dropped, data are kept"""
+    ds = xr.Dataset(
+        {
+            "tas": (("time",), np.zeros(2)),
+            "time_bnds": (("time", "bnds"), np.zeros((2, 2))),
+            "vertices": (("time", "bnds"), np.zeros((2, 2))),
+        },
+        coords={"time": [0, 1]},
+    )
+    ds["time"].attrs["bounds"] = "vertices"
+    assert set(drop_bounds(ds).variables) == {"tas", "time"}
+
+
+def test_align_coords_rounding_only():
+    """Coordinates equal up to rounding are replaced, different ones are kept"""
+    lat = np.array([-89.05759162, 45.0])
+    reference = {"lat": xr.DataArray(lat, dims="lat")}
+    fix = align_coords(reference)
+    rounded = xr.Dataset(coords={"lat": lat.astype("float32").astype("float64")})
+    np.testing.assert_array_equal(fix(rounded)["lat"].values, lat)
+    other = xr.Dataset(coords={"lat": [-60.0, 30.0]})
+    np.testing.assert_array_equal(fix(other)["lat"].values, [-60.0, 30.0])
+
+
+def test_rounded_duplicates():
+    """Latitudes duplicated by rounding are found, regular grids and integer indices are not"""
+    lat = np.array([-89.05759162, 45.0])
+    joined = np.union1d(lat, lat.astype("float32").astype("float64"))
+    assert rounded_duplicates(xr.Dataset(coords={"lat": joined, "lon": [0.0, 1.25]})) == {"lat": 1}
+    assert rounded_duplicates(xr.Dataset(coords={"lat": lat, "cell": np.arange(5)})) == {}

@@ -360,11 +360,11 @@ def _pi_variable(var, util, piclim, face, diag, field_3d):
     domain = get_domain(var, face)
     offset, factor = UnitsHandler(var, org_units=varunit, clim=piclim, face=face).units_converter()
 
-    fix = getattr(util, f"{domain}fix")
-    remap = getattr(util, f"{domain}remap")
-
     # time means of all the seasons in a single pass on the data, so memory does not scale with the record
     tmeans = season_means(field, diag.seasons)
+
+    # default interpolation weights, or new ones if the field is not on the inifiles grid (e.g. staggered)
+    fix, remap = util.get_interp(tmeans, domain)
 
     # climatology average and variance of all the seasons (small files), computed together
     (clims,) = dask.compute(

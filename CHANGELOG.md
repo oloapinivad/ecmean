@@ -13,6 +13,7 @@ Unreleased is the current development version, which is currently lying in `main
 3. Performance indices of fields on a grid other than the inifiles one get their own interpolation weights: PIs that were NaN become finite (e.g. UKESM1-0-LL `tauv`, `ua`, `va`; NorESM2 `siconc`), and fields on a shifted grid of the same shape change value (e.g. UKESM1-0-LL `tauu` on u-points, global PI 5.38 -> 4.73) (#182)
 
 Fixed
+- Formulas of the interface files accept again variable names starting with a digit (e.g. `derived: '2t'` for `tas`), broken since the formula parser rewrite (#179)
 - Performance indices no longer fail with "Cannot interpolate ... with the current weights" for fields on a grid different from the areafile/gridfile/maskfile one (staggered winds and stresses of HadGEM3/UKESM/ACCESS, CICE sea ice of NorESM2/CMCC): `Supporter.get_interp()` compares lon/lat coordinates with the inifiles grid and computes new weights from the field coordinates when they differ (#182)
 - `utils/reference-create.py` gets a `--variables` option to recompute only some variables, keeping the others in the existing reference file (#175)
 - `utils/reference-create.py` no longer fails on variables whose name is not a valid formula token (e.g. `2t` for `tas`): a name already present in the input file is used directly (#172)

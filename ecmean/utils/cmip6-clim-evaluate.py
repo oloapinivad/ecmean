@@ -28,45 +28,52 @@ warnings.simplefilter("ignore")
 config_file = "config_create_clim.yml"
 climdir = "../climatology/"
 
-# models = ['EC-Earth3', 'IPSL-CM6A-LR', 'FGOALS-g3', 'TaiESM1', 'CanESM5', 'CESM2',
-#          'MIROC6', 'MPI-ESM1-2-HR', 'AWI-CM-1-1-MR', 'CMCC-CM2-SR5', 'NorESM2-MM', 'GFDL-CM4']
+# CMIP6 coupled models (historical), one line per modelling centre. Selected from the esgpull archive
+# as the models with at least 5 PIs over 1985-2014 and a land-sea mask (sftlf) on the atmospheric grid:
+# models without sftlf (e.g. CAS-ESM2-0, HadGEM3-GC31-LL/MM, NESM3, UKESM1-1-LL) are left out
 models = [
-    "EC-Earth3",
-    "IPSL-CM6A-LR",
-    "FGOALS-g3",
-    "CanESM5",
-    "CESM2",
-    "CNRM-CM6-1",
-    "GISS-E2-1-G",
-    "ACCESS-CM2",
-    "CNRM-CM6-1",
-    "SAM0-UNICON",
-    "UKESM1-0-LL",
-    "MIROC6",
-    "MPI-ESM1-2-HR",
-    "AWI-CM-1-1-MR",
-    "NorESM2-MM",
-    "GFDL-CM4",
+    "TaiESM1",  # AS-RCEC
+    "AWI-CM-1-1-MR", "AWI-ESM-1-1-LR", "AWI-ESM-1-REcoM",  # AWI
+    "BCC-CSM2-MR", "BCC-ESM1",  # BCC
+    "FGOALS-f3-L", "FGOALS-g3",  # CAS
+    "CanESM5", "CanESM5-CanOE",  # CCCma
+    "CMCC-CM2-HR4", "CMCC-CM2-SR5", "CMCC-ESM2",  # CMCC
+    "CNRM-CM6-1", "CNRM-CM6-1-HR", "CNRM-ESM2-1",  # CNRM-CERFACS
+    "ACCESS-ESM1-5", "ACCESS-CM2",  # CSIRO, CSIRO-ARCCSS
+    "E3SM-1-0", "E3SM-1-1", "E3SM-1-1-ECA",  # E3SM-Project
+    "EC-Earth3", "EC-Earth3-AerChem", "EC-Earth3-Veg", "EC-Earth3-Veg-LR",  # EC-Earth-Consortium
+    "MPI-ESM-1-2-HAM",  # HAMMOZ-Consortium
+    "INM-CM4-8", "INM-CM5-0",  # INM
+    "IPSL-CM6A-LR",  # IPSL
+    "MIROC6", "MIROC-ES2L",  # MIROC
+    "UKESM1-0-LL",  # MOHC
+    "ICON-ESM-LR", "MPI-ESM1-2-HR", "MPI-ESM1-2-LR",  # MPI-M
+    "MRI-ESM2-0",  # MRI
+    "GISS-E2-1-G",  # NASA-GISS
+    "CESM2", "CESM2-FV2", "CESM2-WACCM", "CESM2-WACCM-FV2",  # NCAR
+    "NorCPM1", "NorESM2-LM", "NorESM2-MM",  # NCC
+    "GFDL-CM4", "GFDL-ESM4",  # NOAA-GFDL
+    "SAM0-UNICON",  # SNU
 ]
 # models = ['EC-Earth3']
 
-# models currently missing on the ESGF
-# models= ['CMCC-CM2-SR5', 'TaiESM1']
-
-# HighResMIP high-resolution coupled models (hist-1950), used for the -HR climatologies (e.g. EC26-CMIP-HR).
-# Several of them do not provide fx/Ofx files: the CMIP6_highresmip interface uses
-# a data file as gridfile, and the variables requiring the land-sea mask are skipped
+# HighResMIP high-resolution coupled models (hist-1950), used for the -HR climatologies (e.g. EC26-CMIP-HR),
+# one line per modelling centre. Selected from the esgpull archive as the high-resolution models with at least
+# 5 PIs over 1985-2014. CESM1-CAM5-SE-HR and MPI-ESM1-2-XR have no land-sea mask (sftlf): they are kept
+# for the PIs that do not need it (global variables and those on the ocean grid), while tas, net_sfc,
+# tauu and tauv are NaN. AWI-CM-1-1-HR has no atmospheric data and provides the ocean PIs only.
+# The standard-resolution counterparts (e.g. CMCC-CM2-HR4, HadGEM3-GC31-MM, ECMWF-IFS-LR) are left out
 highresmip_models = [
-    "AWI-CM-1-1-HR",
-    "BCC-CSM2-HR",
-    "CESM1-CAM5-SE-HR",
-    "CMCC-CM2-VHR4",
-    "CNRM-CM6-1-HR",
-    "EC-Earth3P-HR",
-    "ECMWF-IFS-HR",
-    "HadGEM3-GC31-HH",
-    "INM-CM5-H",
-    "MPI-ESM1-2-XR",
+    "AWI-CM-1-1-HR",  # AWI
+    "BCC-CSM2-HR",  # BCC
+    "CESM1-CAM5-SE-HR",  # NCAR
+    "CMCC-CM2-VHR4",  # CMCC
+    "CNRM-CM6-1-HR",  # CNRM-CERFACS
+    "EC-Earth3P-HR",  # EC-Earth-Consortium
+    "ECMWF-IFS-HR",  # ECMWF
+    "INM-CM5-H",  # INM
+    "HadGEM3-GC31-HH", "HadGEM3-GC31-HM",  # MOHC, NERC
+    "MPI-ESM1-2-XR",  # MPI-M
 ]
 
 # experiment, MIP, interface and models for each climatology family (CMIP6 by default)
@@ -76,10 +83,13 @@ HIGHRESMIP_SETUP = {"expname": "hist-1950", "mip": "HighResMIP", "interface": "C
 # models whose ensemble member or consortium differ from the default r1i1p1f1 and '*'
 ENSEMBLES = {
     "CNRM-CM6-1": "r1i1p1f2",
+    "CNRM-ESM2-1": "r1i1p1f2",
+    "CanESM5-CanOE": "r1i1p2f1",
+    "MIROC-ES2L": "r1i1p1f2",
     "UKESM1-0-LL": "r1i1p1f2",
     "AWI-CM-1-1-HR": "r1i1p1f2",
     "CNRM-CM6-1-HR": "r1i1p1f2",
-    "EC-Earth3P-HR": "r1i1p2f1",
+    "EC-Earth3P-HR": "r2i1p2f1",
 }
 CONSORTIA = {"HadGEM3-GC31-HH": "NERC"}
 # performance indices left out of the climatology for a specific model, as {model: {variable: reason}}.
@@ -89,12 +99,37 @@ EXCLUDE = {
     "AWI-CM-1-1-HR": {"sos": "Baltic Sea 13-24 psu against 5-7 psu in ORAS5: 64 cells give 53% of the global PI"},
     "BCC-CSM2-HR": {"sos": "Red Sea up to 59 psu against 38 psu in ORAS5: 29 cells give 66% of the global PI"},
     "CNRM-CM6-1-HR": {
+        "tas": "cold bias over land: PI 61 in hist-1950 and 54 in historical, against 14-22 for the other models",
         "ta": "troposphere about 4 K colder than ERA5 (500 hPa global mean 254.4 K against 258.5 K): PI 197",
         "hus": "35-65% of the ERA5 humidity between 300 and 100 hPa: PI 80",
     },
     "INM-CM5-H": {
         "ta": "troposphere about 2 K warmer than ERA5 and tropopause biases (PI 137 at 150 hPa): PI 51",
         "hus": "30-50% more humid than ERA5 in the upper troposphere (PI 342 at 150 hPa): PI 72",
+    },
+    # errors in the published CMIP6 data
+    "CMCC-CM2-HR4": {"tauu": "wind stress with flipped sign", "tauv": "wind stress with flipped sign"},
+    "CMCC-CM2-SR5": {"tauu": "wind stress with flipped sign", "tauv": "wind stress with flipped sign"},
+    "CMCC-ESM2": {"tauu": "wind stress with flipped sign", "tauv": "wind stress with flipped sign"},
+    "FGOALS-f3-L": {
+        "tauu": "wind stress with flipped sign",
+        "tauv": "wind stress with flipped sign",
+        "siconc": "grid stored in reverse order with respect to areacello and tos",
+    },
+    "FGOALS-g3": {"siconc": "grid stored in reverse order with respect to areacello and tos"},
+    "CMCC-CM2-VHR4": {"siconc": "undeclared fill values 1e20 in the coordinates and 1e30 in the data"},
+    "E3SM-1-1": {
+        "ta": "undeclared fill value 9.97e36 below the ground",
+        "ua": "undeclared fill value 9.97e36 below the ground",
+        "va": "undeclared fill value 9.97e36 below the ground",
+    },
+    "E3SM-1-1-ECA": {"ta": "values close to zero below the ground"},
+    "GISS-E2-1-G": {"hus": "undeclared fill value -1e27"},
+    "EC-Earth3-Veg": {
+        "hus": "only 11-16 of the 30 years available",
+        "tauu": "only 11-16 of the 30 years available",
+        "tauv": "only 11-16 of the 30 years available",
+        "va": "only 11-16 of the 30 years available",
     },
 }
 

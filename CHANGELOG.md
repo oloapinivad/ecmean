@@ -11,6 +11,7 @@ Unreleased is the current development version, which is currently lying in `main
 1. GM reference values for `rsns` and `rlns` change in EC26-CMIP/HIST/PDAY: global means move from the Wild (2020) scalars (160 / -56 W/m2) to CERES-EBAF 4.2.1 (about +3.6 / +3.8 W/m2), see the Changed section (#172)
 2. The offline reference/climatology tools (`utils/reference-create.py`, `utils/clim-create.py`) now use complete years only: datasets starting or ending mid-year (e.g. CERES-EBAF, from March 2000) no longer average a partial year as if it were complete. The CERES-derived EC26 global-mean references change (regional annual means and std of shortwave fluxes, `year1` becomes 2001) (#175)
 3. Performance indices of fields on a grid other than the inifiles one get their own interpolation weights: PIs that were NaN become finite (e.g. UKESM1-0-LL `tauv`, `ua`, `va`; NorESM2 `siconc`), and fields on a shifted grid of the same shape change value (e.g. UKESM1-0-LL `tauu` on u-points, global PI 5.38 -> 4.73) (#182)
+4. PI climatologies EC26-CMIP (47 models instead of 15) and EC26-CMIP-HR (11 instead of 10) are regenerated: the relative PIs of every run change, see the Changed section
 
 Fixed
 - `open_input_files()` no longer fails on files whose bounds (`time_bnds`, ...) or coordinates differ by rounding: the new fixers `ncfixers.drop_bounds` and `ncfixers.align_coords` are applied only when their symptom shows up (a `MergeError` on a bounds variable; grid points duplicated by the outer join). This restores `net_sfc` for CESM2, CESM2-FV2 and CESM2-WACCM-FV2 (`prsn` differs by rounding); files that opened cleanly are unchanged (#181)
@@ -25,6 +26,7 @@ Fixed
 
 Changed
 - GM references EC26-CMIP/HIST/PDAY: `rsns` and `rlns` now come from CERES-EBAF 4.2.1 (`sfc_net_sw_all_mon`, `sfc_net_lw_all_mon`) instead of Wild (2020), adding regional/seasonal values, `std` and the reference period. `hfss`, `hfls`, `net_sfc`, `net_sfc_nosn` stay on Wild (2020); `gm_reference_EC23.yml` is unchanged (#172)
+- `utils/cmip6-clim-evaluate.py`: the CMIP6 model list for the PI climatologies grows from 15 to 47 models, i.e. all models of the esgpull archive with at least 5 PIs over 1985-2014 and a land-sea mask. The HighResMIP list follows the same criteria restricted to high-resolution models: HadGEM3-GC31-HM is added, CESM1-CAM5-SE-HR and MPI-ESM1-2-XR (no land-sea mask) are kept only for the PIs that do not need one, AWI-CM-1-1-HR (no atmospheric data) only for the ocean PIs, and EC-Earth3P-HR moves to `r2i1p2f1`, which also provides `hus`. PIs with errors in the published data are excluded (flipped wind-stress sign in CMCC and FGOALS-f3-L, undeclared fill values in E3SM-1-1, GISS-E2-1-G `hus` and CMCC-CM2-VHR4 `siconc`, reversed FGOALS `siconc` grid, partial years in EC-Earth3-Veg), as is the `tas` of CNRM-CM6-1-HR (PI 54-61, an outlier like its `ta`)
 
 ## [v0.3.0]
 

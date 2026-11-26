@@ -12,7 +12,7 @@
      - CRU (v4.09)
      - land-no-antarctica
      - 1985-2014
-     - 46 (1985-2014)
+     - 47 (1985-2014)
    * - Precipitation
      - MSWEP (v2.80)
      - global
@@ -52,12 +52,12 @@
      - ERA5
      - global
      - 1985-2014
-     - 44 (1985-2014)
+     - 45 (1985-2014)
    * - Specific Humidity
      - ERA5
      - global
      - 1985-2014
-     - 42 (1985-2014)
+     - 43 (1985-2014)
    * - Sea Surface Temperature
      - ESA-CCI-L4 (v3.0.1)
      - ocean

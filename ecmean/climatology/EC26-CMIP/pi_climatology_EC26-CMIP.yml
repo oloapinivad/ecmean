@@ -10,54 +10,54 @@ tas:
   year2: 2014
   cmip6:
     ALL:
-      Global: 29.817
-      North Midlat: 14.058
-      Tropical: 45.79
-      South Midlat: 22.704
-      NH: 18.374
-      SH: 23.182
-      Equatorial: 54.482
-      North Pole: 8.355
+      Global: 30.339
+      North Midlat: 14.527
+      Tropical: 46.389
+      South Midlat: 22.897
+      NH: 18.915
+      SH: 23.306
+      Equatorial: 55.105
+      North Pole: 8.275
       South Pole: .nan
     DJF:
-      Global: 17.631
-      North Midlat: 7.41
-      Tropical: 27.83
-      South Midlat: 14.986
-      NH: 9.662
-      SH: 16.437
-      Equatorial: 33.566
-      North Pole: 7.089
+      Global: 17.951
+      North Midlat: 7.673
+      Tropical: 28.232
+      South Midlat: 14.959
+      NH: 9.935
+      SH: 16.433
+      Equatorial: 34.087
+      North Pole: 7.048
       South Pole: .nan
     JJA:
-      Global: 25.169
-      North Midlat: 14.851
-      Tropical: 36.649
-      South Midlat: 7.822
-      NH: 19.133
-      SH: 8.793
-      Equatorial: 42.843
-      North Pole: 11.84
+      Global: 25.347
+      North Midlat: 14.931
+      Tropical: 36.93
+      South Midlat: 7.905
+      NH: 19.289
+      SH: 8.865
+      Equatorial: 43.099
+      North Pole: 11.691
       South Pole: .nan
     MAM:
-      Global: 16.35
-      North Midlat: 7.401
-      Tropical: 25.719
-      South Midlat: 8.549
-      NH: 9.146
-      SH: 10.118
-      Equatorial: 32.615
-      North Pole: 5.192
+      Global: 16.642
+      North Midlat: 7.65
+      Tropical: 26.075
+      South Midlat: 8.541
+      NH: 9.421
+      SH: 10.13
+      Equatorial: 33.035
+      North Pole: 5.142
       South Pole: .nan
     SON:
-      Global: 22.438
-      North Midlat: 7.885
-      Tropical: 37.488
-      South Midlat: 12.105
-      NH: 11.784
-      SH: 12.375
-      Equatorial: 46.798
-      North Pole: 6.062
+      Global: 22.77
+      North Midlat: 8.109
+      Tropical: 37.932
+      South Midlat: 12.347
+      NH: 12.09
+      SH: 12.467
+      Equatorial: 47.263
+      North Pole: 6.0
       South Pole: .nan
     models:
     - TaiESM1
@@ -74,6 +74,7 @@ tas:
     - CMCC-CM2-SR5
     - CMCC-ESM2
     - CNRM-CM6-1
+    - CNRM-CM6-1-HR
     - CNRM-ESM2-1
     - ACCESS-ESM1-5
     - ACCESS-CM2
@@ -106,12 +107,9 @@ tas:
     - GFDL-CM4
     - GFDL-ESM4
     - SAM0-UNICON
-    nmodels: 46
+    nmodels: 47
     year1: 1985
     year2: 2014
-    excluded:
-      CNRM-CM6-1-HR: 'cold bias over land: PI 61 in hist-1950 and 54 in historical,
-        against 14-22 for the other models'
 pr:
   dataset: MSWEP
   description: v2.80; PAST+NRT
@@ -904,55 +902,55 @@ ta:
   year2: 2014
   cmip6:
     ALL:
-      Global: 31.129
-      North Midlat: 30.732
-      Tropical: 25.84
-      South Midlat: 42.105
-      NH: 31.959
-      SH: 39.506
-      Equatorial: 22.273
-      North Pole: 15.203
-      South Pole: 46.584
+      Global: 34.235
+      North Midlat: 33.572
+      Tropical: 29.744
+      South Midlat: 43.879
+      NH: 35.338
+      SH: 41.913
+      Equatorial: 25.789
+      North Pole: 15.748
+      South Pole: 46.375
     DJF:
-      Global: 14.323
-      North Midlat: 12.649
-      Tropical: 13.117
-      South Midlat: 18.409
-      NH: 13.745
-      SH: 18.085
-      Equatorial: 11.26
-      North Pole: 5.746
-      South Pole: 19.755
+      Global: 15.71
+      North Midlat: 13.484
+      Tropical: 14.997
+      South Midlat: 19.359
+      NH: 14.897
+      SH: 19.442
+      Equatorial: 12.901
+      North Pole: 5.914
+      South Pole: 19.808
     JJA:
-      Global: 22.668
-      North Midlat: 23.645
-      Tropical: 22.936
-      South Midlat: 21.155
-      NH: 27.54
-      SH: 21.794
-      Equatorial: 18.823
-      North Pole: 17.424
-      South Pole: 18.956
+      Global: 25.009
+      North Midlat: 25.83
+      Tropical: 26.211
+      South Midlat: 21.786
+      NH: 30.409
+      SH: 22.873
+      Equatorial: 21.87
+      North Pole: 17.961
+      South Pole: 18.77
     MAM:
-      Global: 19.01
-      North Midlat: 17.661
-      Tropical: 14.535
-      South Midlat: 29.31
-      NH: 18.962
-      SH: 26.179
-      Equatorial: 12.16
-      North Pole: 7.833
-      South Pole: 35.091
+      Global: 20.539
+      North Midlat: 18.997
+      Tropical: 16.379
+      South Midlat: 30.401
+      NH: 20.575
+      SH: 27.524
+      Equatorial: 13.786
+      North Pole: 8.124
+      South Pole: 34.992
     SON:
-      Global: 20.778
-      North Midlat: 16.038
-      Tropical: 23.638
-      South Midlat: 19.798
-      NH: 17.992
-      SH: 20.155
-      Equatorial: 24.058
-      North Pole: 17.041
-      South Pole: 18.843
+      Global: 23.368
+      North Midlat: 17.163
+      Tropical: 27.795
+      South Midlat: 20.721
+      NH: 19.771
+      SH: 21.629
+      Equatorial: 28.501
+      North Pole: 17.19
+      South Pole: 18.734
     models:
     - TaiESM1
     - AWI-CM-1-1-MR
@@ -968,6 +966,7 @@ ta:
     - CMCC-CM2-SR5
     - CMCC-ESM2
     - CNRM-CM6-1
+    - CNRM-CM6-1-HR
     - CNRM-ESM2-1
     - ACCESS-ESM1-5
     - ACCESS-CM2
@@ -998,12 +997,10 @@ ta:
     - GFDL-CM4
     - GFDL-ESM4
     - SAM0-UNICON
-    nmodels: 44
+    nmodels: 45
     year1: 1985
     year2: 2014
     excluded:
-      CNRM-CM6-1-HR: 'troposphere about 4 K colder than ERA5 (500 hPa global mean
-        254.4 K against 258.5 K): PI 197'
       E3SM-1-1: undeclared fill value 9.97e36 below the ground
       E3SM-1-1-ECA: values close to zero below the ground
 hus:
@@ -1017,55 +1014,55 @@ hus:
   year2: 2014
   cmip6:
     ALL:
-      Global: 40.059
-      North Midlat: 35.357
-      Tropical: 26.53
-      South Midlat: 71.819
-      NH: 34.247
-      SH: 64.97
-      Equatorial: 21.688
-      North Pole: 31.077
-      South Pole: 118.134
+      Global: 40.782
+      North Midlat: 36.443
+      Tropical: 27.33
+      South Midlat: 72.023
+      NH: 35.341
+      SH: 65.23
+      Equatorial: 22.499
+      North Pole: 31.733
+      South Pole: 118.215
     DJF:
-      Global: 25.509
-      North Midlat: 31.456
-      Tropical: 15.035
-      South Midlat: 40.508
-      NH: 27.541
-      SH: 37.626
-      Equatorial: 11.898
-      North Pole: 24.669
-      South Pole: 57.431
+      Global: 25.847
+      North Midlat: 31.84
+      Tropical: 15.386
+      South Midlat: 40.775
+      NH: 27.889
+      SH: 37.926
+      Equatorial: 12.264
+      North Pole: 25.153
+      South Pole: 57.659
     JJA:
-      Global: 22.84
-      North Midlat: 23.295
-      Tropical: 19.108
-      South Midlat: 29.851
-      NH: 23.452
-      SH: 27.642
-      Equatorial: 17.633
-      North Pole: 22.216
-      South Pole: 30.824
+      Global: 23.419
+      North Midlat: 24.077
+      Tropical: 19.871
+      South Midlat: 29.859
+      NH: 24.307
+      SH: 27.731
+      Equatorial: 18.417
+      North Pole: 22.564
+      South Pole: 30.711
     MAM:
-      Global: 27.213
-      North Midlat: 25.805
-      Tropical: 18.183
-      South Midlat: 46.68
-      NH: 25.111
-      SH: 41.595
-      Equatorial: 15.401
-      North Pole: 23.971
-      South Pole: 62.771
+      Global: 27.578
+      North Midlat: 26.397
+      Tropical: 18.556
+      South Midlat: 46.802
+      NH: 25.795
+      SH: 41.678
+      Equatorial: 15.729
+      North Pole: 24.359
+      South Pole: 63.333
     SON:
-      Global: 25.064
-      North Midlat: 26.717
-      Tropical: 20.088
-      South Midlat: 33.363
-      NH: 27.063
-      SH: 29.888
-      Equatorial: 18.502
-      North Pole: 25.764
-      South Pole: 39.793
+      Global: 25.698
+      North Midlat: 27.338
+      Tropical: 20.923
+      South Midlat: 33.607
+      NH: 27.703
+      SH: 30.274
+      Equatorial: 19.367
+      North Pole: 26.205
+      South Pole: 39.507
     models:
     - TaiESM1
     - AWI-CM-1-1-MR
@@ -1081,6 +1078,7 @@ hus:
     - CMCC-CM2-SR5
     - CMCC-ESM2
     - CNRM-CM6-1
+    - CNRM-CM6-1-HR
     - CNRM-ESM2-1
     - ACCESS-ESM1-5
     - ACCESS-CM2
@@ -1109,11 +1107,10 @@ hus:
     - GFDL-CM4
     - GFDL-ESM4
     - SAM0-UNICON
-    nmodels: 42
+    nmodels: 43
     year1: 1985
     year2: 2014
     excluded:
-      CNRM-CM6-1-HR: '35-65% of the ERA5 humidity between 300 and 100 hPa: PI 80'
       EC-Earth3-Veg: only 11-16 of the 30 years available
       GISS-E2-1-G: undeclared fill value -1e27
 tos:

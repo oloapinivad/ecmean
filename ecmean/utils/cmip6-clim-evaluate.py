@@ -7,7 +7,7 @@ It runs and then reads the output of the cmip6 models to provide an assessment o
 climatology for CMIP6 models to be stored
 """
 
-__author__ = "Paolo Davini (paolo.davini@cnr.it), Sep 2022."
+__author__ = "Paolo Davini, Sep 2022."
 
 import os
 import warnings
@@ -76,10 +76,6 @@ highresmip_models = [
     "MPI-ESM1-2-XR",  # MPI-M
 ]
 
-# experiment, MIP, interface and models for each climatology family (CMIP6 by default)
-CMIP6_SETUP = {"expname": "historical", "mip": "CMIP", "interface": None, "models": models}
-HIGHRESMIP_SETUP = {"expname": "hist-1950", "mip": "HighResMIP", "interface": "CMIP6_highresmip", "models": highresmip_models}
-
 # models whose ensemble member or consortium differ from the default r1i1p1f1 and '*'
 ENSEMBLES = {
     "CNRM-CM6-1": "r1i1p1f2",
@@ -92,21 +88,11 @@ ENSEMBLES = {
     "EC-Earth3P-HR": "r2i1p2f1",
 }
 CONSORTIA = {"HadGEM3-GC31-HH": "NERC"}
-# performance indices left out of the climatology for a specific model, as {model: {variable: reason}}.
-# The PI files are kept as they are, and the reasons are stored in the `excluded` entry of the climatology file
-EXCLUDE = {
-    "CESM1-CAM5-SE-HR": {"sos": "unphysical values over about 7000 ocean cells"},
-    "AWI-CM-1-1-HR": {"sos": "Baltic Sea 13-24 psu against 5-7 psu in ORAS5: 64 cells give 53% of the global PI"},
-    "BCC-CSM2-HR": {"sos": "Red Sea up to 59 psu against 38 psu in ORAS5: 29 cells give 66% of the global PI"},
-    "CNRM-CM6-1-HR": {
-        "tas": "cold bias over land: PI 61 in hist-1950 and 54 in historical, against 14-22 for the other models",
-        "ta": "troposphere about 4 K colder than ERA5 (500 hPa global mean 254.4 K against 258.5 K): PI 197",
-        "hus": "35-65% of the ERA5 humidity between 300 and 100 hPa: PI 80",
-    },
-    "INM-CM5-H": {
-        "ta": "troposphere about 2 K warmer than ERA5 and tropopause biases (PI 137 at 150 hPa): PI 51",
-        "hus": "30-50% more humid than ERA5 in the upper troposphere (PI 342 at 150 hPa): PI 72",
-    },
+# performance indices left out of the climatology for a specific model, as {model: {variable: reason}}, one table
+# per family: a model may be in both (e.g. CNRM-CM6-1-HR), with different simulations and different ensembles
+# to be compared with. The PI files are kept as they are, and the reasons are stored in the `excluded` entry
+# of the climatology file
+CMIP6_EXCLUDE = {
     # errors in the published CMIP6 data
     "CMCC-CM2-HR4": {"tauu": "wind stress with flipped sign", "tauv": "wind stress with flipped sign"},
     "CMCC-CM2-SR5": {"tauu": "wind stress with flipped sign", "tauv": "wind stress with flipped sign"},
@@ -117,7 +103,6 @@ EXCLUDE = {
         "siconc": "grid stored in reverse order with respect to areacello and tos",
     },
     "FGOALS-g3": {"siconc": "grid stored in reverse order with respect to areacello and tos"},
-    "CMCC-CM2-VHR4": {"siconc": "undeclared fill values 1e20 in the coordinates and 1e30 in the data"},
     "E3SM-1-1": {
         "ta": "undeclared fill value 9.97e36 below the ground",
         "ua": "undeclared fill value 9.97e36 below the ground",
@@ -131,6 +116,32 @@ EXCLUDE = {
         "tauv": "only 11-16 of the 30 years available",
         "va": "only 11-16 of the 30 years available",
     },
+}
+HIGHRESMIP_EXCLUDE = {
+    "CESM1-CAM5-SE-HR": {"sos": "unphysical values over about 7000 ocean cells"},
+    "AWI-CM-1-1-HR": {"sos": "Baltic Sea 13-24 psu against 5-7 psu in ORAS5: 64 cells give 53% of the global PI"},
+    "BCC-CSM2-HR": {"sos": "Red Sea up to 59 psu against 38 psu in ORAS5: 29 cells give 66% of the global PI"},
+    "CNRM-CM6-1-HR": {
+        "tas": "cold bias over land: PI 61 against 14-22 for the other models",
+        "ta": "troposphere about 4 K colder than ERA5 (500 hPa global mean 254.4 K against 258.5 K): PI 197",
+        "hus": "35-65% of the ERA5 humidity between 300 and 100 hPa: PI 80",
+    },
+    "INM-CM5-H": {
+        "ta": "troposphere about 2 K warmer than ERA5 and tropopause biases (PI 137 at 150 hPa): PI 51",
+        "hus": "30-50% more humid than ERA5 in the upper troposphere (PI 342 at 150 hPa): PI 72",
+    },
+    # errors in the published HighResMIP data
+    "CMCC-CM2-VHR4": {"siconc": "undeclared fill values 1e20 in the coordinates and 1e30 in the data"},
+}
+
+# experiment, MIP, interface, models and exclusions for each climatology family (CMIP6 by default)
+CMIP6_SETUP = {"expname": "historical", "mip": "CMIP", "interface": None, "models": models, "exclude": CMIP6_EXCLUDE}
+HIGHRESMIP_SETUP = {
+    "expname": "hist-1950",
+    "mip": "HighResMIP",
+    "interface": "CMIP6_highresmip",
+    "models": highresmip_models,
+    "exclude": HIGHRESMIP_EXCLUDE,
 }
 
 
@@ -207,7 +218,7 @@ def main(
                 logging.warning("No PI file found for model %s, skipping it", model)
                 continue
             full[model] = load_yaml(filein[0])
-            for var, reason in EXCLUDE.get(model, {}).items():
+            for var, reason in setup["exclude"].get(model, {}).items():
                 if full[model].pop(var, None) is not None:
                     excluded.setdefault(var, {})[model] = reason
 

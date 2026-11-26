@@ -71,8 +71,7 @@ tas:
     year1: 1985
     year2: 2014
     excluded:
-      CNRM-CM6-1-HR: 'cold bias over land: PI 61 in hist-1950 and 54 in historical,
-        against 14-22 for the other models'
+      CNRM-CM6-1-HR: 'cold bias over land: PI 61 against 14-22 for the other models'
 pr:
   dataset: MSWEP
   description: v2.80; PAST+NRT

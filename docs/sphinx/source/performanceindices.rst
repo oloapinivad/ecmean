@@ -146,7 +146,7 @@ This configuration is designed for comparison with model simulations using histo
 
 .. include:: tables/climatology_EC26-HIST.rst
 
-Properties of the climatology - such as which interpolation method and which CMIP6 models have been used - can be inspected by looking at the ``ecmean/climatology/EC26/pi_climatology_EC26-HIST.yml`` file.
+Properties of the climatology - such as which interpolation method and which CMIP6 models have been used - can be inspected by looking at the ``ecmean/climatology/EC26-HIST/pi_climatology_EC26-HIST.yml`` file.
 
 EC26-CMIP (1985–2014)
 ~~~~~~~~~~~~~~~~~~~~~
@@ -164,10 +164,9 @@ built with ``ecmean/utils/cmip6-clim-evaluate.py -c EC26 -t CMIP``.
    (``tauu``/``tauv`` of CMCC-CM2-HR4, CMCC-CM2-SR5, CMCC-ESM2 and FGOALS-f3-L), undeclared fill values (``ta``/``ua``/``va`` of E3SM-1-1,
    ``ta`` of E3SM-1-1-ECA, ``hus`` of GISS-E2-1-G), a sea-ice grid stored in reverse order (``siconc`` of FGOALS-g3 and FGOALS-f3-L)
    and partial years (``hus``/``tauu``/``tauv``/``va`` of EC-Earth3-Veg).
-   ``tas`` of CNRM-CM6-1-HR (PI 54 against 14-22 of the other models) is excluded as an outlier, as in EC26-CMIP-HR.
    The reasons of each exclusion are stored in the ``excluded`` entry of the ``cmip6`` block of each variable.
 
-Properties of the climatology - such as which interpolation method and which CMIP6 models have been used - can be inspected by looking at the ``ecmean/climatology/EC26/pi_climatology_EC26-CMIP.yml`` file.
+Properties of the climatology - such as which interpolation method and which CMIP6 models have been used - can be inspected by looking at the ``ecmean/climatology/EC26-CMIP/pi_climatology_EC26-CMIP.yml`` file.
 
 EC26-CMIP-HR (1985–2014)
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -190,7 +189,7 @@ The number of models is therefore smaller than for EC26-CMIP and differs from va
    * ``sos``: AWI-CM-1-1-HR (Baltic Sea, 13-24 psu against 5-7 psu in ORAS5), BCC-CSM2-HR (Red Sea, up to 59 psu against 38 psu)
      and CESM1-CAM5-SE-HR (unphysical values over about 7000 ocean cells). Few tens of cells give more than half of the PI of AWI and BCC.
    * ``ta``: CNRM-CM6-1-HR (troposphere about 4 K colder than ERA5, PI 197) and INM-CM5-H (about 2 K warmer, PI 51), against 8-19 of the other models.
-   * ``hus``: CNRM-CM6-1-HR (35-65% of the ERA5 humidity in the upper troposphere, PI 80) and INM-CM5-H (30-50% more humid, PI 72), against 9-25.
+   * ``hus``: CNRM-CM6-1-HR (35-65% of the ERA5 humidity in the upper troposphere, PI 80) and INM-CM5-H (30-50% more humid, PI 72), against 9-49.
    * ``tas``: CNRM-CM6-1-HR (cold bias over land, PI 61), against 14-22 of the other models.
 
    CMCC-CM2-VHR4 ``siconc`` is also left out, for undeclared fill values in its coordinates and data.

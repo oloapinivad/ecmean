@@ -156,6 +156,16 @@ It is aligned with the CMIP6 historical period (1985–2014), ensuring temporal 
 
 .. include:: tables/climatology_EC26-CMIP.rst
 
+The reference PIs are the average over 47 CMIP6 models, i.e. all the models with at least 5 PIs over 1985-2014 and a land-sea mask,
+built with ``ecmean/utils/cmip6-clim-evaluate.py -c EC26 -t CMIP``.
+
+.. note::
+   Some model-variable pairs are left out because of errors in the published CMIP6 data: wind stress with flipped sign
+   (``tauu``/``tauv`` of CMCC-CM2-HR4, CMCC-CM2-SR5, CMCC-ESM2 and FGOALS-f3-L), undeclared fill values (``ta``/``ua``/``va`` of E3SM-1-1,
+   ``ta`` of E3SM-1-1-ECA, ``hus`` of GISS-E2-1-G), a sea-ice grid stored in reverse order (``siconc`` of FGOALS-g3 and FGOALS-f3-L)
+   and partial years (``hus``/``tauu``/``tauv``/``va`` of EC-Earth3-Veg).
+   ``tas`` of CNRM-CM6-1-HR (PI 54 against 14-22 of the other models) is excluded as an outlier, as in EC26-CMIP-HR.
+   The reasons of each exclusion are stored in the ``excluded`` entry of the ``cmip6`` block of each variable.
 
 Properties of the climatology - such as which interpolation method and which CMIP6 models have been used - can be inspected by looking at the ``ecmean/climatology/EC26/pi_climatology_EC26-CMIP.yml`` file.
 
@@ -181,6 +191,11 @@ The number of models is therefore smaller than for EC26-CMIP and differs from va
      and CESM1-CAM5-SE-HR (unphysical values over about 7000 ocean cells). Few tens of cells give more than half of the PI of AWI and BCC.
    * ``ta``: CNRM-CM6-1-HR (troposphere about 4 K colder than ERA5, PI 197) and INM-CM5-H (about 2 K warmer, PI 51), against 8-19 of the other models.
    * ``hus``: CNRM-CM6-1-HR (35-65% of the ERA5 humidity in the upper troposphere, PI 80) and INM-CM5-H (30-50% more humid, PI 72), against 9-25.
+   * ``tas``: CNRM-CM6-1-HR (cold bias over land, PI 61), against 14-22 of the other models.
+
+   CMCC-CM2-VHR4 ``siconc`` is also left out, for undeclared fill values in its coordinates and data.
+   CESM1-CAM5-SE-HR and MPI-ESM1-2-XR have no land-sea mask and do not provide the PIs that need it (``tas``, ``net_sfc``, ``tauu``, ``tauv``),
+   while AWI-CM-1-1-HR has no atmospheric data and provides ``tos`` only.
 
    The models used for each variable and the reasons of each exclusion are stored in the ``models`` and ``excluded`` entries of the
    ``cmip6`` block of each variable in the ``ecmean/climatology/EC26-CMIP-HR/pi_climatology_EC26-CMIP-HR.yml`` file.

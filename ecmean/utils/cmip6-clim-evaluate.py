@@ -121,7 +121,9 @@ CMIP6_EXCLUDE = {
     "CESM2-WACCM-FV2": {"net_sfc": "prsn published over land only: the ocean-masked net_sfc is left with coastal cells"},
 }
 HIGHRESMIP_EXCLUDE = {
-    "CESM1-CAM5-SE-HR": {"sos": "unphysical values over about 7000 ocean cells"},
+    "CESM1-CAM5-SE-HR": {
+        "sos": "negative salinity (down to -181) over about 7000 ocean cells, mostly Baltic Sea and Siberian shelf"
+    },
     "CMCC-CM2-VHR4": {"siconc": "undeclared fill values 1e20 in the coordinates and 1e30 in the data"},
 }
 

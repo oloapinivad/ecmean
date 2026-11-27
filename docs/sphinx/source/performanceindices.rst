@@ -195,7 +195,7 @@ The number of models is therefore smaller than for EC26-CMIP and differs from va
 
 The same three rules of EC26-CMIP decide which PIs enter the average:
 
-* errors in the published data: ``sos`` of CESM1-CAM5-SE-HR (unphysical values over about 7000 ocean cells) and
+* errors in the published data: ``sos`` of CESM1-CAM5-SE-HR (negative salinity, down to -181, over about 7000 ocean cells, mostly in the Baltic Sea and on the Siberian shelf) and
   ``siconc`` of CMCC-CM2-VHR4 (undeclared fill values in its coordinates and data);
 * incomplete period: ``tas`` of BCC-CSM2-HR (14 of 30 years). The ``tos`` of AWI-CM-1-1-HR, whose simulation ends in 2010, is kept with 26 years;
 * outliers: ``tas`` of CNRM-CM6-1-HR (PI 61, against 14-22 of the other models), ``ta`` of CNRM-CM6-1-HR (197) and INM-CM5-H (51), against 8-19,

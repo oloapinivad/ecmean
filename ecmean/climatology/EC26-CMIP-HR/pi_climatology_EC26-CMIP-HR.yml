@@ -920,7 +920,8 @@ sos:
     year1: 1985
     year2: 2014
     excluded:
-      CESM1-CAM5-SE-HR: unphysical values over about 7000 ocean cells
+      CESM1-CAM5-SE-HR: negative salinity (down to -181) over about 7000 ocean cells,
+        mostly Baltic Sea and Siberian shelf
     missing:
     - INM-CM5-H
 siconc:

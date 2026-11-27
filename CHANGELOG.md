@@ -14,6 +14,7 @@ Unreleased is the current development version, which is currently lying in `main
 4. PI climatologies EC26-CMIP (47 models instead of 15) and EC26-CMIP-HR (11 instead of 10) are regenerated: the relative PIs of every run change, see the Changed section (#184)
 
 Fixed
+- `Supporter.get_interp()` never computes interpolation weights from invalid field coordinates (non-finite, |lat| > 90 or lon outside [-360, 720]): a field with the shape of the inifiles grid falls back to the inifiles weights with a warning, any other gets a NaN PI with an error. This fixes the silent garbage PIs of HadGEM3-GC31-HH `siconc` (206264, longitudes mostly -1e30) and CMCC-CM2-VHR4 `siconc` (3.4e57) introduced by #182 (#185)
 - `open_input_files()` no longer fails on files whose bounds (`time_bnds`, ...) or coordinates differ by rounding: the new fixers `ncfixers.drop_bounds` and `ncfixers.align_coords` are applied only when their symptom shows up (a `MergeError` on a bounds variable; grid points duplicated by the outer join). This restores `net_sfc` for CESM2, CESM2-FV2 and CESM2-WACCM-FV2 (`prsn` differs by rounding); files that opened cleanly are unchanged (#181)
 - `LICENSE`: the copyright placeholder is filled in with Paolo Davini (CNR-ISAC) and Jost von Hardenberg (Politecnico di Torino), 2025
 - Formulas of the interface files accept again variable names starting with a digit (e.g. `derived: '2t'` for `tas`), broken since the formula parser rewrite (#179)

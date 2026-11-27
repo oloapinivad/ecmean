@@ -32,7 +32,7 @@
      - ORAS5
      - ocean
      - 1985-2014
-     - 7 (1985-2014)
+     - 8 (1985-2014)
    * - Mean Sea Level Pressure
      - ERA5
      - global
@@ -42,12 +42,12 @@
      - ERA5
      - global
      - 1985-2014
-     - 8 (1985-2014)
+     - 9 (1985-2014)
    * - Meridional Wind
      - ERA5
      - global
      - 1985-2014
-     - 8 (1985-2014)
+     - 9 (1985-2014)
    * - Air Temperature
      - ERA5
      - global

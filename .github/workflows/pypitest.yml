@@ -31,7 +31,7 @@ jobs:
         cache-environment: true
         create-args: >-
           python=${{ matrix.python-version }}
-          xesmf
+          xesmf>=0.8
           esmpy
           eccodes
           pytest

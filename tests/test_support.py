@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from ecmean.libs.support import Supporter, check_file_exist, identify_grid, mask_coincident_cells
+from ecmean.libs.support import Supporter, check_file_exist, identify_grid, mask_coincident_cells, valid_coords
 
 
 def _regular_field(lat):
@@ -156,3 +156,48 @@ def test_supporter_interp_staggered_grid(tmp_path):
     # same shape but longitudes shifted by half a cell (e.g. u-points): new weights as well
     ua = tas.assign_coords(lon=lon - 0.5).rename("ua")
     assert support.get_interp(ua, "atm")[1] is not support.atmremap
+
+
+def test_supporter_interp_invalid_coords(tmp_path):
+    """Weights are never built from invalid field coordinates (fill values): a field with the inifiles shape
+    falls back to the default weights, a field of another shape raises."""
+    gridfile = tmp_path / "grid.nc"
+    lat = np.linspace(-89.5, 89.5, 180)
+    lon = np.arange(0.5, 360.0, 1.0)
+    xr.Dataset({"tas": (("lat", "lon"), np.zeros((len(lat), len(lon))))}, coords={"lon": lon, "lat": lat}).to_netcdf(gridfile)
+    atmdict = {"maskfile": "", "gridfile": str(gridfile), "areafile": ""}
+    ocedict = {"maskfile": "", "gridfile": "", "areafile": ""}
+    tlat, tlon = np.arange(-89.0, 90.0, 2.0), np.arange(1.0, 360.0, 2.0)
+    targetgrid = xr.Dataset({"tas": (("lat", "lon"), np.zeros((len(tlat), len(tlon))))}, coords={"lon": tlon, "lat": tlat})
+
+    support = Supporter({"atm": "cmoratm", "oce": "cmoroce"}, atmdict, ocedict, areas=False, remap=True, targetgrid=targetgrid)
+
+    # same shape, longitudes partly filled with -1e30 (e.g. HadGEM3-GC31-HH siconc): default weights
+    badlon = lon.copy()
+    badlon[100:] = -1e30
+    sic = xr.DataArray(np.ones((len(lat), len(lon))), coords={"lat": lat, "lon": badlon}, dims=["lat", "lon"], name="siconc")
+    assert support.get_interp(sic, "atm") == (None, support.atmremap)
+
+    # latitudes out of range on a different shape (e.g. CMCC-CM2-VHR4 siconc with 1e20): error
+    badlat = np.linspace(-89.0, 89.0, 90)
+    badlat[-1] = 1e20
+    sic = xr.DataArray(
+        np.ones((len(badlat), len(lon))), coords={"lat": badlat, "lon": lon}, dims=["lat", "lon"], name="siconc"
+    )
+    with pytest.raises(ValueError, match="invalid lon/lat"):
+        support.get_interp(sic, "atm")
+
+
+@pytest.mark.parametrize(
+    "lon, lat, expected",
+    [
+        ([0.0, 359.0], [-90.0, 90.0], True),
+        ([-180.0, 720.0], [0.0, 0.0], True),
+        ([np.nan, 0.0], [0.0, 0.0], False),
+        ([0.0, 0.0], [0.0, 90.5], False),
+        ([-1e30, 0.0], [0.0, 0.0], False),
+    ],
+)
+def test_valid_coords(lon, lat, expected):
+    xfield = xr.DataArray(np.zeros(2), coords={"lon": ("cell", lon), "lat": ("cell", lat)}, dims=["cell"])
+    assert valid_coords(xfield) is expected

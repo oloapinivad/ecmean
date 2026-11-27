@@ -210,6 +210,9 @@ class Supporter:
         without the halo of the ocean one (e.g. CICE siconc on NorESM2). For those, new weights are computed
         from the field coordinates: slower, but always consistent with the data.
         Fields needing a fixer (OIFS reduced gaussian grid) always use the default interpolators.
+        Weights are never computed from invalid coordinates (fill values, see valid_coords): a field with the
+        same horizontal shape as the inifiles grid falls back to the default interpolators (e.g. HadGEM3-GC31-HH
+        siconc, whose longitudes are mostly -1e30 on the ORCA12 grid of tos), any other field raises.
 
         Args:
             xfield (xarray.DataArray): Field to be interpolated, with lon and lat coordinates.
@@ -217,11 +220,23 @@ class Supporter:
 
         Returns:
             tuple: The fix (None if not needed) and remap objects.
+
+        Raises:
+            ValueError: If the field coordinates are invalid and its shape differs from the inifiles grid.
         """
         fix = getattr(self, f"{domain}fix")
         remap = getattr(self, f"{domain}remap")
-        if remap is None or fix is not None or same_grid(xfield, getattr(self, f"{domain}field")):
+        inifield = getattr(self, f"{domain}field")
+        if remap is None or fix is not None or same_grid(xfield, inifield):
             return fix, remap
+
+        if not valid_coords(xfield):
+            if all(xfield[coord].shape == inifield[coord].shape for coord in ["lon", "lat"]):
+                loggy.warning(
+                    "%s has invalid lon/lat coordinates: using the %s inifiles interpolation weights", xfield.name, domain
+                )
+                return fix, remap
+            raise ValueError(f"{xfield.name} has invalid lon/lat coordinates and is not on the {domain} inifiles grid")
 
         loggy.warning("%s is not on the %s inifiles grid: computing new interpolation weights", xfield.name, domain)
         grid = xfield.to_dataset(name="grid")
@@ -332,6 +347,28 @@ def same_grid(xfield, grid):
     return all(
         xfield[coord].shape == grid[coord].shape and np.allclose(xfield[coord], grid[coord], equal_nan=True)
         for coord in ["lon", "lat"]
+    )
+
+
+def valid_coords(xfield):
+    """Check whether the lon and lat coordinates of a field are physically valid.
+
+    Some published files carry fill values in their coordinates (e.g. -1e30 longitudes for HadGEM3-GC31-HH
+    siconc, 1e20 for CMCC-CM2-VHR4 siconc): interpolation weights built on them give silent garbage.
+    Longitudes are accepted in [-360, 720] to allow for the different conventions and the halo of tripolar grids.
+
+    Args:
+        xfield (xarray.DataArray or xarray.Dataset): Field with lon and lat coordinates.
+
+    Returns:
+        bool: True if all coordinates are finite, with |lat| <= 90 and lon within [-360, 720].
+    """
+    lon, lat = xfield["lon"].values, xfield["lat"].values
+    return bool(
+        np.isfinite(lon).all()
+        and np.isfinite(lat).all()
+        and (np.abs(lat) <= 90).all()
+        and ((lon >= -360) & (lon <= 720)).all()
     )
 
 

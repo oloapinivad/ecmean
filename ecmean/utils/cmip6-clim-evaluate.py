@@ -10,6 +10,7 @@ climatology for CMIP6 models to be stored
 __author__ = "Paolo Davini, Sep 2022."
 
 import os
+import subprocess
 import warnings
 import glob
 from collections import defaultdict
@@ -18,10 +19,12 @@ import logging
 
 import yaml
 import numpy as np
+import xarray as xr
 
-from ecmean.performance_indices import performance_indices
-from ecmean.libs.files import load_yaml
-from ecmean.utils.utils import timeframe_years, parse_create_args
+from ecmean.performance_indices import PerformanceIndices, performance_indices
+from ecmean.libs.files import load_yaml, make_input_filename
+from ecmean.libs.formula import formula_variables
+from ecmean.utils.utils import timeframe_years, parse_create_args, variance_iqr
 
 warnings.simplefilter("ignore")
 
@@ -89,21 +92,23 @@ ENSEMBLES = {
     "EC-Earth3P-HR": "r2i1p2f1",
 }
 CONSORTIA = {"HadGEM3-GC31-HH": "NERC"}
-# performance indices left out of the climatology for a specific model, as {model: {variable: reason}}, one table
-# per family: a model may be in both (e.g. CNRM-CM6-1-HR), with different simulations and different ensembles
-# to be compared with. The PI files are kept as they are, and the reasons are stored in the `excluded` entry
-# of the climatology file
+# Three rules decide which performance indices enter the climatology. The PI files are kept as they are, and
+# the reason of each exclusion is stored in the `excluded` entry of the climatology file.
+# 1. errors in the published data: the tables below, as {model: {variable: reason}}, one per family
+#    (a model may be in both, e.g. CNRM-CM6-1-HR, with different simulations);
+# 2. incomplete period: less than MIN_YEARS_FRACTION of the years found in the archive (see years_available);
+# 3. outliers: global annual PI above the upper whisker of the boxplot of log10(PI) of the models left
+#    (see upper_whisker). Only the upper whisker is used: a very low PI is a good model, not an error.
+MIN_YEARS_FRACTION = 0.8
+
 CMIP6_EXCLUDE = {
-    # errors in the published CMIP6 data
     "CMCC-CM2-HR4": {"tauu": "wind stress with flipped sign", "tauv": "wind stress with flipped sign"},
     "CMCC-CM2-SR5": {"tauu": "wind stress with flipped sign", "tauv": "wind stress with flipped sign"},
     "CMCC-ESM2": {"tauu": "wind stress with flipped sign", "tauv": "wind stress with flipped sign"},
     "FGOALS-f3-L": {
         "tauu": "wind stress with flipped sign",
         "tauv": "wind stress with flipped sign",
-        "siconc": "grid stored in reverse order with respect to areacello and tos",
     },
-    "FGOALS-g3": {"siconc": "grid stored in reverse order with respect to areacello and tos"},
     "E3SM-1-1": {
         "ta": "undeclared fill value 9.97e36 below the ground",
         "ua": "undeclared fill value 9.97e36 below the ground",
@@ -111,27 +116,12 @@ CMIP6_EXCLUDE = {
     },
     "E3SM-1-1-ECA": {"ta": "values close to zero below the ground"},
     "GISS-E2-1-G": {"hus": "undeclared fill value -1e27"},
-    "EC-Earth3-Veg": {
-        "hus": "only 11-16 of the 30 years available",
-        "tauu": "only 11-16 of the 30 years available",
-        "tauv": "only 11-16 of the 30 years available",
-        "va": "only 11-16 of the 30 years available",
-    },
+    "CESM2": {"net_sfc": "prsn published over land only: the ocean-masked net_sfc is left with coastal cells"},
+    "CESM2-FV2": {"net_sfc": "prsn published over land only: the ocean-masked net_sfc is left with coastal cells"},
+    "CESM2-WACCM-FV2": {"net_sfc": "prsn published over land only: the ocean-masked net_sfc is left with coastal cells"},
 }
 HIGHRESMIP_EXCLUDE = {
     "CESM1-CAM5-SE-HR": {"sos": "unphysical values over about 7000 ocean cells"},
-    "AWI-CM-1-1-HR": {"sos": "Baltic Sea 13-24 psu against 5-7 psu in ORAS5: 64 cells give 53% of the global PI"},
-    "BCC-CSM2-HR": {"sos": "Red Sea up to 59 psu against 38 psu in ORAS5: 29 cells give 66% of the global PI"},
-    "CNRM-CM6-1-HR": {
-        "tas": "cold bias over land: PI 61 against 14-22 for the other models",
-        "ta": "troposphere about 4 K colder than ERA5 (500 hPa global mean 254.4 K against 258.5 K): PI 197",
-        "hus": "35-65% of the ERA5 humidity between 300 and 100 hPa: PI 80",
-    },
-    "INM-CM5-H": {
-        "ta": "troposphere about 2 K warmer than ERA5 and tropopause biases (PI 137 at 150 hPa): PI 51",
-        "hus": "30-50% more humid than ERA5 in the upper troposphere (PI 342 at 150 hPa): PI 72",
-    },
-    # errors in the published HighResMIP data
     "CMCC-CM2-VHR4": {"siconc": "undeclared fill values 1e20 in the coordinates and 1e30 in the data"},
 }
 
@@ -144,6 +134,60 @@ HIGHRESMIP_SETUP = {
     "models": highresmip_models,
     "exclude": HIGHRESMIP_EXCLUDE,
 }
+
+
+def years_available(var, face, diag):
+    """Count the years of the period for which the input files of a variable are found.
+
+    The files are those ecmean selects for the diagnostic. Their names are assumed to follow CMOR
+    (``<var>_..._<first year>??-<last year>??.nc``): for a derived variable a year counts only if
+    all its components are found.
+
+    Args:
+        var (str): the variable name.
+        face (dict): the interface file.
+        diag (Diagnostic): the diagnostic instance of the model.
+
+    Returns:
+        int: the number of years found, or None if no file is found (e.g. archive not reachable).
+    """
+    info = face["variables"][var]
+    found = {name: set() for name in (formula_variables(info["derived"]) if "derived" in info else [var])}
+    for filename in make_input_filename(var, face, diag):
+        name, *_, dates = os.path.basename(filename).removesuffix(".nc").split("_")
+        first, last = (int(date[:4]) for date in dates.split("-"))
+        if name in found:
+            found[name].update(range(first, last + 1))
+    if not any(found.values()):
+        return None
+    return len(set(diag.years_joined).intersection(*found.values()))
+
+
+def upper_whisker(values):
+    """Upper whisker of the boxplot of log10(values), i.e. the third quartile plus 1.5 times the
+    interquartile range, back in linear units. PIs are positive and close to log-normal, so the
+    boxplot is drawn on their logarithm, as for the variance filter of the climatology (variance_iqr).
+
+    Args:
+        values (list): the PIs of the models.
+
+    Returns:
+        float: the largest PI not considered an outlier.
+    """
+    return float(variance_iqr(xr.DataArray(values))[2])
+
+
+def code_date():
+    """Date of the last commit touching the PI code, to spot PI files computed with an older version.
+
+    Returns:
+        int: seconds since the epoch, or None if the script does not run in a git checkout.
+    """
+    command = ["git", "log", "-1", "--format=%ct", "--", "../libs", "../performance_indices.py"]
+    try:
+        return int(subprocess.run(command, capture_output=True, text=True, check=True).stdout)
+    except (OSError, subprocess.CalledProcessError, ValueError):
+        return None
 
 
 def main(
@@ -209,6 +253,8 @@ def main(
         # dictionary with all elements
         full = {}
         excluded = {}
+        stale = []
+        newest_code = code_date()
         for model in setup["models"]:
             logging.warning("Climatology for model %s", model)
             ensemble = ENSEMBLES.get(model, "r1i1p1f1")
@@ -219,9 +265,53 @@ def main(
                 logging.warning("No PI file found for model %s, skipping it", model)
                 continue
             full[model] = load_yaml(filein[0])
+            if newest_code and os.path.getmtime(filein[0]) < newest_code:
+                stale.append(model)
+
+            # rule 1: errors in the published data
             for var, reason in setup["exclude"].get(model, {}).items():
                 if full[model].pop(var, None) is not None:
                     excluded.setdefault(var, {})[model] = reason
+
+            # rule 2: incomplete period, from the files found in the archive
+            diag = PerformanceIndices(
+                expname,
+                year1,
+                year2,
+                config=copy.deepcopy(cfg),
+                model=model,
+                ensemble=ensemble,
+                consortium=CONSORTIA.get(model),
+                mip=setup["mip"],
+                interface=setup["interface"],
+                climatology=climname,
+                loglevel="ERROR",
+            ).diag
+            face = load_yaml(diag.interface)
+            nyears = len(diag.years_joined)
+            for var in [v for v in full[model] if not np.isnan(full[model][v]["ALL"]["Global"])]:
+                found = years_available(var, face, diag)
+                if found is None:
+                    logging.warning("No input file found for %s of %s: the period cannot be checked", var, model)
+                elif found < MIN_YEARS_FRACTION * nyears:
+                    del full[model][var]
+                    excluded.setdefault(var, {})[model] = f"only {found} of the {nyears} years available"
+
+        if stale:
+            logging.warning("PI files older than the last change to the PI code, recompute them if it matters: %s", stale)
+
+        # rule 3: outliers, on the global annual PI of the models left for each variable
+        for var in dict.fromkeys(v for model_data in full.values() for v in model_data):
+            values = {model: model_data[var]["ALL"]["Global"] for model, model_data in full.items() if var in model_data}
+            values = {model: value for model, value in values.items() if not np.isnan(value)}
+            whisker = upper_whisker(list(values.values()))
+            for model, value in values.items():
+                if value > whisker:
+                    del full[model][var]
+                    excluded.setdefault(var, {})[model] = (
+                        f"outlier: global PI {value:.1f} above the upper whisker ({whisker:.1f}) "
+                        f"of the log10 boxplot of {len(values)} models"
+                    )
 
         # union of the variables of all models, in order of appearance: a variable can be missing
         # in some models (e.g. no land-sea mask or no atmosphere), and it is then averaged on the others.
@@ -274,6 +364,11 @@ def main(
             piclim[var]["cmip6"]["year2"] = year2
             if var in excluded:
                 piclim[var]["cmip6"]["excluded"] = excluded[var]
+            # models of the family without a valid PI (no data, or a failed computation): listed so that
+            # a model silently dropping out of the average is visible in the file
+            missing = [m for m in setup["models"] if m not in mout[var] and m not in excluded.get(var, {})]
+            if missing:
+                piclim[var]["cmip6"]["missing"] = missing
 
         # dump the new file
         with open(update_pifile, "w", encoding="utf8") as file:

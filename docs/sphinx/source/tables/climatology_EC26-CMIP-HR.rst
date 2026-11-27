@@ -12,7 +12,7 @@
      - CRU (v4.09)
      - land-no-antarctica
      - 1985-2014
-     - 7 (1985-2014)
+     - 6 (1985-2014)
    * - Precipitation
      - MSWEP (v2.80)
      - global
@@ -47,7 +47,7 @@
      - ERA5
      - global
      - 1985-2014
-     - 9 (1985-2014)
+     - 7 (1985-2014)
    * - Air Temperature
      - ERA5
      - global
@@ -57,7 +57,7 @@
      - ERA5
      - global
      - 1985-2014
-     - 7 (1985-2014)
+     - 9 (1985-2014)
    * - Sea Surface Temperature
      - ESA-CCI-L4 (v3.0.1)
      - ocean
@@ -67,7 +67,7 @@
      - ORAS5
      - ocean
      - 1985-2014
-     - 7 (1985-2014)
+     - 9 (1985-2014)
    * - Sea-ice Concentration
      - ESA-CCI-L4 (v3.0.1)
      - ocean

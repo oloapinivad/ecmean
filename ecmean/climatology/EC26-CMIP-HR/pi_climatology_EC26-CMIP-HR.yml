@@ -10,68 +10,73 @@ tas:
   year2: 2014
   cmip6:
     ALL:
-      Global: 17.621
-      North Midlat: 9.341
-      Tropical: 25.913
-      South Midlat: 14.409
-      NH: 11.834
-      SH: 13.275
-      Equatorial: 30.292
-      North Pole: 6.865
+      Global: 17.313
+      North Midlat: 9.829
+      Tropical: 24.739
+      South Midlat: 14.999
+      NH: 12.107
+      SH: 12.691
+      Equatorial: 28.942
+      North Pole: 7.111
       South Pole: .nan
     DJF:
-      Global: 11.638
-      North Midlat: 6.471
-      Tropical: 16.922
-      South Midlat: 8.225
-      NH: 7.933
-      SH: 8.479
-      Equatorial: 19.879
-      North Pole: 6.925
+      Global: 11.48
+      North Midlat: 6.589
+      Tropical: 16.45
+      South Midlat: 8.499
+      NH: 8.198
+      SH: 7.608
+      Equatorial: 19.15
+      North Pole: 7.087
       South Pole: .nan
     JJA:
-      Global: 15.03
-      North Midlat: 9.911
-      Tropical: 20.635
-      South Midlat: 7.17
-      NH: 12.043
-      SH: 7.151
-      Equatorial: 23.586
-      North Pole: 6.241
+      Global: 13.211
+      North Midlat: 8.37
+      Tropical: 18.431
+      South Midlat: 6.586
+      NH: 9.726
+      SH: 6.872
+      Equatorial: 22.158
+      North Pole: 6.37
       South Pole: .nan
     MAM:
-      Global: 9.779
-      North Midlat: 5.048
-      Tropical: 14.673
-      South Midlat: 6.018
-      NH: 5.955
-      SH: 6.313
-      Equatorial: 18.363
-      North Pole: 5.077
+      Global: 9.553
+      North Midlat: 5.281
+      Tropical: 13.964
+      South Midlat: 6.096
+      NH: 6.049
+      SH: 5.708
+      Equatorial: 17.641
+      North Pole: 5.075
       South Pole: .nan
     SON:
-      Global: 13.557
-      North Midlat: 5.543
-      Tropical: 21.67
-      South Midlat: 9.35
-      NH: 7.711
-      SH: 8.002
-      Equatorial: 26.776
-      North Pole: 4.149
+      Global: 13.229
+      North Midlat: 5.708
+      Tropical: 20.795
+      South Midlat: 9.641
+      NH: 7.897
+      SH: 7.75
+      Equatorial: 25.409
+      North Pole: 4.29
       South Pole: .nan
     models:
-    - BCC-CSM2-HR
     - CMCC-CM2-VHR4
     - EC-Earth3P-HR
     - ECMWF-IFS-HR
     - INM-CM5-H
     - HadGEM3-GC31-HH
     - HadGEM3-GC31-HM
-    nmodels: 7
+    nmodels: 6
     year1: 1985
     year2: 2014
     excluded:
-      CNRM-CM6-1-HR: 'cold bias over land: PI 61 against 14-22 for the other models'
+      BCC-CSM2-HR: only 14 of the 30 years available
+      CNRM-CM6-1-HR: 'outlier: global PI 61.2 above the upper whisker (32.1) of the
+        log10 boxplot of 7 models'
+    missing:
+    - AWI-CM-1-1-HR
+    - CESM1-CAM5-SE-HR
+    - MPI-ESM1-2-XR
 pr:
   dataset: MSWEP
   description: v2.80; PAST+NRT
@@ -146,6 +151,9 @@ pr:
     nmodels: 9
     year1: 1985
     year2: 2014
+    missing:
+    - AWI-CM-1-1-HR
+    - CESM1-CAM5-SE-HR
 net_sfc:
   dataset: NOCS
   description: NOCS Surface Flux Dataset v2.0
@@ -219,6 +227,10 @@ net_sfc:
     nmodels: 8
     year1: 1985
     year2: 2014
+    missing:
+    - AWI-CM-1-1-HR
+    - CESM1-CAM5-SE-HR
+    - MPI-ESM1-2-XR
 tauu:
   dataset: ORAS5
   description: ECMWF Ocean Reanalysis System 5
@@ -291,6 +303,10 @@ tauu:
     nmodels: 8
     year1: 1985
     year2: 2014
+    missing:
+    - AWI-CM-1-1-HR
+    - CESM1-CAM5-SE-HR
+    - MPI-ESM1-2-XR
 tauv:
   dataset: ORAS5
   description: ECMWF Ocean Reanalysis System 5
@@ -363,6 +379,10 @@ tauv:
     nmodels: 8
     year1: 1985
     year2: 2014
+    missing:
+    - AWI-CM-1-1-HR
+    - CESM1-CAM5-SE-HR
+    - MPI-ESM1-2-XR
 psl:
   dataset: ERA5
   description: ECMWF ERA5 reanalysis
@@ -437,6 +457,8 @@ psl:
     nmodels: 10
     year1: 1985
     year2: 2014
+    missing:
+    - AWI-CM-1-1-HR
 ua:
   dataset: ERA5
   description: ECMWF ERA5 reanalysis
@@ -510,6 +532,9 @@ ua:
     nmodels: 9
     year1: 1985
     year2: 2014
+    missing:
+    - AWI-CM-1-1-HR
+    - CESM1-CAM5-SE-HR
 va:
   dataset: ERA5
   description: ECMWF ERA5 reanalysis
@@ -521,68 +546,74 @@ va:
   year2: 2014
   cmip6:
     ALL:
-      Global: 10.158
-      North Midlat: 5.318
-      Tropical: 6.163
-      South Midlat: 22.987
-      NH: 5.166
-      SH: 18.542
-      Equatorial: 6.896
-      North Pole: 3.922
-      South Pole: 52.292
+      Global: 7.459
+      North Midlat: 4.932
+      Tropical: 3.893
+      South Midlat: 17.117
+      NH: 4.595
+      SH: 13.835
+      Equatorial: 4.081
+      North Pole: 3.565
+      South Pole: 34.302
     DJF:
-      Global: 4.178
-      North Midlat: 1.967
-      Tropical: 3.403
-      South Midlat: 7.937
-      NH: 1.86
-      SH: 6.957
-      Equatorial: 3.734
-      North Pole: 1.207
-      South Pole: 11.582
+      Global: 3.354
+      North Midlat: 1.866
+      Tropical: 2.465
+      South Midlat: 6.622
+      NH: 1.712
+      SH: 5.788
+      Equatorial: 2.593
+      North Pole: 1.128
+      South Pole: 8.191
     JJA:
-      Global: 5.653
-      North Midlat: 3.862
-      Tropical: 6.117
-      South Midlat: 6.515
-      NH: 3.98
-      SH: 5.691
-      Equatorial: 7.225
-      North Pole: 3.186
-      South Pole: 10.157
+      Global: 4.866
+      North Midlat: 3.831
+      Tropical: 5.178
+      South Midlat: 5.277
+      NH: 3.891
+      SH: 4.518
+      Equatorial: 6.138
+      North Pole: 3.505
+      South Pole: 7.093
     MAM:
-      Global: 5.167
-      North Midlat: 2.31
-      Tropical: 4.177
-      South Midlat: 10.004
-      NH: 2.385
-      SH: 8.237
-      Equatorial: 4.889
-      North Pole: 1.551
-      South Pole: 20.958
+      Global: 3.763
+      North Midlat: 2.086
+      Tropical: 2.661
+      South Midlat: 7.645
+      NH: 2.031
+      SH: 6.372
+      Equatorial: 2.92
+      North Pole: 1.523
+      South Pole: 14.068
     SON:
-      Global: 4.605
-      North Midlat: 2.902
-      Tropical: 4.263
-      South Midlat: 6.992
-      NH: 2.795
-      SH: 5.941
-      Equatorial: 5.06
-      North Pole: 1.9
-      South Pole: 12.728
+      Global: 3.507
+      North Midlat: 2.69
+      Tropical: 2.926
+      South Midlat: 5.486
+      NH: 2.55
+      SH: 4.623
+      Equatorial: 3.353
+      North Pole: 1.717
+      South Pole: 8.845
     models:
     - BCC-CSM2-HR
     - CMCC-CM2-VHR4
-    - CNRM-CM6-1-HR
     - EC-Earth3P-HR
     - ECMWF-IFS-HR
-    - INM-CM5-H
     - HadGEM3-GC31-HH
     - HadGEM3-GC31-HM
     - MPI-ESM1-2-XR
-    nmodels: 9
+    nmodels: 7
     year1: 1985
     year2: 2014
+    excluded:
+      CNRM-CM6-1-HR: 'outlier: global PI 17.9 above the upper whisker (16.1) of the
+        log10 boxplot of 9 models'
+      INM-CM5-H: 'outlier: global PI 21.3 above the upper whisker (16.1) of the log10
+        boxplot of 9 models'
+    missing:
+    - AWI-CM-1-1-HR
+    - CESM1-CAM5-SE-HR
 ta:
   dataset: ERA5
   description: ECMWF ERA5 reanalysis
@@ -655,10 +686,13 @@ ta:
     year1: 1985
     year2: 2014
     excluded:
-      CNRM-CM6-1-HR: 'troposphere about 4 K colder than ERA5 (500 hPa global mean
-        254.4 K against 258.5 K): PI 197'
-      INM-CM5-H: 'troposphere about 2 K warmer than ERA5 and tropopause biases (PI
-        137 at 150 hPa): PI 51'
+      CNRM-CM6-1-HR: 'outlier: global PI 196.9 above the upper whisker (34.1) of the
+        log10 boxplot of 9 models'
+      INM-CM5-H: 'outlier: global PI 50.6 above the upper whisker (34.1) of the log10
+        boxplot of 9 models'
+    missing:
+    - AWI-CM-1-1-HR
+    - CESM1-CAM5-SE-HR
 hus:
   dataset: ERA5
   description: ECMWF ERA5 reanalysis
@@ -670,70 +704,71 @@ hus:
   year2: 2014
   cmip6:
     ALL:
-      Global: 20.454
-      North Midlat: 24.578
-      Tropical: 15.147
-      South Midlat: 26.944
-      NH: 23.275
-      SH: 25.61
-      Equatorial: 12.781
-      North Pole: 27.996
-      South Pole: 39.574
+      Global: 32.748
+      North Midlat: 39.75
+      Tropical: 25.461
+      South Midlat: 40.318
+      NH: 37.841
+      SH: 37.775
+      Equatorial: 23.012
+      North Pole: 38.24
+      South Pole: 59.093
     DJF:
-      Global: 15.34
-      North Midlat: 21.987
-      Tropical: 10.131
-      South Midlat: 19.11
-      NH: 19.51
-      SH: 18.203
-      Equatorial: 8.574
-      North Pole: 25.716
-      South Pole: 26.201
+      Global: 21.755
+      North Midlat: 31.727
+      Tropical: 13.938
+      South Midlat: 27.414
+      NH: 27.561
+      SH: 25.895
+      Equatorial: 12.186
+      North Pole: 31.983
+      South Pole: 39.548
     JJA:
-      Global: 14.44
-      North Midlat: 19.053
-      Tropical: 11.987
-      South Midlat: 14.731
-      NH: 17.97
-      SH: 14.165
-      Equatorial: 11.308
-      North Pole: 21.493
-      South Pole: 14.574
+      Global: 21.377
+      North Midlat: 25.317
+      Tropical: 20.408
+      South Midlat: 19.377
+      NH: 24.933
+      SH: 18.654
+      Equatorial: 20.576
+      North Pole: 26.015
+      South Pole: 17.294
     MAM:
-      Global: 15.806
-      North Midlat: 19.737
-      Tropical: 11.778
-      South Midlat: 19.929
-      NH: 19.608
-      SH: 18.174
-      Equatorial: 9.87
-      North Pole: 22.188
-      South Pole: 27.048
+      Global: 22.533
+      North Midlat: 30.683
+      Tropical: 16.556
+      South Midlat: 26.336
+      NH: 29.801
+      SH: 23.787
+      Equatorial: 14.335
+      North Pole: 30.881
+      South Pole: 36.665
     SON:
-      Global: 14.751
-      North Midlat: 17.965
-      Tropical: 12.493
-      South Midlat: 16.051
-      NH: 17.329
-      SH: 15.467
-      Equatorial: 11.582
-      North Pole: 21.794
-      South Pole: 15.103
+      Global: 24.313
+      North Midlat: 28.163
+      Tropical: 22.177
+      South Midlat: 24.736
+      NH: 27.694
+      SH: 23.594
+      Equatorial: 21.753
+      North Pole: 30.21
+      South Pole: 21.477
     models:
     - BCC-CSM2-HR
     - CMCC-CM2-VHR4
+    - CNRM-CM6-1-HR
     - EC-Earth3P-HR
     - ECMWF-IFS-HR
+    - INM-CM5-H
     - HadGEM3-GC31-HH
     - HadGEM3-GC31-HM
     - MPI-ESM1-2-XR
-    nmodels: 7
+    nmodels: 9
     year1: 1985
     year2: 2014
-    excluded:
-      CNRM-CM6-1-HR: '35-65% of the ERA5 humidity between 300 and 100 hPa: PI 80'
-      INM-CM5-H: '30-50% more humid than ERA5 in the upper troposphere (PI 342 at
-        150 hPa): PI 72'
+    missing:
+    - AWI-CM-1-1-HR
+    - CESM1-CAM5-SE-HR
 tos:
   dataset: ESA-CCI-L4
   description: ESA SST CCI OSTIA L4 v3.0.1
@@ -809,6 +844,8 @@ tos:
     nmodels: 10
     year1: 1985
     year2: 2014
+    missing:
+    - INM-CM5-H
 sos:
   dataset: ORAS5
   description: ECMWF Ocean Reanalysis System 5
@@ -820,56 +857,58 @@ sos:
   year2: 2014
   cmip6:
     ALL:
-      Global: 20.376
-      North Midlat: 58.093
-      Tropical: 12.353
-      South Midlat: 12.865
-      NH: 45.862
-      SH: 12.42
-      Equatorial: 12.086
-      North Pole: 41.376
-      South Pole: 5.672
+      Global: 29.339
+      North Midlat: 77.912
+      Tropical: 22.27
+      South Midlat: 13.784
+      NH: 73.819
+      SH: 13.313
+      Equatorial: 17.392
+      North Pole: 82.101
+      South Pole: 5.6
     DJF:
-      Global: 14.672
-      North Midlat: 43.476
-      Tropical: 8.395
-      South Midlat: 9.199
-      NH: 34.389
-      SH: 8.88
-      Equatorial: 7.877
-      North Pole: 31.219
-      South Pole: 3.918
+      Global: 21.141
+      North Midlat: 58.665
+      Tropical: 15.253
+      South Midlat: 9.901
+      NH: 54.737
+      SH: 9.586
+      Equatorial: 11.528
+      North Pole: 62.749
+      South Pole: 3.828
     JJA:
-      Global: 15.236
-      North Midlat: 42.024
-      Tropical: 9.206
-      South Midlat: 10.488
-      NH: 33.093
-      SH: 10.229
-      Equatorial: 8.831
-      North Pole: 35.317
-      South Pole: 6.113
+      Global: 20.454
+      North Midlat: 56.29
+      Tropical: 14.01
+      South Midlat: 11.147
+      NH: 48.845
+      SH: 10.906
+      Equatorial: 12.022
+      North Pole: 63.222
+      South Pole: 5.73
     MAM:
-      Global: 14.36
-      North Midlat: 41.938
-      Tropical: 8.63
-      South Midlat: 8.646
-      NH: 33.645
-      SH: 8.339
-      Equatorial: 8.097
-      North Pole: 31.641
-      South Pole: 4.419
+      Global: 22.106
+      North Midlat: 56.727
+      Tropical: 17.992
+      South Midlat: 9.406
+      NH: 56.028
+      SH: 9.101
+      Equatorial: 13.855
+      North Pole: 63.107
+      South Pole: 4.298
     SON:
-      Global: 15.264
-      North Midlat: 40.127
-      Tropical: 9.299
-      South Midlat: 11.478
-      NH: 31.6
-      SH: 11.333
-      Equatorial: 8.705
-      North Pole: 31.742
-      South Pole: 7.691
+      Global: 20.218
+      North Midlat: 53.312
+      Tropical: 13.981
+      South Midlat: 12.095
+      NH: 47.289
+      SH: 11.952
+      Equatorial: 11.306
+      North Pole: 58.142
+      South Pole: 7.28
     models:
+    - AWI-CM-1-1-HR
+    - BCC-CSM2-HR
     - CMCC-CM2-VHR4
     - CNRM-CM6-1-HR
     - EC-Earth3P-HR
@@ -877,15 +916,13 @@ sos:
     - HadGEM3-GC31-HH
     - HadGEM3-GC31-HM
     - MPI-ESM1-2-XR
-    nmodels: 7
+    nmodels: 9
     year1: 1985
     year2: 2014
     excluded:
-      AWI-CM-1-1-HR: 'Baltic Sea 13-24 psu against 5-7 psu in ORAS5: 64 cells give
-        53% of the global PI'
-      BCC-CSM2-HR: 'Red Sea up to 59 psu against 38 psu in ORAS5: 29 cells give 66%
-        of the global PI'
       CESM1-CAM5-SE-HR: unphysical values over about 7000 ocean cells
+    missing:
+    - INM-CM5-H
 siconc:
   dataset: ESA-CCI-L4
   description: ESA SST CCI OSTIA L4 v3.0.1
@@ -962,3 +999,6 @@ siconc:
     excluded:
       CMCC-CM2-VHR4: undeclared fill values 1e20 in the coordinates and 1e30 in the
         data
+    missing:
+    - AWI-CM-1-1-HR
+    - INM-CM5-H

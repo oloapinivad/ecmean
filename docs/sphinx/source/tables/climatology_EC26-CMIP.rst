@@ -12,7 +12,7 @@
      - CRU (v4.09)
      - land-no-antarctica
      - 1985-2014
-     - 47 (1985-2014)
+     - 46 (1985-2014)
    * - Precipitation
      - MSWEP (v2.80)
      - global
@@ -22,12 +22,12 @@
      - NOCS (v2.0)
      - ocean
      - 1985-2014
-     - 45 (1985-2014)
+     - 41 (1985-2014)
    * - Eastward Wind Stress
      - ORAS5
      - ocean
      - 1985-2014
-     - 42 (1985-2014)
+     - 41 (1985-2014)
    * - Northward Wind Stress
      - ORAS5
      - ocean
@@ -37,7 +37,7 @@
      - ERA5
      - global
      - 1985-2014
-     - 47 (1985-2014)
+     - 45 (1985-2014)
    * - Zonal Wind
      - ERA5
      - global
@@ -47,12 +47,12 @@
      - ERA5
      - global
      - 1985-2014
-     - 45 (1985-2014)
+     - 43 (1985-2014)
    * - Air Temperature
      - ERA5
      - global
      - 1985-2014
-     - 45 (1985-2014)
+     - 42 (1985-2014)
    * - Specific Humidity
      - ERA5
      - global
@@ -62,14 +62,14 @@
      - ESA-CCI-L4 (v3.0.1)
      - ocean
      - 1985-2014
-     - 39 (1985-2014)
+     - 37 (1985-2014)
    * - Sea Surface Salinity
      - ORAS5
      - ocean
      - 1985-2014
-     - 37 (1985-2014)
+     - 32 (1985-2014)
    * - Sea-ice Concentration
      - ESA-CCI-L4 (v3.0.1)
      - ocean
      - 1985-2014
-     - 35 (1985-2014)
+     - 36 (1985-2014)

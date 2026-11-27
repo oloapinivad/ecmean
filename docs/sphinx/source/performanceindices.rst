@@ -193,8 +193,9 @@ The number of models is therefore smaller than for EC26-CMIP and differs from va
    * ``tas``: CNRM-CM6-1-HR (cold bias over land, PI 61), against 14-22 of the other models.
 
    CMCC-CM2-VHR4 ``siconc`` is also left out, for undeclared fill values in its coordinates and data.
-   CESM1-CAM5-SE-HR and MPI-ESM1-2-XR have no land-sea mask and do not provide the PIs that need it (``tas``, ``net_sfc``, ``tauu``, ``tauv``),
-   while AWI-CM-1-1-HR has no atmospheric data and provides ``tos`` only.
+   MPI-ESM1-2-XR has no land-sea mask and does not provide the PIs that need it (``tas``, ``net_sfc``, ``tauu``, ``tauv``).
+   CESM1-CAM5-SE-HR has no land-sea mask either and, among the atmospheric fields, publishes only ``psl``: it provides ``psl``, ``tos`` and ``siconc``.
+   AWI-CM-1-1-HR publishes ocean data only (no atmosphere and no ``siconc``): it provides ``tos``, since its ``sos`` is left out.
 
    The models used for each variable and the reasons of each exclusion are stored in the ``models`` and ``excluded`` entries of the
    ``cmip6`` block of each variable in the ``ecmean/climatology/EC26-CMIP-HR/pi_climatology_EC26-CMIP-HR.yml`` file.

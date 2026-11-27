@@ -59,9 +59,10 @@ models = [
 
 # HighResMIP high-resolution coupled models (hist-1950), used for the -HR climatologies (e.g. EC26-CMIP-HR),
 # one line per modelling centre. Selected from the esgpull archive as the high-resolution models with at least
-# 5 PIs over 1985-2014. CESM1-CAM5-SE-HR and MPI-ESM1-2-XR have no land-sea mask (sftlf): they are kept
-# for the PIs that do not need it (global variables and those on the ocean grid), while tas, net_sfc,
-# tauu and tauv are NaN. AWI-CM-1-1-HR has no atmospheric data and provides the ocean PIs only.
+# 5 PIs over 1985-2014. MPI-ESM1-2-XR has no land-sea mask (sftlf): it is kept for the PIs that do not
+# need it, while tas, net_sfc, tauu and tauv are NaN. CESM1-CAM5-SE-HR has no sftlf either and, among
+# the atmospheric fields, publishes psl only: it provides psl, tos and siconc. AWI-CM-1-1-HR publishes
+# ocean data only (no atmosphere, no siconc) and provides tos and sos.
 # The standard-resolution counterparts (e.g. CMCC-CM2-HR4, HadGEM3-GC31-MM, ECMWF-IFS-LR) are left out
 highresmip_models = [
     "AWI-CM-1-1-HR",  # AWI

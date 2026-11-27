@@ -146,7 +146,7 @@ This configuration is designed for comparison with model simulations using histo
 
 .. include:: tables/climatology_EC26-HIST.rst
 
-Properties of the climatology - such as which interpolation method and which CMIP6 models have been used - can be inspected by looking at the ``ecmean/climatology/EC26/pi_climatology_EC26-HIST.yml`` file.
+Properties of the climatology - such as which interpolation method and which CMIP6 models have been used - can be inspected by looking at the ``ecmean/climatology/EC26-HIST/pi_climatology_EC26-HIST.yml`` file.
 
 EC26-CMIP (1985–2014)
 ~~~~~~~~~~~~~~~~~~~~~
@@ -156,8 +156,29 @@ It is aligned with the CMIP6 historical period (1985–2014), ensuring temporal 
 
 .. include:: tables/climatology_EC26-CMIP.rst
 
+The reference PIs are the average over the CMIP6 models, taken among the 47 models with at least 5 PIs over 1985-2014 and a land-sea mask,
+and are built with ``ecmean/utils/cmip6-clim-evaluate.py -c EC26 -t CMIP``.
+Three rules, applied in this order, decide whether the PI of a model enters the average of a variable:
 
-Properties of the climatology - such as which interpolation method and which CMIP6 models have been used - can be inspected by looking at the ``ecmean/climatology/EC26/pi_climatology_EC26-CMIP.yml`` file.
+1. **Errors in the published data**, listed by hand in the script: wind stress with flipped sign
+   (``tauu``/``tauv`` of CMCC-CM2-HR4, CMCC-CM2-SR5, CMCC-ESM2 and FGOALS-f3-L), undeclared fill values (``ta``/``ua``/``va`` of E3SM-1-1,
+   ``ta`` of E3SM-1-1-ECA, ``hus`` of GISS-E2-1-G) and snowfall published over land only, which leaves the ocean-masked ``net_sfc``
+   with coastal cells (CESM2, CESM2-FV2, CESM2-WACCM-FV2).
+2. **Incomplete period**: less than 80% of the years (24 of 30) found in the archive
+   (``hus``/``tauu``/``tauv``/``va`` of EC-Earth3-Veg, with 11-16 years).
+3. **Outliers**: a global annual PI above the upper whisker of the boxplot of the models left, i.e. the third quartile plus 1.5 times
+   the interquartile range. The boxplot is drawn on the base-10 logarithm of the PIs, which are positive and close to log-normal,
+   as for the variance filter of the climatology. Only the upper whisker is used, since a very low PI is a good model and not an error.
+   A model beyond the whisker is left out for all the seasons and regions of that variable.
+
+.. note::
+   The outlier rule leaves out 18 PIs: ``tas`` of MIROC6, ``net_sfc`` of ICON-ESM-LR, ``tauu`` of MIROC-ES2L, ``psl`` and ``tos`` of MIROC6 and MIROC-ES2L,
+   ``va`` of ICON-ESM-LR and GISS-E2-1-G, ``ta`` of CNRM-CM6-1, CNRM-CM6-1-HR and CNRM-ESM2-1,
+   ``sos`` of AWI-CM-1-1-MR, FGOALS-f3-L, ICON-ESM-LR, MIROC6 and MIROC-ES2L, and ``siconc`` of FGOALS-g3.
+   The reason of each exclusion (with the PI and the whisker for the outliers) is stored in the ``excluded`` entry of the ``cmip6`` block of each variable,
+   next to the ``models`` used. The ``missing`` entry lists the models without a valid PI for that variable, i.e. with no data available.
+
+Properties of the climatology - such as which interpolation method and which CMIP6 models have been used - can be inspected by looking at the ``ecmean/climatology/EC26-CMIP/pi_climatology_EC26-CMIP.yml`` file.
 
 EC26-CMIP-HR (1985–2014)
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -172,19 +193,25 @@ The number of models is therefore smaller than for EC26-CMIP and differs from va
 
 .. include:: tables/climatology_EC26-CMIP-HR.rst
 
+The same three rules of EC26-CMIP decide which PIs enter the average:
+
+* errors in the published data: ``sos`` of CESM1-CAM5-SE-HR (negative salinity, down to -181, over about 7000 ocean cells, mostly in the Baltic Sea and on the Siberian shelf) and
+  ``siconc`` of CMCC-CM2-VHR4 (undeclared fill values in its coordinates and data);
+* incomplete period: ``tas`` of BCC-CSM2-HR (14 of 30 years). The ``tos`` of AWI-CM-1-1-HR, whose simulation ends in 2010, is kept with 26 years;
+* outliers: ``tas`` of CNRM-CM6-1-HR (PI 61, against 14-22 of the other models), ``ta`` of CNRM-CM6-1-HR (197) and INM-CM5-H (51), against 8-19,
+  and ``va`` of CNRM-CM6-1-HR (18) and INM-CM5-H (21), against 2-11.
+
 .. note::
-   Not all the models provide all the variables, and some model-variable pairs have been left out because a few cells or a mean-state bias
-   dominate their PI, which is the squared bias divided by the interannual variance of the reference, very small for ``ta`` and ``hus`` in ERA5.
-   These are the biases in the models, not processing issues: the fields have been checked before and after the remapping, and they do not drift in time.
+   Not all the models provide all the variables. MPI-ESM1-2-XR has no land-sea mask and does not provide the PIs that need it (``tas``, ``net_sfc``, ``tauu``, ``tauv``).
+   CESM1-CAM5-SE-HR has no land-sea mask either and, among the atmospheric fields, publishes only ``psl``: it provides ``psl``, ``tos`` and ``siconc``.
+   AWI-CM-1-1-HR publishes ocean data only (no atmosphere and no ``siconc``): it provides ``tos`` and ``sos``.
 
-   * ``sos``: AWI-CM-1-1-HR (Baltic Sea, 13-24 psu against 5-7 psu in ORAS5), BCC-CSM2-HR (Red Sea, up to 59 psu against 38 psu)
-     and CESM1-CAM5-SE-HR (unphysical values over about 7000 ocean cells). Few tens of cells give more than half of the PI of AWI and BCC.
-   * ``ta``: CNRM-CM6-1-HR (troposphere about 4 K colder than ERA5, PI 197) and INM-CM5-H (about 2 K warmer, PI 51), against 8-19 of the other models.
-   * ``hus``: CNRM-CM6-1-HR (35-65% of the ERA5 humidity in the upper troposphere, PI 80) and INM-CM5-H (30-50% more humid, PI 72), against 9-25.
+   With 6 to 10 models per variable the quartiles, and so the whiskers, depend on how the models happen to cluster: the outlier rule is less
+   robust than for EC26-CMIP, as are the reference PIs. Large PIs inside the whiskers are kept, e.g. the ``hus`` of CNRM-CM6-1-HR (79) and INM-CM5-H (72)
+   and the ``sos`` of AWI-CM-1-1-HR (71, dominated by the Baltic Sea) and BCC-CSM2-HR (50, Red Sea).
 
-   The models used for each variable and the reasons of each exclusion are stored in the ``models`` and ``excluded`` entries of the
-   ``cmip6`` block of each variable in the ``ecmean/climatology/EC26-CMIP-HR/pi_climatology_EC26-CMIP-HR.yml`` file.
-   Since the average is done on a small number of models, the reference PIs are less robust than the ones of EC26-CMIP.
+   The models used for each variable, the reasons of each exclusion and the models without data are stored in the ``models``, ``excluded`` and ``missing``
+   entries of the ``cmip6`` block of each variable in the ``ecmean/climatology/EC26-CMIP-HR/pi_climatology_EC26-CMIP-HR.yml`` file.
 
 EC24 (deprecated)
 -----------------
